@@ -1,0 +1,150 @@
+# agent-workbench
+
+A minimal, readable **coding-agent harness** — the core machinery every agent
+platform needs, with nothing you can't read in an afternoon:
+
+- an **agent loop** (the model calls tools until the task is done),
+- a **tool registry** (read file, write file, run shell),
+- a **permission gate** (human-in-the-loop / policy control over mutating actions),
+- **tracing + cost accounting** (JSONL trace per run, token and USD totals),
+- a **fixture-based eval runner** (run the agent against tasks, grade the outcome).
+
+It is intentionally small and dependency-light so you can see exactly how an
+agent works, then extend it. It is the Sprint 1 / Month 0–30 artifact of the
+[ai-infra learning plan](../../learning/02-roadmap-12-months.md) — the
+foundation the fintech PR-review agent and incident-triage agent build on.
+
+> Built with the Anthropic Python SDK against Claude (Opus 4.8 by default;
+> configurable to Sonnet 4.6 / Haiku 4.5 for cheaper loops).
+
+## Architecture
+
+```
+                 task (string)
+                      │
+                      ▼
+            ┌──────────────────┐        ┌──────────────────────┐
+            │    Agent loop    │ ─────▶ │  Anthropic Messages   │
+            │  (agent.py)      │ ◀───── │  API (Claude)         │
+            └────────┬─────────┘        └──────────────────────┘
+                     │ tool_use
+                     ▼
+            ┌──────────────────┐   check   ┌──────────────────┐
+            │ Permission gate  │ ◀──────── │  Tool registry   │
+            │ (permissions.py) │           │  (registry.py)   │
+            └────────┬─────────┘           └────────┬─────────┘
+              allow  │ deny                          │
+                     ▼                               ▼
+            ┌──────────────────┐           read_file / write_file / run_shell
+            │   Tracer (JSONL) │◀──── every LLM call + tool call + totals
+            │  (tracing.py)    │
+            └──────────────────┘
+```
+
+The loop is **manual on purpose** (not the SDK's auto tool runner): driving it
+ourselves is what lets the harness gate, time, and log every single tool call —
+which is the whole point of a workbench.
+
+## Quickstart
+
+```bash
+cd projects/agent-workbench
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"          # or: pip install -r requirements.txt
+
+# 1) Run the offline unit tests (no API key needed — uses a scripted fake LLM)
+make test
+
+# 2) Set your key and run the agent on a real task
+cp .env.example .env             # then edit ANTHROPIC_API_KEY
+export ANTHROPIC_API_KEY=sk-ant-...
+python -m agent_workbench.cli --workdir .sandbox \
+    "create greet.py that prints hello, then run it"
+
+# 3) Run the eval suite (calls the API)
+make eval
+```
+
+By default the agent runs in `--permission-mode ask`, so it pauses for your
+approval before any file write or shell command.
+
+## How the loop works
+
+Each turn (`agent.py`):
+
+1. Send the conversation + tool schemas to Claude.
+2. Record token usage and cost in the trace.
+3. If `stop_reason == "end_turn"` → done.
+4. Otherwise, for each `tool_use` block: ask the **permission gate**, run the
+   tool through the **registry** (or return a "denied" result), and feed the
+   results back as a `tool_result`.
+5. Repeat, up to `AGENT_MAX_TURNS`.
+
+The assistant turn (including thinking and `tool_use` blocks) is appended to the
+message history **verbatim** before tool results — the API requires that pairing.
+
+## The moving parts (read in this order)
+
+| File | Responsibility |
+|------|----------------|
+| `config.py` | Model, pricing table, effort/thinking, trace dir — all tunable via env. |
+| `tools/base.py` | The `Tool` contract: schema + `run`, plus `mutating` / `parallel_safe`. |
+| `tools/registry.py` | Register tools, expose schemas, dispatch calls by name. |
+| `tools/fs.py`, `tools/shell.py` | The built-in tools, **jailed to a working directory**. |
+| `permissions.py` | The gate: `ask` / `auto` / `readonly`, allowlist, path jail. |
+| `tracing.py` | JSONL events + token/cost accounting. |
+| `llm.py` | Thin Anthropic SDK wrapper (adaptive thinking, effort, tools). |
+| `agent.py` | The loop that ties it all together. |
+| `evals/runner.py` | Run fixtures in a sandbox, grade with deterministic checks. |
+
+## Evaluation methodology
+
+Evals live in `agent_workbench/evals/`. Each fixture is a task plus checks on
+the outcome (file exists / file contains / final answer contains). The runner
+executes the agent in a **throwaway temp directory** with permissions on `auto`,
+then grades deterministically — **no LLM-as-judge**, so results are reproducible
+and free to verify. This is the seed of eval-driven development: add a fixture
+for every behavior you care about, and you'll know when a prompt change breaks
+something. See [`evals/README.md`](agent_workbench/evals/README.md).
+
+## Security model
+
+- **Path jail.** `read_file` / `write_file` resolve paths against the working
+  directory and refuse anything that escapes it (`..`, absolute paths, symlink
+  tricks). Never trust a path that came from the model.
+- **Permission gate.** Mutating tools (`write_file`, `run_shell`) require
+  approval in `ask` mode; read-only tools run freely. Policy lives in one place,
+  separate from the model and the tools.
+- **Shell denylist + timeout.** `run_shell` blocks obvious foot-guns and times
+  out — a tripwire, not a real boundary. Run the agent in a disposable sandbox
+  (container/VM) for anything untrusted; `--permission-mode auto` should only be
+  used there.
+- **Secrets.** The API key comes from the environment, never code. Traces store
+  tool inputs/outputs — don't point the agent at secrets you don't want logged.
+
+## Failure modes (known + by design)
+
+- **Runaway loops** → bounded by `AGENT_MAX_TURNS`; status reports `max_turns`.
+- **Model asks for an unknown tool** → registry returns an error result; the
+  model can recover. Unknown tools are treated as *mutating* (unsafe) by the gate.
+- **Tool raises** → caught by the registry and returned as an error result, not
+  a crash, so the loop keeps going.
+- **No API key / SDK missing** → the loop errors cleanly; offline unit tests
+  still pass (they use a fake LLM).
+- **Cost blindness** → every run prints and logs USD cost; watch it.
+
+## Production considerations (what's intentionally *not* here yet)
+
+This is a learning starter. The next layers (Sprints 2–3 of the plan) are:
+OpenTelemetry GenAI spans instead of raw JSONL, a sandboxed executor (container
+per run), parallel-safe tool scheduling, prompt caching, a metrics endpoint
+(Prometheus), and a richer policy-as-code permission layer. The code is
+structured so each of those slots in without a rewrite.
+
+## What I learned
+
+_(Fill this in as you build — it's the highest-signal part of a portfolio repo.)_
+Examples to write up: why the assistant turn must be replayed verbatim with
+thinking blocks; how token/cost accounting maps to `usage`; why deterministic
+eval checks beat LLM-as-judge for a regression suite; where the permission gate
+belongs in the architecture.

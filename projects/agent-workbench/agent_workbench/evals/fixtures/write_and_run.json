@@ -1,0 +1,9 @@
+{
+  "id": "write_and_run",
+  "prompt": "Create a file greet.py that prints exactly the word hello, then run it with python and tell me the output.",
+  "checks": [
+    { "type": "file_exists", "path": "greet.py" },
+    { "type": "file_contains", "path": "greet.py", "substring": "print" },
+    { "type": "final_contains", "substring": "hello" }
+  ]
+}

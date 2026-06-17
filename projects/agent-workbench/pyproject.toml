@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-workbench"
+version = "0.1.0"
+description = "A minimal coding-agent harness: agent loop, tool registry, permission gate, tracing, and an eval runner."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+]
+
+[project.scripts]
+agent-workbench = "agent_workbench.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agent_workbench*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,14 @@
+{
+  "id": "fix_failing_test",
+  "prompt": "There is a function in calc.py and a test in test_calc.py. Run the test, find why it fails, fix calc.py (do not edit the test), and run the test again to confirm it passes.",
+  "setup": {
+    "files": {
+      "calc.py": "def add(a, b):\n    return a - b\n",
+      "test_calc.py": "from calc import add\n\n\ndef test_add():\n    assert add(2, 3) == 5\n"
+    }
+  },
+  "checks": [
+    { "type": "file_contains", "path": "calc.py", "substring": "a + b" },
+    { "type": "final_contains", "substring": "pass" }
+  ]
+}

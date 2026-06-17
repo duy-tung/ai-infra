@@ -1,0 +1,12 @@
+{
+  "id": "read_and_summarize",
+  "prompt": "Read config.txt and tell me the value of the timeout setting.",
+  "setup": {
+    "files": {
+      "config.txt": "host=localhost\nport=5432\ntimeout=30\nretries=3\n"
+    }
+  },
+  "checks": [
+    { "type": "final_contains", "substring": "30" }
+  ]
+}
