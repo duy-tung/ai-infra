@@ -35,7 +35,13 @@ Trạng thái: ⬜ chưa · 🟡 đang làm · ✅ xong.
 
 | Ngày | Artifact | Repo/path | Link public |
 |------|----------|-----------|-------------|
-| | agent-workbench starter | `projects/agent-workbench/` | |
+| | agent-workbench starter (loop, registry, gate, trace, eval) | `projects/agent-workbench/` | |
+| | Sprint 2 scaffold: MCP server + client bridge | `agent_workbench/mcp_server.py`, `mcp_bridge.py` | |
+| | Sprint 2 scaffold: OpenTelemetry GenAI tracing + Jaeger stack | `agent_workbench/tracing_otel.py`, `observability/` | |
+| | Sprint 2 scaffold: LLM routing layer | `agent_workbench/routing.py` | |
+
+> Sprint 2 code đã scaffold sẵn (đã có test pass) — việc của bạn là **đọc hiểu +
+> chạy thật** (đọc lessons Phase 13, chạy `make otel-up`, dùng MCP Inspector).
 
 ## Blockers / câu hỏi mở
 

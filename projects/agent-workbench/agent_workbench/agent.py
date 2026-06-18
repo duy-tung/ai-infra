@@ -14,14 +14,18 @@ from __future__ import annotations
 
 import sys
 import time
+from contextlib import nullcontext
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .config import Settings
 from .llm import LLMClient
 from .permissions import Decision, PermissionGate, PermissionRequest
 from .tools.registry import ToolRegistry
 from .tracing import RunTotals, Tracer, Usage
+
+if TYPE_CHECKING:  # OTel is optional — only imported for type hints
+    from .tracing_otel import OtelTracer
 
 SYSTEM_PROMPT = (
     "You are a focused coding agent operating inside a sandboxed working "
@@ -60,12 +64,15 @@ class Agent:
         gate: PermissionGate,
         llm: LLMClient | None = None,
         verbose: bool = True,
+        otel: "OtelTracer | None" = None,
     ) -> None:
         self.settings = settings
         self.registry = registry
         self.gate = gate
         self.llm = llm or LLMClient(settings)
         self.verbose = verbose
+        # Optional OpenTelemetry tracer. None = JSONL trace only (default).
+        self.otel = otel
 
     def _log(self, text: str) -> None:
         if self.verbose:
@@ -79,47 +86,55 @@ class Agent:
         final_text = ""
         status = "max_turns"
 
-        try:
-            for _turn in range(self.settings.max_turns):
-                started = time.monotonic()
-                response = self.llm.create(SYSTEM_PROMPT, messages, tools)
-                latency = time.monotonic() - started
-                stop_reason = getattr(response, "stop_reason", None)
-                tracer.llm_call(_usage_from_response(response), stop_reason, latency)
+        # Wrap the whole run in an OTel root span when enabled (no-op otherwise).
+        run_ctx = self.otel.run_span(task) if self.otel else nullcontext()
+        with run_ctx:
+            try:
+                for _turn in range(self.settings.max_turns):
+                    started = time.monotonic()
+                    response = self.llm.create(SYSTEM_PROMPT, messages, tools)
+                    latency = time.monotonic() - started
+                    stop_reason = getattr(response, "stop_reason", None)
+                    usage = _usage_from_response(response)
+                    cost = tracer.llm_call(usage, stop_reason, latency)
+                    if self.otel:
+                        self.otel.llm_call(usage, stop_reason, latency, cost)
 
-                tool_uses = []
-                for block in response.content:
-                    btype = getattr(block, "type", None)
-                    if btype == "text":
-                        final_text = block.text
-                        self._log(f"\n[agent] {block.text}")
-                    elif btype == "thinking":
-                        thinking = getattr(block, "thinking", "")
-                        if thinking:
-                            self._log(f"[thinking] {thinking}")
-                    elif btype == "tool_use":
-                        tool_uses.append(block)
+                    tool_uses = []
+                    for block in response.content:
+                        btype = getattr(block, "type", None)
+                        if btype == "text":
+                            final_text = block.text
+                            self._log(f"\n[agent] {block.text}")
+                        elif btype == "thinking":
+                            thinking = getattr(block, "thinking", "")
+                            if thinking:
+                                self._log(f"[thinking] {thinking}")
+                        elif btype == "tool_use":
+                            tool_uses.append(block)
 
-                if stop_reason == "end_turn":
-                    status = "completed"
-                    break
+                    if stop_reason == "end_turn":
+                        status = "completed"
+                        break
 
-                if stop_reason == "pause_turn":
-                    # Server-side tool loop paused; re-send to let it resume.
+                    if stop_reason == "pause_turn":
+                        # Server-side tool loop paused; re-send to let it resume.
+                        messages.append({"role": "assistant", "content": response.content})
+                        continue
+
+                    # Preserve the assistant turn verbatim (thinking + tool_use blocks)
+                    # before adding our tool results — the API requires the pairing.
                     messages.append({"role": "assistant", "content": response.content})
-                    continue
+                    tool_results = [self._handle_tool(tracer, b) for b in tool_uses]
+                    messages.append({"role": "user", "content": tool_results})
+            except Exception as exc:  # noqa: BLE001 - surface the failure, don't crash the harness
+                status = "error"
+                final_text = f"agent error: {exc}"
+                self._log(f"[error] {exc}")
 
-                # Preserve the assistant turn verbatim (thinking + tool_use blocks)
-                # before adding our tool results — the API requires the pairing.
-                messages.append({"role": "assistant", "content": response.content})
-                tool_results = [self._handle_tool(tracer, b) for b in tool_uses]
-                messages.append({"role": "user", "content": tool_results})
-        except Exception as exc:  # noqa: BLE001 - surface the failure, don't crash the harness
-            status = "error"
-            final_text = f"agent error: {exc}"
-            self._log(f"[error] {exc}")
-
-        tracer.run_end(status, final_text)
+            tracer.run_end(status, final_text)
+            if self.otel:
+                self.otel.run_end(status, tracer.totals)
         self._log(
             f"\n[done] status={status} turns_used calls={tracer.totals.llm_calls} "
             f"tool_calls={tracer.totals.tool_calls} cost=${tracer.totals.cost_usd:.4f} "
@@ -158,6 +173,8 @@ class Agent:
             is_error=is_error,
             latency_s=latency,
         )
+        if self.otel:
+            self.otel.tool_call(name=name, decision=decision.value, is_error=is_error, latency_s=latency)
         return {
             "type": "tool_result",
             "tool_use_id": block.id,

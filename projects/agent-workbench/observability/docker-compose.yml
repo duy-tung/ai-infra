@@ -1,0 +1,30 @@
+# Local observability stack for agent traces.
+#
+#   docker compose -f observability/docker-compose.yml up -d
+#   # run the agent with --otel (sends OTLP to localhost:4317)
+#   AGENT_MODEL=claude-haiku-4-5 python -m agent_workbench.cli --otel --workdir .sandbox \
+#       --permission-mode auto "create greet.py that prints hello and run it"
+#   # open Jaeger UI:  http://localhost:16686   (service: agent-workbench)
+#
+# Flow:  agent --OTLP--> otel-collector --OTLP--> jaeger (UI)
+# The collector is the "AI gateway" pattern: one place to fan traces out to
+# multiple backends, sample, redact, or add resource attributes.
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.119.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC — the agent exports here
+      - "4318:4318"   # OTLP HTTP
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"  # Jaeger UI

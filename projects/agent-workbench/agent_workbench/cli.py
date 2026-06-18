@@ -41,15 +41,42 @@ def main(argv: list[str] | None = None) -> int:
         help="Pre-approve a tool by name (repeatable). e.g. --allow read_file",
     )
     parser.add_argument("--quiet", action="store_true", help="Suppress streaming output.")
+    parser.add_argument(
+        "--route",
+        action="store_true",
+        help="Let the ModelRouter pick the model from the task (overrides AGENT_MODEL).",
+    )
+    parser.add_argument(
+        "--otel",
+        action="store_true",
+        help="Emit OpenTelemetry spans (needs the [otel] extra + an OTLP endpoint).",
+    )
     args = parser.parse_args(argv)
 
     workdir = Path(args.workdir).expanduser().resolve()
     workdir.mkdir(parents=True, exist_ok=True)
 
     settings = Settings()
+
+    if args.route:
+        from .routing import ModelRouter
+
+        decision = ModelRouter().route(args.task)
+        settings.model = decision.model
+        print(f"[router] {decision.model} — {decision.reason}")
+
+    otel = None
+    if args.otel:
+        try:
+            from .tracing_otel import OtelTracer
+
+            otel = OtelTracer(settings)
+        except Exception as exc:  # noqa: BLE001 - otel is optional
+            print(f"[otel] disabled: {exc}")
+
     registry = default_registry(workdir)
     gate = PermissionGate(mode=args.permission_mode, allowlist=set(args.allow))
-    agent = Agent(settings, registry, gate, verbose=not args.quiet)
+    agent = Agent(settings, registry, gate, verbose=not args.quiet, otel=otel)
 
     result = agent.run(args.task)
     print(f"\n=== {result.status} ===")

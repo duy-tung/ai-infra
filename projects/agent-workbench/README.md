@@ -94,8 +94,12 @@ message history **verbatim** before tool results — the API requires that pairi
 | `permissions.py` | The gate: `ask` / `auto` / `readonly`, allowlist, path jail. |
 | `tracing.py` | JSONL events + token/cost accounting. |
 | `llm.py` | Thin Anthropic SDK wrapper (adaptive thinking, effort, tools). |
-| `agent.py` | The loop that ties it all together. |
+| `agent.py` | The loop that ties it all together (optionally drives OTel). |
 | `evals/runner.py` | Run fixtures in a sandbox, grade with deterministic checks. |
+| `routing.py` | LLM routing layer — pick model by task (Sprint 2). |
+| `mcp_server.py` | Expose the tools over MCP (Sprint 2). |
+| `mcp_bridge.py` | Consume a remote MCP server as `Tool`s (Sprint 2). |
+| `tracing_otel.py` | OpenTelemetry GenAI spans alongside the JSONL trace (Sprint 2). |
 
 ## Evaluation methodology
 
@@ -133,13 +137,41 @@ something. See [`evals/README.md`](agent_workbench/evals/README.md).
   still pass (they use a fake LLM).
 - **Cost blindness** → every run prints and logs USD cost; watch it.
 
+## Sprint 2 additions — MCP + OpenTelemetry + routing
+
+The starter has grown the first production-shaped layers:
+
+- **MCP server** (`mcp_server.py`): expose the tools over the Model Context
+  Protocol so any MCP client can use them. `make mcp-server` (or plug into
+  Claude Desktop / the MCP Inspector). Same path-jail security boundary.
+- **MCP client bridge** (`mcp_bridge.py`): consume a remote MCP server and adapt
+  its tools into the workbench `Tool` interface — the sync agent loop drives an
+  async MCP session on a background event loop. Remote tools are gated as
+  mutating by default. Round-trip is covered by an integration test.
+- **OpenTelemetry GenAI tracing** (`tracing_otel.py`): run with `--otel` to emit
+  spans (`agent.run` → `chat <model>` → `execute_tool <name>`) with GenAI
+  semantic-convention attributes (tokens, cost, finish reason, tool name). View
+  in Jaeger via [`observability/`](observability/) (`make otel-up`).
+- **LLM routing** (`routing.py`): `--route` picks the model from the task
+  (cheap → Haiku, balanced → Sonnet, heavy/agentic → Opus) to cut cost.
+
+Security model for MCP (both directions) is written up in [`MCP_SECURITY.md`](MCP_SECURITY.md).
+
+```bash
+make otel-up                       # start collector + Jaeger
+python -m agent_workbench.cli --route --otel --workdir .sandbox --permission-mode auto \
+    "refactor greet.py to take a name argument, then run it"
+open http://localhost:16686        # see the trace
+```
+
 ## Production considerations (what's intentionally *not* here yet)
 
-This is a learning starter. The next layers (Sprints 2–3 of the plan) are:
-OpenTelemetry GenAI spans instead of raw JSONL, a sandboxed executor (container
-per run), parallel-safe tool scheduling, prompt caching, a metrics endpoint
-(Prometheus), and a richer policy-as-code permission layer. The code is
-structured so each of those slots in without a rewrite.
+This is a learning starter. Sprint 2 added MCP + OTel + routing (above). The
+remaining Sprint 3 layers: a sandboxed executor (container per run),
+parallel-safe tool scheduling, prompt caching, a Prometheus metrics endpoint,
+PII/secrets redaction on traces, a cost governor + kill switch, and a richer
+policy-as-code permission layer. The code is structured so each slots in without
+a rewrite.
 
 ## What I learned
 

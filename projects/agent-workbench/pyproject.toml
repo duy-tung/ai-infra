@@ -13,8 +13,21 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# MCP server + client bridge (Sprint 2)
+mcp = ["mcp>=1.2"]
+# OpenTelemetry GenAI tracing → OTLP (Sprint 2)
+otel = [
+    "opentelemetry-api>=1.20",
+    "opentelemetry-sdk>=1.20",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.20",
+]
+# Everything needed to run the full test suite.
 dev = [
     "pytest>=7",
+    "mcp>=1.2",
+    "opentelemetry-api>=1.20",
+    "opentelemetry-sdk>=1.20",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.20",
 ]
 
 [project.scripts]
