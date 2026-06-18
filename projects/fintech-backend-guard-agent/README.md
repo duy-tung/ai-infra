@@ -1,10 +1,10 @@
 # fintech-backend-guard-agent
 
 > **Status: ✅ runnable starter.** The deterministic static-check core and the
-> offline eval are implemented and tested (31 unit tests; 7 eval fixtures at
-> precision/recall = 1.00). The LLM reviewer layer is wired and testable with a
-> scripted client (real runs need `ANTHROPIC_API_KEY`). Sprint 4 of the plan;
-> pairs with the hardening patterns from [`../agent-workbench/`](../agent-workbench/).
+> offline eval are implemented and tested (41 unit tests; 33 eval fixtures across
+> 14 risk categories at precision/recall = 1.00). The LLM reviewer layer is wired
+> and testable with a scripted client (real runs need `ANTHROPIC_API_KEY`). Sprint
+> 4 of the plan; pairs with the hardening patterns from [`../agent-workbench/`](../agent-workbench/).
 
 An AI agent that reviews a backend pull request **for fintech-specific risk** —
 not code style. It reads the diff, migrations, tests, and service context, then
@@ -43,13 +43,13 @@ python -m fintech_guard.cli --diff pr.diff --json
 | Piece | Module | Status |
 |-------|--------|--------|
 | Diff parser | `diff.py` | ✅ |
-| Static checks (risk taxonomy) | `checks.py` | ✅ money_float, migration locks, idempotency, secrets/PII, error-swallow, audit |
+| Static checks (risk taxonomy) | `checks.py` | ✅ 14 categories: money_float, money_division, migration not-null/index/type/lock, idempotency, secrets/PII, error-swallow, audit, txn_boundary, ledger_imbalance, unbounded_retry, reconciliation |
 | Secret/PII detection + pre-LLM scrubbing | `redaction.py` | ✅ |
 | LLM reviewer (structured output) | `reviewer.py` | ✅ (fake-client tested; real runs need a key) |
 | Merge + severity gate + report (md/json) | `report.py` | ✅ advisory by default |
 | Pipeline (workflow) | `pipeline.py` | ✅ |
 | CLI | `cli.py` | ✅ |
-| Offline eval (precision/recall) | `evals/` | ✅ 7 fixtures |
+| Offline eval (precision/recall) | `evals/` | ✅ 33 fixtures, 14 categories (thematic files), all P/R = 1.00 |
 | PR comment bot, OTel/metrics, more checks, sandboxed test-run | — | 🔜 next |
 
 It's a **workflow**, not an agent loop: PR review is well-specified, so the code

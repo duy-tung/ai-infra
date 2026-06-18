@@ -31,8 +31,9 @@ Theo spec trong README của project đó. Tối thiểu cho v1:
 - [x] Static checks (idempotency, money precision, migration lock, audit, PII) _(starter: `checks.py`)_
 - [x] LLM reviewer với severity rubric (structured output) _(starter: `reviewer.py`)_
 - [x] Report: severity + suggested patch + confidence; human approval gate (advisory) _(starter: `report.py`)_
-- [ ] Eval set mở rộng 30–50 fixture PRs (starter có 7 — thêm mỗi loại rủi ro nhiều case)
+- [x] Eval set 33 fixture PRs / 14 risk categories (P/R=1.00) — `evals/fixtures/*.json` _(target 30–50: đã đạt 33; thêm nữa khi gặp case thật)_
 - [ ] Context loader: đọc thêm test output + service ownership doc.
+- [ ] PR comment bot (GitHub Action chạy trên PR → post review).
 - [ ] Fintech risk classifier (rule + LLM).
 - [ ] Static checks (idempotency, money precision, migration lock, audit, PII).
 - [ ] LLM reviewer với severity rubric (structured output).

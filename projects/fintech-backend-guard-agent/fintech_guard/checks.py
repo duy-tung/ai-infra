@@ -21,9 +21,19 @@ from .findings import Finding, Severity
 MONEY = re.compile(r"(?i)\b(amount|price|balance|total|subtotal|fee|cost|money|payment|refund|charge|tax|salary|wage|interest|principal)\b")
 FLOAT_TYPE = re.compile(r"(?i)(\bfloat(32|64)?\b|\bdouble\b|:\s*float\b|\bfloat\s*\()")
 PAYMENT = re.compile(r"(?i)\b(charge|payment|transfer|capture|debit|withdraw|payout|refund|settle)\b")
-HANDLER = re.compile(r"(?i)(\bdef\b|\bfunc\b|@app\.route|@router|\.post\(|HandlerFunc|POST\b)")
-LEDGER = re.compile(r"(?i)\b(ledger|account|transaction|balance|entry|journal|posting|wallet)\b")
+# Handler/route markers. Note: no bare "POST" — case-insensitively it matches the
+# word "post" anywhere (e.g. audit.record("post")), a false positive.
+HANDLER = re.compile(r"(?i)(\bdef\b|\bfunc\b|@app\.route|@router|\.post\(|HandlerFunc)")
+# Ledger-ish tables/fields. Plural-aware: \baccount\b would miss "accounts".
+LEDGER = re.compile(r"(?i)\b(ledgers?|accounts?|transactions?|balances?|journals?|postings?|wallets?|entry|entries)\b")
 DB_WRITE = re.compile(r"(?i)(insert\s+into|update\s+\w|delete\s+from|\.save\(|\.create\(|\.update\(|\.insert\()")
+TX_MARKER = re.compile(r"(?i)(\bbegin\b|\bcommit\b|\brollback\b|\btx\b|transaction|\.begin\(|withtx|begintx|savepoint|atomic|db\.transaction)")
+DIVISION = re.compile(r"[\w\)\]]\s*/\s*[\w\(\d]")
+RETRY = re.compile(r"(?i)retr(y|ies|ying)")
+RETRY_BOUND = re.compile(r"(?i)(\bmax\b|backoff|attempt|\blimit\b|\bcap\b)")
+SETTLE = re.compile(r"(?i)\b(settle|settlement|payout)\b")
+DEBIT = re.compile(r"(?i)\bdebit\b")
+CREDIT = re.compile(r"(?i)\bcredit\b")
 
 
 def _add(findings, **kw):
@@ -143,13 +153,93 @@ def check_missing_audit(files: list[FileDiff]) -> list[Finding]:
     return out
 
 
+def check_txn_boundary(files: list[FileDiff]) -> list[Finding]:
+    out: list[Finding] = []
+    for fd in files:
+        if fd.is_sql():
+            continue
+        writes = [(ln, t) for ln, t in fd.added if DB_WRITE.search(t) and LEDGER.search(t)]
+        if len(writes) >= 2 and not TX_MARKER.search(fd.added_text):
+            _add(out, category="txn_boundary", severity=Severity.HIGH, file=fd.path, line=writes[0][0],
+                 message="Multiple ledger/account writes with no visible transaction boundary — a partial failure leaves money inconsistent.",
+                 suggestion="Wrap the writes in a single DB transaction (BEGIN/COMMIT) so they commit atomically.")
+    return out
+
+
+def check_ledger_imbalance(files: list[FileDiff]) -> list[Finding]:
+    out: list[Finding] = []
+    for fd in files:
+        if fd.is_sql():
+            continue
+        text = fd.added_text
+        writes_ledger = any(DB_WRITE.search(t) and LEDGER.search(t) for _, t in fd.added)
+        if writes_ledger and bool(DEBIT.search(text)) ^ bool(CREDIT.search(text)):
+            line = next((ln for ln, t in fd.added if DEBIT.search(t) or CREDIT.search(t)), None)
+            _add(out, category="ledger_imbalance", severity=Severity.MEDIUM, file=fd.path, line=line,
+                 confidence=0.6,
+                 message="Only one side of a double-entry (debit XOR credit) appears — the ledger may not balance.",
+                 suggestion="Post matching debit and credit entries so every transaction nets to zero.")
+    return out
+
+
+def check_money_division(files: list[FileDiff]) -> list[Finding]:
+    out: list[Finding] = []
+    for fd in files:
+        if fd.is_sql():
+            continue
+        for lineno, text in fd.added:
+            stripped = text.strip()
+            if stripped.startswith("#") or stripped.startswith("//") or "://" in text:
+                continue
+            if MONEY.search(text) and DIVISION.search(text):
+                _add(out, category="money_division", severity=Severity.MEDIUM, file=fd.path, line=lineno,
+                     message="Division on a monetary value — silent truncation/rounding can lose or create money.",
+                     suggestion="Use integer division with an explicit remainder, or a Decimal with a defined rounding mode.")
+    return out
+
+
+def check_unbounded_retry(files: list[FileDiff]) -> list[Finding]:
+    out: list[Finding] = []
+    for fd in files:
+        if fd.is_sql():
+            continue
+        text = fd.added_text
+        if RETRY.search(text) and PAYMENT.search(text) and not RETRY_BOUND.search(text):
+            line = next((ln for ln, t in fd.added if RETRY.search(t)), None)
+            _add(out, category="unbounded_retry", severity=Severity.MEDIUM, file=fd.path, line=line,
+                 confidence=0.6,
+                 message="Retry on a payment path with no max attempts / backoff — a stuck retry can repeat a charge.",
+                 suggestion="Bound retries (max attempts + backoff) and make the operation idempotent before retrying.")
+    return out
+
+
+def check_missing_reconciliation(files: list[FileDiff]) -> list[Finding]:
+    out: list[Finding] = []
+    for fd in files:
+        if fd.is_sql():
+            continue
+        text = fd.added_text
+        if SETTLE.search(text) and "reconcil" not in text.lower():
+            line = next((ln for ln, t in fd.added if SETTLE.search(t)), None)
+            _add(out, category="missing_reconciliation", severity=Severity.LOW, file=fd.path, line=line,
+                 confidence=0.5,
+                 message="Settlement/payout code with no reconciliation path in sight — discrepancies may go undetected.",
+                 suggestion="Add (or reference) a reconciliation job that matches settled amounts against the ledger.")
+    return out
+
+
 CHECKS = [
     check_money_float,
+    check_money_division,
     check_migration_lock,
     check_missing_idempotency,
     check_secret_pii,
     check_error_swallow,
     check_missing_audit,
+    check_txn_boundary,
+    check_ledger_imbalance,
+    check_unbounded_retry,
+    check_missing_reconciliation,
 ]
 
 

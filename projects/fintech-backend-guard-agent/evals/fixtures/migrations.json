@@ -1,0 +1,37 @@
+[
+  {
+    "id": "not_null_no_default",
+    "diff": "+++ b/migrations/001.sql\n@@ -0,0 +1,1 @@\n+ALTER TABLE accounts ADD COLUMN status text NOT NULL;\n",
+    "expected_categories": ["migration_not_null"]
+  },
+  {
+    "id": "not_null_currency",
+    "diff": "+++ b/migrations/002.sql\n@@ -0,0 +1,1 @@\n+ALTER TABLE ledger ADD COLUMN currency varchar(3) NOT NULL;\n",
+    "expected_categories": ["migration_not_null"]
+  },
+  {
+    "id": "index_no_concurrently",
+    "diff": "+++ b/migrations/003.sql\n@@ -0,0 +1,1 @@\n+CREATE INDEX idx_acct ON entries (account_id);\n",
+    "expected_categories": ["migration_index_lock"]
+  },
+  {
+    "id": "index_no_concurrently_dir",
+    "diff": "+++ b/db/migrate/004.sql\n@@ -0,0 +1,1 @@\n+CREATE INDEX idx_tx ON tx_events (created_at);\n",
+    "expected_categories": ["migration_index_lock"]
+  },
+  {
+    "id": "alter_column_type",
+    "diff": "+++ b/migrations/005.sql\n@@ -0,0 +1,1 @@\n+ALTER TABLE accounts ALTER COLUMN bal TYPE numeric(20,4);\n",
+    "expected_categories": ["migration_type_change"]
+  },
+  {
+    "id": "lock_table",
+    "diff": "+++ b/migrations/006.sql\n@@ -0,0 +1,1 @@\n+LOCK TABLE accounts IN EXCLUSIVE MODE;\n",
+    "expected_categories": ["migration_lock_table"]
+  },
+  {
+    "id": "index_concurrently_clean",
+    "diff": "+++ b/migrations/007.sql\n@@ -0,0 +1,1 @@\n+CREATE INDEX CONCURRENTLY idx_ok ON events (ts);\n",
+    "expected_categories": []
+  }
+]

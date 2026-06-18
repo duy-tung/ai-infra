@@ -1,6 +1,0 @@
-{
-  "id": "error_swallow",
-  "description": "Exception on a payment path swallowed with pass.",
-  "diff": "diff --git a/pay.py b/pay.py\n--- a/pay.py\n+++ b/pay.py\n@@ -0,0 +1,4 @@\n+    try:\n+        gateway.capture(order)\n+    except Exception:\n+        pass\n",
-  "expected_categories": ["error_swallow"]
-}

@@ -66,3 +66,57 @@ def test_missing_audit_silenced_when_audit_present():
 def test_clean_code_no_findings():
     files = _fd("util.py", "def slugify(name):", '    return name.lower()')
     assert _categories(files) == set()
+
+
+def test_ledger_matches_plural_tables():
+    # regression: \baccount\b must also match "accounts"
+    files = _fd("a.py", 'db.execute("UPDATE accounts SET x = 1")')
+    assert "missing_audit" in _categories(files)
+
+
+def test_txn_boundary_two_writes_no_transaction():
+    files = _fd("t.py",
+                'db.execute("UPDATE accounts SET bal = bal - 1")',
+                'db.execute("UPDATE accounts SET bal = bal + 1")',
+                'audit.record("x")')
+    assert "txn_boundary" in _categories(files)
+
+
+def test_txn_boundary_silenced_by_transaction():
+    files = _fd("t.py",
+                "with db.begin():",
+                '    db.execute("UPDATE accounts SET bal = bal - 1")',
+                '    db.execute("UPDATE accounts SET bal = bal + 1")')
+    assert "txn_boundary" not in _categories(files)
+
+
+def test_ledger_imbalance_single_sided():
+    files = _fd("l.py", "db.execute(\"INSERT INTO ledger (side) VALUES ('debit')\")", 'audit.record("x")')
+    assert "ledger_imbalance" in _categories(files)
+
+
+def test_money_division_flagged():
+    assert "money_division" in _categories(_fd("m.py", "x = amount / 100"))
+
+
+def test_money_division_ignores_comment():
+    assert "money_division" not in _categories(_fd("m.py", "# amount / 100 is fine"))
+
+
+def test_unbounded_retry_flagged():
+    files = _fd("r.py", "while True: charge(o)", "    retry()")
+    assert "unbounded_retry" in _categories(files)
+
+
+def test_bounded_retry_ok():
+    files = _fd("r.py", "for i in range(max_attempts):", "    charge(o); retry()")
+    assert "unbounded_retry" not in _categories(files)
+
+
+def test_missing_reconciliation_flagged():
+    assert "missing_reconciliation" in _categories(_fd("s.py", "payout(batch)"))
+
+
+def test_reconciliation_present_ok():
+    files = _fd("s.py", "payout(batch)", "reconcile(batch)")
+    assert "missing_reconciliation" not in _categories(files)

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "money_float_go",
+    "diff": "+++ b/wallet.go\n@@ -0,0 +1,1 @@\n+    Balance float64\n",
+    "expected_categories": ["money_float"]
+  },
+  {
+    "id": "money_float_py",
+    "diff": "+++ b/order.py\n@@ -0,0 +1,1 @@\n+    price: float = 0.0\n",
+    "expected_categories": ["money_float"]
+  },
+  {
+    "id": "money_float_double_java",
+    "diff": "+++ b/Fee.java\n@@ -0,0 +1,1 @@\n+    private double amount;\n",
+    "expected_categories": ["money_float"]
+  },
+  {
+    "id": "money_division_py",
+    "diff": "+++ b/split.py\n@@ -0,0 +1,1 @@\n+    share = amount / num_users\n",
+    "expected_categories": ["money_division"]
+  },
+  {
+    "id": "money_division_go",
+    "diff": "+++ b/interest.go\n@@ -0,0 +1,1 @@\n+    monthly := principal / 12\n",
+    "expected_categories": ["money_division"]
+  }
+]

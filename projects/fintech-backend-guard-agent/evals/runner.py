@@ -37,8 +37,13 @@ class Tally:
         return self.tp / (self.tp + self.fn) if (self.tp + self.fn) else 1.0
 
 
-def run_fixture(path: Path, guard: Guard) -> tuple[bool, set[str], set[str]]:
-    fx = json.loads(path.read_text(encoding="utf-8"))
+def load_fixtures(path: Path) -> list[dict]:
+    """A fixture file is either one fixture (dict) or a list of fixtures."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return data if isinstance(data, list) else [data]
+
+
+def grade_fixture(fx: dict, guard: Guard) -> tuple[bool, set[str], set[str]]:
     report = guard.review_diff(fx["diff"], migration_sql=fx.get("migration_sql"))
     flagged = {f.category for f in report.findings}
     expected = set(fx.get("expected_categories", []))
@@ -52,19 +57,20 @@ def main(argv: list[str] | None = None) -> int:
 
     # Static-only (no reviewer) so the eval is deterministic and offline.
     guard = Guard(reviewer=None, threshold=Severity.HIGH, advisory=True)
-    fixtures = sorted(Path(args.fixtures).glob("*.json"))
+    files = sorted(Path(args.fixtures).glob("*.json"))
+    fixtures = [(fp, fx) for fp in files for fx in load_fixtures(fp)]
     if not fixtures:
         print(f"no fixtures in {args.fixtures}")
         return 1
 
     by_category: dict[str, Tally] = {}
     passed = 0
-    for fp in fixtures:
-        ok, flagged, expected = run_fixture(fp, guard)
+    for fp, fx in fixtures:
+        ok, flagged, expected = grade_fixture(fx, guard)
         passed += ok
         mark = "PASS" if ok else "FAIL"
-        print(f"[{mark}] {fp.stem}")
         if not ok:
+            print(f"[{mark}] {fp.stem}:{fx.get('id', '?')}")
             print(f"    expected: {sorted(expected) or '∅'}")
             print(f"    flagged : {sorted(flagged) or '∅'}")
         for cat in expected | flagged:

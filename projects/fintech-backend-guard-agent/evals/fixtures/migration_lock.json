@@ -1,6 +1,0 @@
-{
-  "id": "migration_lock",
-  "description": "CREATE INDEX without CONCURRENTLY on a hot table.",
-  "diff": "diff --git a/migrations/001_idx.sql b/migrations/001_idx.sql\n--- a/migrations/001_idx.sql\n+++ b/migrations/001_idx.sql\n@@ -0,0 +1,1 @@\n+CREATE INDEX idx_tx_acct ON tx_events (acct_id);\n",
-  "expected_categories": ["migration_index_lock"]
-}

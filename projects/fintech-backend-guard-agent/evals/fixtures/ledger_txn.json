@@ -1,0 +1,22 @@
+[
+  {
+    "id": "txn_two_updates_py",
+    "diff": "+++ b/balances.py\n@@ -0,0 +1,4 @@\n+def rebalance(db, a, b, cents):\n+    db.execute(\"UPDATE accounts SET balance = balance - ? WHERE id = ?\", (cents, a))\n+    db.execute(\"UPDATE accounts SET balance = balance + ? WHERE id = ?\", (cents, b))\n+    audit.record(\"rebalance\", a, b, cents)\n",
+    "expected_categories": ["txn_boundary"]
+  },
+  {
+    "id": "txn_two_writes_go",
+    "diff": "+++ b/orders.go\n@@ -0,0 +1,4 @@\n+func fulfill(db, id int) {\n+    db.Exec(\"UPDATE ledger SET amt = amt - 1 WHERE id = 1\")\n+    db.Exec(\"UPDATE accounts SET bal = bal + 1 WHERE id = 2\")\n+    audit.Log(\"fulfill\")\n+}\n",
+    "expected_categories": ["txn_boundary"]
+  },
+  {
+    "id": "imbalance_debit_only",
+    "diff": "+++ b/post.py\n@@ -0,0 +1,2 @@\n+db.execute(\"INSERT INTO ledger (side, amount) VALUES ('debit', ?)\", (amt,))\n+audit.record(\"post\", amt)\n",
+    "expected_categories": ["ledger_imbalance"]
+  },
+  {
+    "id": "imbalance_credit_only",
+    "diff": "+++ b/credits.py\n@@ -0,0 +1,2 @@\n+wallet.update(user, credit=amt)\n+audit.record(\"credit\", user)\n",
+    "expected_categories": ["ledger_imbalance"]
+  }
+]

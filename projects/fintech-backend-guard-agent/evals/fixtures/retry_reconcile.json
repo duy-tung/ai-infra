@@ -1,0 +1,12 @@
+[
+  {
+    "id": "unbounded_retry_charge",
+    "diff": "+++ b/charge.py\n@@ -0,0 +1,6 @@\n+    while True:\n+        try:\n+            charge(order)\n+            break\n+        except TimeoutError:\n+            retry()\n",
+    "expected_categories": ["unbounded_retry"]
+  },
+  {
+    "id": "missing_reconciliation_payout",
+    "diff": "+++ b/settlement.py\n@@ -0,0 +1,2 @@\n+run_settlement(batch)\n+payout(batch.total)\n",
+    "expected_categories": ["missing_reconciliation"]
+  }
+]

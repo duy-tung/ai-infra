@@ -1,0 +1,27 @@
+[
+  {
+    "id": "idem_charge_py",
+    "diff": "+++ b/charge.py\n@@ -0,0 +1,2 @@\n+def charge_card(token, cents):\n+    return gateway.charge(token, cents)\n",
+    "expected_categories": ["missing_idempotency"]
+  },
+  {
+    "id": "idem_capture_go",
+    "diff": "+++ b/handler.go\n@@ -0,0 +1,3 @@\n+func CapturePayment(w http.ResponseWriter, r *http.Request) {\n+    capture(orderID)\n+}\n",
+    "expected_categories": ["missing_idempotency"]
+  },
+  {
+    "id": "idem_refund_route",
+    "diff": "+++ b/routes.py\n@@ -0,0 +1,3 @@\n+@app.route(\"/refund\", methods=[\"POST\"])\n+def refund_order(id):\n+    process_refund(id)\n",
+    "expected_categories": ["missing_idempotency"]
+  },
+  {
+    "id": "audit_single_insert",
+    "diff": "+++ b/ledger.py\n@@ -0,0 +1,2 @@\n+def post(db, acct, cents):\n+    db.execute(\"INSERT INTO ledger (acct, cents) VALUES (?, ?)\", (acct, cents))\n",
+    "expected_categories": ["missing_audit"]
+  },
+  {
+    "id": "audit_single_update_go",
+    "diff": "+++ b/accounts.go\n@@ -0,0 +1,4 @@\n+func Close(db *sql.DB, id int) error {\n+    _, e := db.Exec(\"UPDATE accounts SET closed = true WHERE id = $1\", id)\n+    return e\n+}\n",
+    "expected_categories": ["missing_audit"]
+  }
+]

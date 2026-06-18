@@ -1,0 +1,17 @@
+[
+  {
+    "id": "clean_util",
+    "diff": "+++ b/util.py\n@@ -0,0 +1,2 @@\n+def slugify(name):\n+    return name.lower().replace(\" \", \"-\")\n",
+    "expected_categories": []
+  },
+  {
+    "id": "clean_migration_concurrent",
+    "diff": "+++ b/migrations/100.sql\n@@ -0,0 +1,1 @@\n+CREATE INDEX CONCURRENTLY idx ON events (ts);\n",
+    "expected_categories": []
+  },
+  {
+    "id": "clean_config",
+    "diff": "+++ b/settings.py\n@@ -0,0 +1,2 @@\n+TIMEOUT_SECONDS = 30\n+MAX_RETRIES = 3\n",
+    "expected_categories": []
+  }
+]
