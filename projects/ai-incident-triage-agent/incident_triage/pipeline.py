@@ -39,10 +39,12 @@ class TriageReport:
 
 
 class Triage:
-    def __init__(self, generator: HypothesisGenerator | None = None, window_minutes: int = 60, otel=None) -> None:
+    def __init__(self, generator: HypothesisGenerator | None = None, window_minutes: int = 60,
+                 otel=None, metrics=None) -> None:
         self.generator = generator
         self.window_minutes = window_minutes
-        self.otel = otel  # optional OpenTelemetry tracer
+        self.otel = otel        # optional OpenTelemetry tracer
+        self.metrics = metrics  # optional Prometheus metrics
 
     def triage(self, bundle: IncidentBundle) -> TriageReport:
         started = time.monotonic()
@@ -57,15 +59,19 @@ class Triage:
                 t0 = time.monotonic()
                 llm = self.generator.generate(correlation, bundle)
                 used_llm = True
+                usage = getattr(self.generator, "last_usage", {}) or {}
+                model = getattr(self.generator, "model", "")
+                in_tok, out_tok = usage.get("input_tokens", 0), usage.get("output_tokens", 0)
                 if self.otel:
-                    usage = getattr(self.generator, "last_usage", {}) or {}
-                    self.otel.llm_span(getattr(self.generator, "model", ""),
-                                       usage.get("input_tokens", 0), usage.get("output_tokens", 0),
-                                       time.monotonic() - t0)
+                    self.otel.llm_span(model, in_tok, out_tok, time.monotonic() - t0)
+                if self.metrics:
+                    self.metrics.record_llm(model, in_tok, out_tok)
 
             hypotheses = merge_hypotheses(baseline, llm)
             report = TriageReport(correlation, hypotheses, time.monotonic() - started, used_llm)
+            top_conf = report.top.confidence if report.top else 0.0
             if self.otel:
-                top_conf = report.top.confidence if report.top else 0.0
                 self.otel.set_result(len(correlation.suspect_deploys), top_conf, used_llm)
+            if self.metrics:
+                self.metrics.record_triage(bool(correlation.suspect_deploys), top_conf, report.duration_s)
             return report

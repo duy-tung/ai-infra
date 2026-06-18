@@ -40,6 +40,8 @@ python -m fintech_guard.cli --diff pr.diff --json
 python -m fintech_guard.cli --diff pr.diff --comment
 # emit OpenTelemetry spans (review + LLM call with token/cost) — needs ".[otel]" + an OTLP endpoint
 python -m fintech_guard.cli --diff pr.diff --llm --otel
+# push Prometheus metrics (cost/findings/latency) to a Pushgateway — see /observability
+python -m fintech_guard.cli --diff pr.diff --llm --metrics-push http://localhost:9091
 ```
 
 ## CI / PR comment bot
@@ -70,7 +72,8 @@ blocks merge. Static-only by default (no API key needed); if an
 | Offline eval (precision/recall) | `evals/` | ✅ 33 fixtures, 14 categories (thematic files), all P/R = 1.00 |
 | CI / PR comment bot | `pr_comment.py`, `.github/workflows/pr-review.yml` | ✅ sticky comment, advisory; `--llm` if a key secret is set |
 | OpenTelemetry tracing + cost | `tracing.py` | ✅ `guard.review` → `chat <model>` spans (tokens + USD); `--otel` |
-| Prometheus metrics, more checks, sandboxed test-run | — | 🔜 next |
+| Prometheus metrics | `metrics.py` | ✅ reviews/findings/cost/latency; `--metrics-file` / `--metrics-push` (shared stack in [`/observability`](../../observability/)) |
+| More checks, sandboxed test-run | — | 🔜 next |
 
 It's a **workflow**, not an agent loop: PR review is well-specified, so the code
 orchestrates the steps and only calls the model for the judgment-heavy part. The

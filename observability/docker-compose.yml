@@ -1,0 +1,66 @@
+# Shared observability stack for all three agents in this repo.
+#
+#   docker compose -f observability/docker-compose.yml up -d
+#
+# Then run any agent with:
+#   --otel                      → traces to the collector → Jaeger (http://localhost:16686)
+#   --metrics-push http://localhost:9091  → metrics to Pushgateway → Prometheus → Grafana
+#
+# Grafana:    http://localhost:3000  (anonymous admin; dashboard "AI agents")
+# Prometheus: http://localhost:9090
+# Jaeger:     http://localhost:16686
+#
+# Flow:
+#   agent --OTLP--> otel-collector --> Jaeger (traces)
+#                                  \-> spanmetrics --> Prometheus (RED metrics per span)
+#   agent --push--> pushgateway --> Prometheus (per-run cost/findings/latency)
+#   Grafana <- Prometheus + Jaeger
+#
+# NOTE: config-only; can't be run-verified in this environment (no Docker daemon).
+# agent-workbench also ships its own minimal traces-only stack for standalone use;
+# this root stack is the unified demo across all three projects.
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.119.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC (agents --otel export here)
+      - "4318:4318"   # OTLP HTTP
+      - "8889:8889"   # Prometheus exporter (spanmetrics)
+    depends_on: [jaeger]
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686" # UI
+
+  pushgateway:
+    image: prom/pushgateway:v1.9.0
+    ports:
+      - "9091:9091"
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on: [otel-collector, pushgateway]
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on: [prometheus]

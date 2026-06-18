@@ -41,6 +41,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
     p.add_argument("--redact", action="store_true", help="Scrub PII/secrets from the trace and audit log.")
     p.add_argument("--audit", metavar="PATH", help="Write a hash-chained audit log to PATH.")
     p.add_argument("--metrics-file", metavar="PATH", help="Write Prometheus metrics to PATH at the end.")
+    p.add_argument("--metrics-push", metavar="URL", help="Push Prometheus metrics to a Pushgateway URL.")
     p.add_argument("--sandbox", choices=["local", "docker"], default="local",
                    help="Where run_shell executes (docker = ephemeral container, network off).")
     p.add_argument("--docker-image", default="python:3.11-slim", help="Image for --sandbox docker.")
@@ -108,7 +109,7 @@ def main(argv: list[str] | None = None) -> int:
         audit = AuditLog(Path(args.audit))
 
     metrics = None
-    if args.metrics_file:
+    if args.metrics_file or args.metrics_push:
         from .metrics import Metrics
 
         metrics = Metrics()
@@ -125,6 +126,12 @@ def main(argv: list[str] | None = None) -> int:
     if metrics and args.metrics_file:
         metrics.write_textfile(args.metrics_file)
         print(f"[metrics] wrote {args.metrics_file}")
+    if metrics and args.metrics_push:
+        try:
+            metrics.push(args.metrics_push)
+            print(f"[metrics] pushed to {args.metrics_push}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[metrics] push failed: {exc}")
     if audit:
         from .audit import verify
 

@@ -47,6 +47,7 @@ Trạng thái: ⬜ chưa · 🟡 đang làm · ✅ xong.
 | | Sprint 3 scaffold: sandbox runner (local/docker) | `agent_workbench/sandbox.py` | |
 | | Sprint 4: fintech-backend-guard-agent (static checks + eval + LLM reviewer + CLI) | `projects/fintech-backend-guard-agent/` | |
 | | Project #3: ai-incident-triage-agent (correlator + eval + LLM hypotheses + CLI, read-only) | `projects/ai-incident-triage-agent/` | |
+| | Prometheus metrics (3 repo) + shared OTel→Jaeger + Prometheus→Grafana stack | `*/metrics.py`, `observability/` | |
 
 > Trạng thái: cả 3 repo chạy được + test xanh. agent-workbench (60), fintech-guard
 > (48: 14 checks, 33 eval P/R=1.00, PR bot, OTel), incident-triage (26: correlator,

@@ -37,10 +37,11 @@ ai-infra/
 │   ├── sprints/                        4 sprint map tới phases cụ thể
 │   ├── blog-drafts/                    nháp README/blog tiếng Anh (portfolio)
 │   └── notes/                          ghi chú học theo phase (+ template)
-└── projects/                     ← portfolio (3 repo)
-    ├── agent-workbench/                ✅ RUNNABLE (Sprint 1–3)
-    ├── fintech-backend-guard-agent/    ✅ RUNNABLE starter (Sprint 4)
-    └── ai-incident-triage-agent/       ✅ RUNNABLE starter (read-only)
+├── projects/                     ← portfolio (3 repo)
+│   ├── agent-workbench/                ✅ RUNNABLE (Sprint 1–3)
+│   ├── fintech-backend-guard-agent/    ✅ RUNNABLE starter (Sprint 4)
+│   └── ai-incident-triage-agent/       ✅ RUNNABLE starter (read-only)
+└── observability/                ← shared OTel→Jaeger + Prometheus→Grafana stack
 ```
 
 ---

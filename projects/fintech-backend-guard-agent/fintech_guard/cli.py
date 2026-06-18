@@ -46,6 +46,10 @@ def main(argv: list[str] | None = None) -> int:
                    help="Emit a sticky PR-comment body (markdown + marker) for the CI bot.")
     p.add_argument("--otel", action="store_true",
                    help="Emit OpenTelemetry spans (needs the [otel] extra + an OTLP endpoint).")
+    p.add_argument("--metrics-file", metavar="PATH",
+                   help="Write Prometheus metrics to PATH (textfile-collector pattern).")
+    p.add_argument("--metrics-push", metavar="URL",
+                   help="Push Prometheus metrics to a Pushgateway URL.")
     args = p.parse_args(argv)
 
     diff_text = _read_diff(args)
@@ -69,8 +73,28 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as exc:  # noqa: BLE001 - otel is optional
             print(f"[otel] disabled: {exc}")
 
-    guard = Guard(reviewer=reviewer, threshold=Severity(args.threshold), advisory=not args.enforce, otel=otel)
+    metrics = None
+    if args.metrics_file or args.metrics_push:
+        try:
+            from .metrics import Metrics
+
+            metrics = Metrics()
+        except Exception as exc:  # noqa: BLE001 - metrics are optional
+            print(f"[metrics] disabled: {exc}")
+
+    guard = Guard(reviewer=reviewer, threshold=Severity(args.threshold),
+                  advisory=not args.enforce, otel=otel, metrics=metrics)
     report = guard.review_diff(diff_text, migration_sql=migration_sql)
+
+    if metrics and args.metrics_file:
+        metrics.write_textfile(args.metrics_file)
+        print(f"[metrics] wrote {args.metrics_file}")
+    if metrics and args.metrics_push:
+        try:
+            metrics.push(args.metrics_push)
+            print(f"[metrics] pushed to {args.metrics_push}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"[metrics] push failed: {exc}")
 
     if args.comment:
         from .pr_comment import to_comment

@@ -40,11 +40,13 @@ class GuardReport:
 
 
 class Guard:
-    def __init__(self, reviewer=None, threshold: Severity = Severity.HIGH, advisory: bool = True, otel=None) -> None:
+    def __init__(self, reviewer=None, threshold: Severity = Severity.HIGH, advisory: bool = True,
+                 otel=None, metrics=None) -> None:
         self.reviewer = reviewer
         self.threshold = threshold
         self.advisory = advisory
-        self.otel = otel  # optional OpenTelemetry tracer
+        self.otel = otel        # optional OpenTelemetry tracer
+        self.metrics = metrics  # optional Prometheus metrics
 
     def review_diff(self, diff_text: str, migration_sql: str | None = None) -> GuardReport:
         from .report import merge_findings
@@ -70,16 +72,20 @@ class Guard:
                 t0 = time.monotonic()
                 llm = self.reviewer.review(context, already_flagged=[f.category for f in static])
                 used_llm = True
+                usage = getattr(self.reviewer, "last_usage", {}) or {}
+                model = getattr(self.reviewer, "model", "")
+                in_tok, out_tok = usage.get("input_tokens", 0), usage.get("output_tokens", 0)
                 if self.otel:
-                    usage = getattr(self.reviewer, "last_usage", {}) or {}
-                    self.otel.llm_span(getattr(self.reviewer, "model", ""),
-                                       usage.get("input_tokens", 0), usage.get("output_tokens", 0),
-                                       time.monotonic() - t0)
+                    self.otel.llm_span(model, in_tok, out_tok, time.monotonic() - t0)
+                if self.metrics:
+                    self.metrics.record_llm(model, in_tok, out_tok)
 
             merged = merge_findings(static, llm)
             g = gate(merged, self.threshold, self.advisory)
             report = GuardReport(merged, g, time.monotonic() - started, used_llm)
+            verdict = "block" if g.blocked else ("advisory" if g.advisory else "pass")
             if self.otel:
-                verdict = "block" if g.blocked else ("advisory" if g.advisory else "pass")
                 self.otel.set_result(verdict, report.counts, used_llm)
+            if self.metrics:
+                self.metrics.record_review(verdict, report.counts, report.duration_s)
             return report

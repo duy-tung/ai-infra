@@ -64,6 +64,11 @@ class Metrics:
 
         write_to_textfile(path, self.registry)
 
+    def push(self, gateway: str, job: str = "agent-workbench") -> None:
+        from prometheus_client import push_to_gateway
+
+        push_to_gateway(gateway, job=job, registry=self.registry)
+
     def start_server(self, port: int = 9464) -> Any:
         from prometheus_client import start_http_server
 

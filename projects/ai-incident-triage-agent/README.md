@@ -33,6 +33,8 @@ python -m incident_triage.cli --incident incident.json --llm
 python -m incident_triage.cli --incident incident.json --json
 # emit OpenTelemetry spans (triage + LLM call with token/cost) — needs ".[otel]" + an OTLP endpoint
 python -m incident_triage.cli --incident incident.json --llm --otel
+# push Prometheus metrics (cost/latency/outcomes) to a Pushgateway — see /observability
+python -m incident_triage.cli --incident incident.json --llm --metrics-push http://localhost:9091
 ```
 
 The incident bundle is a single JSON file (alert + deploys + logs + optional
@@ -50,7 +52,8 @@ metrics/diff/runbook/owners) — so the whole pipeline runs with no live backend
 | Pipeline (workflow) + CLI | `pipeline.py`, `cli.py` | ✅ |
 | Offline eval (top-1 / top-3 accuracy) | `evals/` | ✅ 3 fixtures |
 | OpenTelemetry tracing + cost | `tracing.py` | ✅ `triage.run` → `chat <model>` spans (tokens + USD); `--otel` |
-| Live connectors (Loki/Tempo/Prometheus/GitHub), metric-shift detection, dashboard | — | 🔜 next |
+| Prometheus metrics | `metrics.py` | ✅ runs/cost/latency/confidence; `--metrics-file` / `--metrics-push` (shared stack in [`/observability`](../../observability/)) |
+| Live connectors (Loki/Tempo/Prometheus/GitHub), metric-shift detection | — | 🔜 next |
 
 Like the guard, it's a **workflow**, not an agent loop, and **read-only**: it
 proposes a rollback candidate and queries; a human acts.
