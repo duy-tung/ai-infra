@@ -1,9 +1,10 @@
 # ai-incident-triage-agent
 
-> **Status: 🔜 specification — not yet implemented.** Portfolio project #2
-> (Month 6–9). Reuses the harness from [`../agent-workbench/`](../agent-workbench/)
-> and the observability/production work from
-> [Sprint 3](../../learning/sprints/sprint-3-production-infra.md).
+> **Status: ✅ runnable starter.** The deterministic correlation core and the
+> offline eval are implemented and tested (23 unit tests; 3 incident fixtures at
+> top-1 = 100%). The LLM hypothesis layer is wired and testable with a scripted
+> client (real runs need `ANTHROPIC_API_KEY`). Portfolio project #2; reuses the
+> workflow shape from [`../fintech-backend-guard-agent/`](../fintech-backend-guard-agent/).
 
 An incident-triage assistant for **Go / Postgres services**. Given an alert and
 the surrounding telemetry, it proposes a root cause, the blast radius, a rollback
@@ -14,6 +15,42 @@ suggestion, and the queries to run next — turning a 2am page into a head start
 It moves you toward **Observability Platform / SRE-for-AI / Developer
 Productivity / AI Platform** roles. It's the second leg of the "Agent Control
 Plane" narrative and shows you can apply agents to operations, not just code review.
+
+## Quickstart
+
+```bash
+cd projects/ai-incident-triage-agent
+python -m pip install -e ".[dev]"
+
+make test     # 23 unit tests (offline, no API key)
+make eval     # grade suspect-deploy correlation over fixture incidents (offline)
+
+# triage an incident bundle — deterministic correlation, no API key
+python -m incident_triage.cli --incident evals/fixtures/deploy_caused_errors.json
+# add the LLM hypothesis layer (needs ANTHROPIC_API_KEY)
+python -m incident_triage.cli --incident incident.json --llm
+# JSON for a bot / dashboard
+python -m incident_triage.cli --incident incident.json --json
+```
+
+The incident bundle is a single JSON file (alert + deploys + logs + optional
+metrics/diff/runbook/owners) — so the whole pipeline runs with no live backends.
+
+## What's implemented vs. ahead
+
+| Piece | Module | Status |
+|-------|--------|--------|
+| Incident bundle model + ISO time parsing | `models.py` | ✅ |
+| Error-log signature clustering | `signatures.py` | ✅ normalizes ids/numbers/uuids |
+| Deterministic correlator | `correlate.py` | ✅ suspect deploys, blast radius, timeline, rollback, owner, queries, confidence |
+| LLM hypothesis generator (structured output) | `hypotheses.py` | ✅ (fake-client tested; real runs need a key) |
+| Report (markdown / JSON) | `report.py` | ✅ read-only / advisory |
+| Pipeline (workflow) + CLI | `pipeline.py`, `cli.py` | ✅ |
+| Offline eval (top-1 / top-3 accuracy) | `evals/` | ✅ 3 fixtures |
+| Live connectors (Loki/Tempo/Prometheus/GitHub), metric-shift detection, dashboard | — | 🔜 next |
+
+Like the guard, it's a **workflow**, not an agent loop, and **read-only**: it
+proposes a rollback candidate and queries; a human acts.
 
 ## Input
 

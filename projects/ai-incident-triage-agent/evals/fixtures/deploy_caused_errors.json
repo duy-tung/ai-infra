@@ -1,0 +1,17 @@
+{
+  "id": "deploy_caused_errors",
+  "expected_suspect_deploy_id": "D2",
+  "alert": {"name": "HighErrorRate", "service": "payments", "fired_at": "2026-06-18T10:00:00Z",
+            "metric": "error_rate", "value": 0.41, "threshold": 0.05},
+  "deploys": [
+    {"id": "D1", "service": "search", "at": "2026-06-18T09:10:00Z", "sha": "aaa111", "summary": "tune ranking"},
+    {"id": "D2", "service": "payments", "at": "2026-06-18T09:58:00Z", "sha": "bbb222", "summary": "store balance as float64"}
+  ],
+  "logs": [
+    {"at": "2026-06-18T09:59:00Z", "level": "error", "service": "payments", "message": "balance mismatch for account 123"},
+    {"at": "2026-06-18T09:59:20Z", "level": "error", "service": "payments", "message": "balance mismatch for account 456"},
+    {"at": "2026-06-18T09:59:40Z", "level": "error", "service": "payments", "message": "balance mismatch for account 789"}
+  ],
+  "owners": {"payments": "team-payments"},
+  "diff": "diff --git a/wallet.go b/wallet.go\n+++ b/wallet.go\n@@ +10,1 @@\n+\tBalance float64\n"
+}

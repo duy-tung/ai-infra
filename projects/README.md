@@ -7,7 +7,7 @@ AI-native software engineering**, grounded in fintech backend production.
 |---|---------|------------|--------|--------|
 | 1 | [`agent-workbench/`](agent-workbench/) | Minimal coding-agent harness: loop, tool registry, permission gate, tracing, eval runner. The foundation everything else builds on. | ✅ Runnable starter | [1](../learning/sprints/sprint-1-agent-foundations.md) |
 | 2 | [`fintech-backend-guard-agent/`](fintech-backend-guard-agent/) | PR-review agent for fintech backends — idempotency, migrations, ledger, audit, PII. The headline portfolio piece. | ✅ Runnable starter | [4](../learning/sprints/sprint-4-capstone.md) |
-| 3 | [`ai-incident-triage-agent/`](ai-incident-triage-agent/) | Incident assistant for Go/Postgres services — parse logs/traces, correlate deploys, suggest root cause + rollback. | 🔜 Spec ready | post-month-6 |
+| 3 | [`ai-incident-triage-agent/`](ai-incident-triage-agent/) | Incident assistant for Go/Postgres services — parse logs/traces, correlate deploys, suggest root cause + rollback. | ✅ Runnable starter | post-month-6 |
 
 ## How they relate
 

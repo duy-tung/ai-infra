@@ -1,0 +1,14 @@
+{
+  "id": "no_recent_deploy",
+  "expected_suspect_deploy_id": null,
+  "alert": {"name": "DBConnSpike", "service": "payments", "fired_at": "2026-06-18T10:00:00Z",
+            "metric": "db_conn_errors", "value": 120, "threshold": 5},
+  "deploys": [
+    {"id": "D9", "service": "payments", "at": "2026-06-18T08:00:00Z", "sha": "eee555", "summary": "log tweak"}
+  ],
+  "logs": [
+    {"at": "2026-06-18T09:58:00Z", "level": "error", "service": "payments", "message": "could not acquire connection: pool exhausted"},
+    {"at": "2026-06-18T09:59:00Z", "level": "error", "service": "payments", "message": "could not acquire connection: pool exhausted"}
+  ],
+  "owners": {"payments": "team-payments"}
+}

@@ -1,0 +1,6 @@
+# The deterministic correlator needs nothing.
+# The LLM hypothesis generator needs the Anthropic SDK:
+anthropic>=0.40
+
+# Dev / testing
+pytest>=7

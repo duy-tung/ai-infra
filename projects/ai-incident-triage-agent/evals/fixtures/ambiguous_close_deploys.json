@@ -1,0 +1,14 @@
+{
+  "id": "ambiguous_close_deploys",
+  "expected_suspect_deploy_id": "D1",
+  "alert": {"name": "LatencyP99", "service": "ledger", "fired_at": "2026-06-18T10:00:00Z",
+            "metric": "p99_ms", "value": 2200, "threshold": 500},
+  "deploys": [
+    {"id": "D1", "service": "ledger", "at": "2026-06-18T09:40:00Z", "sha": "ccc333", "summary": "add composite index"},
+    {"id": "D2", "service": "ledger", "at": "2026-06-18T09:20:00Z", "sha": "ddd444", "summary": "refactor posting"}
+  ],
+  "logs": [
+    {"at": "2026-06-18T09:45:00Z", "level": "error", "service": "ledger", "message": "statement timeout after 30000ms"}
+  ],
+  "owners": {"ledger": "team-core-banking"}
+}

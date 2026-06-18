@@ -39,7 +39,7 @@ ai-infra/
 └── projects/                     ← portfolio (3 repo)
     ├── agent-workbench/                ✅ RUNNABLE (Sprint 1–3)
     ├── fintech-backend-guard-agent/    ✅ RUNNABLE starter (Sprint 4)
-    └── ai-incident-triage-agent/       🔜 project 2 (6–9 tháng)
+    └── ai-incident-triage-agent/       ✅ RUNNABLE starter (read-only)
 ```
 
 ---
@@ -65,7 +65,7 @@ Theo dõi tiến độ: [`learning/progress-tracker.md`](learning/progress-track
 |---|------|---------|-----------|
 | 1 | `agent-workbench` | Agent harness: loop, tool registry, permission/policy, sandbox, eval, tracing+OTel, MCP, governor, redaction, audit, metrics | ✅ Chạy được (Sprint 1–3) |
 | 2 | `fintech-backend-guard-agent` | PR-review agent cho backend fintech (idempotency, migration, ledger, audit, PII) | ✅ Starter chạy được (Sprint 4) |
-| 3 | `ai-incident-triage-agent` | Incident assistant: parse logs/traces, correlate deploys, root cause, runbook | 🔜 Spec sẵn sàng |
+| 3 | `ai-incident-triage-agent` | Incident assistant: correlate alert↔deploy↔errors, ranked root cause, blast radius, rollback, timeline | ✅ Starter chạy được (read-only) |
 
 Sau 12 tháng, gom lại thành narrative: **"Agent Control Plane for AI-native
 Software Engineering"** (harness + tool registry + permission/sandbox + eval +
