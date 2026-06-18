@@ -2,5 +2,10 @@
 # The LLM hypothesis generator needs the Anthropic SDK:
 anthropic>=0.40
 
+# OpenTelemetry tracing (optional; used with --otel)
+opentelemetry-api>=1.20
+opentelemetry-sdk>=1.20
+opentelemetry-exporter-otlp-proto-grpc>=1.20
+
 # Dev / testing
 pytest>=7

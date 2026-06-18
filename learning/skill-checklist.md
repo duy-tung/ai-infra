@@ -32,8 +32,8 @@ Mỗi mục nên link tới commit/PR/file trong repo.
 
 ## 3. Observability
 
-- [ ] OpenTelemetry traces cho agent runs
-- [ ] token / cost / latency metrics
+- [x] OpenTelemetry traces cho agent runs _(agent-workbench, fintech-guard, incident-triage: `tracing_otel.py`/`tracing.py`)_
+- [x] token / cost / latency metrics _(GenAI spans + cost_usd; Prometheus trong agent-workbench)_
 - [ ] tool-call success rate
 - [ ] error taxonomy
 - [ ] prompt / model / version tracking

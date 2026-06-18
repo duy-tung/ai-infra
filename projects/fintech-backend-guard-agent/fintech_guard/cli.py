@@ -44,6 +44,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", action="store_true", help="Emit JSON instead of markdown.")
     p.add_argument("--comment", action="store_true",
                    help="Emit a sticky PR-comment body (markdown + marker) for the CI bot.")
+    p.add_argument("--otel", action="store_true",
+                   help="Emit OpenTelemetry spans (needs the [otel] extra + an OTLP endpoint).")
     args = p.parse_args(argv)
 
     diff_text = _read_diff(args)
@@ -58,7 +60,16 @@ def main(argv: list[str] | None = None) -> int:
 
         reviewer = LLMReviewer()
 
-    guard = Guard(reviewer=reviewer, threshold=Severity(args.threshold), advisory=not args.enforce)
+    otel = None
+    if args.otel:
+        try:
+            from .tracing import OtelTracer
+
+            otel = OtelTracer()
+        except Exception as exc:  # noqa: BLE001 - otel is optional
+            print(f"[otel] disabled: {exc}")
+
+    guard = Guard(reviewer=reviewer, threshold=Severity(args.threshold), advisory=not args.enforce, otel=otel)
     report = guard.review_diff(diff_text, migration_sql=migration_sql)
 
     if args.comment:

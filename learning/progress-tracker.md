@@ -48,11 +48,11 @@ Trạng thái: ⬜ chưa · 🟡 đang làm · ✅ xong.
 | | Sprint 4: fintech-backend-guard-agent (static checks + eval + LLM reviewer + CLI) | `projects/fintech-backend-guard-agent/` | |
 | | Project #3: ai-incident-triage-agent (correlator + eval + LLM hypotheses + CLI, read-only) | `projects/ai-incident-triage-agent/` | |
 
-> Sprint 2 + 3 code đã scaffold sẵn (agent-workbench: 60 test pass).
-> Sprint 4 fintech-guard starter chạy được (31 test, 7 eval fixture P/R=1.00).
-> Việc của bạn: **đọc hiểu + chạy thật + mở rộng** — đọc lessons Phase 13/15/17/19,
-> thêm checks + eval fixtures (mục tiêu 30–50), chạy `--llm` với key thật, thêm PR
-> comment bot + OTel/metrics, viết README/blog tiếng Anh cho portfolio.
+> Trạng thái: cả 3 repo chạy được + test xanh. agent-workbench (60), fintech-guard
+> (48: 14 checks, 33 eval P/R=1.00, PR bot, OTel), incident-triage (26: correlator,
+> 3 eval top-1=100%, OTel). Cả 3 đều có OpenTelemetry GenAI spans + cost.
+> Việc của bạn: **đọc hiểu + chạy thật (`--llm` với key) + viết README/blog tiếng
+> Anh** (điền "What I learned / Failure modes / Eval methodology" cho portfolio).
 
 ## Blockers / câu hỏi mở
 

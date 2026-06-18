@@ -26,6 +26,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--window", type=int, default=60, help="Correlation window in minutes (default: 60).")
     p.add_argument("--llm", action="store_true", help="Add the LLM hypothesis generator (needs ANTHROPIC_API_KEY).")
     p.add_argument("--json", action="store_true", help="Emit JSON instead of markdown.")
+    p.add_argument("--otel", action="store_true",
+                   help="Emit OpenTelemetry spans (needs the [otel] extra + an OTLP endpoint).")
     args = p.parse_args(argv)
 
     raw = open(args.incident, encoding="utf-8").read() if args.incident else sys.stdin.read()
@@ -37,7 +39,16 @@ def main(argv: list[str] | None = None) -> int:
 
         generator = HypothesisGenerator()
 
-    triage = Triage(generator=generator, window_minutes=args.window)
+    otel = None
+    if args.otel:
+        try:
+            from .tracing import OtelTracer
+
+            otel = OtelTracer()
+        except Exception as exc:  # noqa: BLE001 - otel is optional
+            print(f"[otel] disabled: {exc}")
+
+    triage = Triage(generator=generator, window_minutes=args.window, otel=otel)
     report = triage.triage(bundle)
 
     print(report.json() if args.json else report.markdown())

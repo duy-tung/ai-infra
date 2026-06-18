@@ -75,6 +75,8 @@ class LLMReviewer:
         self._client = client
         self.model = model
         self.effort = effort
+        # Token usage of the most recent review() call (for cost/tracing).
+        self.last_usage: dict[str, int] = {"input_tokens": 0, "output_tokens": 0}
 
     def _ensure_client(self) -> Any:
         if self._client is None:
@@ -99,7 +101,16 @@ class LLMReviewer:
             output_config={"format": {"type": "json_schema", "schema": OUTPUT_SCHEMA}, "effort": self.effort},
             messages=[{"role": "user", "content": f"Review this diff.{note}\n\n```diff\n{safe_diff}\n```"}],
         )
+        self.last_usage = self._usage(response)
         return self._parse(response)
+
+    @staticmethod
+    def _usage(response: Any) -> dict[str, int]:
+        u = getattr(response, "usage", None)
+        return {
+            "input_tokens": getattr(u, "input_tokens", 0) or 0,
+            "output_tokens": getattr(u, "output_tokens", 0) or 0,
+        }
 
     @staticmethod
     def _parse(response: Any) -> list[Finding]:

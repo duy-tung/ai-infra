@@ -38,6 +38,8 @@ git diff main | python -m fintech_guard.cli --llm
 python -m fintech_guard.cli --diff pr.diff --json
 # sticky PR-comment body (markdown + marker) for the CI bot
 python -m fintech_guard.cli --diff pr.diff --comment
+# emit OpenTelemetry spans (review + LLM call with token/cost) — needs ".[otel]" + an OTLP endpoint
+python -m fintech_guard.cli --diff pr.diff --llm --otel
 ```
 
 ## CI / PR comment bot
@@ -67,7 +69,8 @@ blocks merge. Static-only by default (no API key needed); if an
 | CLI | `cli.py` | ✅ |
 | Offline eval (precision/recall) | `evals/` | ✅ 33 fixtures, 14 categories (thematic files), all P/R = 1.00 |
 | CI / PR comment bot | `pr_comment.py`, `.github/workflows/pr-review.yml` | ✅ sticky comment, advisory; `--llm` if a key secret is set |
-| OTel/metrics, more checks, sandboxed test-run | — | 🔜 next |
+| OpenTelemetry tracing + cost | `tracing.py` | ✅ `guard.review` → `chat <model>` spans (tokens + USD); `--otel` |
+| Prometheus metrics, more checks, sandboxed test-run | — | 🔜 next |
 
 It's a **workflow**, not an agent loop: PR review is well-specified, so the code
 orchestrates the steps and only calls the model for the judgment-heavy part. The

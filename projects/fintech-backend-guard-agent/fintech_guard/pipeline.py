@@ -9,6 +9,7 @@ what makes the eval suite offline and reproducible.
 from __future__ import annotations
 
 import time
+from contextlib import nullcontext
 from dataclasses import dataclass
 
 from .checks import run_static_checks
@@ -39,12 +40,15 @@ class GuardReport:
 
 
 class Guard:
-    def __init__(self, reviewer=None, threshold: Severity = Severity.HIGH, advisory: bool = True) -> None:
+    def __init__(self, reviewer=None, threshold: Severity = Severity.HIGH, advisory: bool = True, otel=None) -> None:
         self.reviewer = reviewer
         self.threshold = threshold
         self.advisory = advisory
+        self.otel = otel  # optional OpenTelemetry tracer
 
     def review_diff(self, diff_text: str, migration_sql: str | None = None) -> GuardReport:
+        from .report import merge_findings
+
         started = time.monotonic()
         files = parse_unified_diff(diff_text)
         if migration_sql:
@@ -53,19 +57,29 @@ class Guard:
                          added=[(i + 1, line) for i, line in enumerate(migration_sql.splitlines())])
             )
 
-        static = run_static_checks(files)
+        ctx = self.otel.review_span(len(files)) if self.otel else nullcontext()
+        with ctx:
+            static = run_static_checks(files)
 
-        llm: list[Finding] = []
-        used_llm = False
-        if self.reviewer is not None:
-            context = diff_text
-            if migration_sql:
-                context += "\n\n-- migration.sql --\n" + migration_sql
-            llm = self.reviewer.review(context, already_flagged=[f.category for f in static])
-            used_llm = True
+            llm: list[Finding] = []
+            used_llm = False
+            if self.reviewer is not None:
+                context = diff_text
+                if migration_sql:
+                    context += "\n\n-- migration.sql --\n" + migration_sql
+                t0 = time.monotonic()
+                llm = self.reviewer.review(context, already_flagged=[f.category for f in static])
+                used_llm = True
+                if self.otel:
+                    usage = getattr(self.reviewer, "last_usage", {}) or {}
+                    self.otel.llm_span(getattr(self.reviewer, "model", ""),
+                                       usage.get("input_tokens", 0), usage.get("output_tokens", 0),
+                                       time.monotonic() - t0)
 
-        from .report import merge_findings
-
-        merged = merge_findings(static, llm)
-        g = gate(merged, self.threshold, self.advisory)
-        return GuardReport(merged, g, time.monotonic() - started, used_llm)
+            merged = merge_findings(static, llm)
+            g = gate(merged, self.threshold, self.advisory)
+            report = GuardReport(merged, g, time.monotonic() - started, used_llm)
+            if self.otel:
+                verdict = "block" if g.blocked else ("advisory" if g.advisory else "pass")
+                self.otel.set_result(verdict, report.counts, used_llm)
+            return report

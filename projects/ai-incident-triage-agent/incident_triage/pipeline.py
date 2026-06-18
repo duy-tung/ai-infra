@@ -7,6 +7,7 @@ eval is offline); the LLM hypothesis generator is an optional layer on top.
 from __future__ import annotations
 
 import time
+from contextlib import nullcontext
 from dataclasses import dataclass
 
 from .correlate import Correlation, correlate
@@ -38,20 +39,33 @@ class TriageReport:
 
 
 class Triage:
-    def __init__(self, generator: HypothesisGenerator | None = None, window_minutes: int = 60) -> None:
+    def __init__(self, generator: HypothesisGenerator | None = None, window_minutes: int = 60, otel=None) -> None:
         self.generator = generator
         self.window_minutes = window_minutes
+        self.otel = otel  # optional OpenTelemetry tracer
 
     def triage(self, bundle: IncidentBundle) -> TriageReport:
         started = time.monotonic()
-        correlation = correlate(bundle, window_minutes=self.window_minutes)
-        baseline = baseline_hypothesis(correlation)
+        ctx = self.otel.triage_span(bundle.alert.service) if self.otel else nullcontext()
+        with ctx:
+            correlation = correlate(bundle, window_minutes=self.window_minutes)
+            baseline = baseline_hypothesis(correlation)
 
-        llm: list[Hypothesis] = []
-        used_llm = False
-        if self.generator is not None:
-            llm = self.generator.generate(correlation, bundle)
-            used_llm = True
+            llm: list[Hypothesis] = []
+            used_llm = False
+            if self.generator is not None:
+                t0 = time.monotonic()
+                llm = self.generator.generate(correlation, bundle)
+                used_llm = True
+                if self.otel:
+                    usage = getattr(self.generator, "last_usage", {}) or {}
+                    self.otel.llm_span(getattr(self.generator, "model", ""),
+                                       usage.get("input_tokens", 0), usage.get("output_tokens", 0),
+                                       time.monotonic() - t0)
 
-        hypotheses = merge_hypotheses(baseline, llm)
-        return TriageReport(correlation, hypotheses, time.monotonic() - started, used_llm)
+            hypotheses = merge_hypotheses(baseline, llm)
+            report = TriageReport(correlation, hypotheses, time.monotonic() - started, used_llm)
+            if self.otel:
+                top_conf = report.top.confidence if report.top else 0.0
+                self.otel.set_result(len(correlation.suspect_deploys), top_conf, used_llm)
+            return report
