@@ -9,10 +9,10 @@ the real safety boundary is the permission gate plus running in a sandbox.
 
 from __future__ import annotations
 
-import subprocess
 from pathlib import Path
 from typing import Any
 
+from ..sandbox import LocalSandbox, Sandbox
 from .base import Tool, ToolResult
 
 DEFAULT_TIMEOUT = 30  # seconds
@@ -34,9 +34,11 @@ class ShellTool(Tool):
     mutating = True
     parallel_safe = False
 
-    def __init__(self, workdir: Path, timeout: int = DEFAULT_TIMEOUT) -> None:
+    def __init__(self, workdir: Path, timeout: int = DEFAULT_TIMEOUT, runner: Sandbox | None = None) -> None:
         self.workdir = Path(workdir)
         self.timeout = timeout
+        # The runner decides *where* the command executes (host vs container).
+        self.runner: Sandbox = runner or LocalSandbox()
 
     @property
     def input_schema(self) -> dict[str, Any]:
@@ -52,19 +54,12 @@ class ShellTool(Tool):
         lowered = command.lower()
         if any(bad in lowered for bad in DENYLIST):
             return ToolResult(content=f"command blocked by denylist: {command!r}", is_error=True)
-        try:
-            proc = subprocess.run(
-                command,
-                shell=True,
-                cwd=str(self.workdir),
-                capture_output=True,
-                text=True,
-                timeout=self.timeout,
-            )
-        except subprocess.TimeoutExpired:
+
+        outcome = self.runner.run(command, self.workdir, self.timeout)
+        if outcome.timed_out:
             return ToolResult(content=f"command timed out after {self.timeout}s", is_error=True)
 
-        out = (proc.stdout or "")[:MAX_OUTPUT_CHARS]
-        err = (proc.stderr or "")[:MAX_OUTPUT_CHARS]
-        body = f"exit_code: {proc.returncode}\n--- stdout ---\n{out}\n--- stderr ---\n{err}"
-        return ToolResult(content=body, is_error=proc.returncode != 0)
+        out = outcome.stdout[:MAX_OUTPUT_CHARS]
+        err = outcome.stderr[:MAX_OUTPUT_CHARS]
+        body = f"exit_code: {outcome.returncode}\n--- stdout ---\n{out}\n--- stderr ---\n{err}"
+        return ToolResult(content=body, is_error=outcome.returncode != 0)

@@ -41,11 +41,19 @@ class LLMClient:
         params: dict[str, Any] = {
             "model": self.settings.model,
             "max_tokens": self.settings.max_tokens,
-            "system": system,
             "messages": messages,
             "tools": tools,
             "output_config": {"effort": self.settings.effort},
         }
+        if self.settings.cache:
+            # Cache the stable prefix (tools render before system; a breakpoint on
+            # the last system block caches tools+system together). Stable across
+            # turns in a run, so turns 2+ get cache reads.
+            params["system"] = [
+                {"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}
+            ]
+        else:
+            params["system"] = system
         if self.settings.thinking:
             # Adaptive thinking: the model decides how much to reason. "summarized"
             # gives a readable summary so the trace shows the agent's reasoning.

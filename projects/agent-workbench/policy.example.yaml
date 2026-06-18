@@ -1,0 +1,27 @@
+# Example policy-as-code for the permission gate.
+#   python -m agent_workbench.cli --policy policy.example.yaml "your task"
+# Needs PyYAML (pip install -e ".[policy]").
+
+# Action for any tool not listed under `tools`: allow | ask | deny
+default: ask
+
+# Per-tool action.
+tools:
+  read_file: allow      # read-only — safe to auto-allow
+  write_file: ask       # confirm each write
+  run_shell: ask        # confirm each command
+
+# fnmatch globs — if a tool's `path` argument matches, the call is DENIED
+# regardless of the per-tool action above.
+deny_paths:
+  - "*.env"
+  - "*secrets*"
+  - "*/.git/*"
+  - "*id_rsa*"
+
+# Regex patterns — if run_shell's `command` matches, the call is DENIED.
+deny_commands:
+  - "rm\\s+-rf"
+  - "curl.*\\|\\s*sh"        # curl ... | sh
+  - "git\\s+push\\s+--force"
+  - ">\\s*/dev/sd"

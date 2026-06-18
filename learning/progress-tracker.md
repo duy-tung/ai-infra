@@ -39,9 +39,16 @@ Trạng thái: ⬜ chưa · 🟡 đang làm · ✅ xong.
 | | Sprint 2 scaffold: MCP server + client bridge | `agent_workbench/mcp_server.py`, `mcp_bridge.py` | |
 | | Sprint 2 scaffold: OpenTelemetry GenAI tracing + Jaeger stack | `agent_workbench/tracing_otel.py`, `observability/` | |
 | | Sprint 2 scaffold: LLM routing layer | `agent_workbench/routing.py` | |
+| | Sprint 3 scaffold: cost governor + kill switch | `agent_workbench/governor.py` | |
+| | Sprint 3 scaffold: PII/secrets redaction | `agent_workbench/redaction.py` | |
+| | Sprint 3 scaffold: policy-as-code gate | `agent_workbench/policy.py`, `policy.example.yaml` | |
+| | Sprint 3 scaffold: hash-chained audit log | `agent_workbench/audit.py` | |
+| | Sprint 3 scaffold: Prometheus metrics | `agent_workbench/metrics.py` | |
+| | Sprint 3 scaffold: sandbox runner (local/docker) | `agent_workbench/sandbox.py` | |
 
-> Sprint 2 code đã scaffold sẵn (đã có test pass) — việc của bạn là **đọc hiểu +
-> chạy thật** (đọc lessons Phase 13, chạy `make otel-up`, dùng MCP Inspector).
+> Sprint 2 + 3 code đã scaffold sẵn (60 test pass) — việc của bạn là **đọc hiểu +
+> chạy thật**: đọc lessons Phase 13/15/17, chạy `make otel-up`, `make harden-demo`,
+> dùng MCP Inspector, và mở rộng (parallel tool scheduling, Grafana, semantic cache...).
 
 ## Blockers / câu hỏi mở
 

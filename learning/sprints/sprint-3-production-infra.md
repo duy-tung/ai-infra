@@ -21,7 +21,13 @@ caching, security, cost governance. Đây là phần biến bạn thành "loại
 
 ## Build (70%)
 
-- [ ] **Sandbox runner**: chạy `run_shell` trong container/VM ephemeral (không phải host).
+> 💡 Nhiều mục dưới đã có **starter implementation** trong `agent-workbench` (xem
+> README mục "Sprint 3 additions") — `governor.py`, `redaction.py`, `policy.py`,
+> `audit.py`, `metrics.py`, `sandbox.py`. Việc của bạn: **đọc hiểu, chạy thật
+> (`make harden-demo`), và mở rộng** các mục chưa làm (Grafana dashboard,
+> parallel-safe scheduling, semantic cache, service form với `/metrics`).
+
+- [ ] **Sandbox runner**: chạy `run_shell` trong container/VM ephemeral (không phải host). _(starter: `sandbox.py` DockerSandbox)_
 - [ ] **Prometheus metrics** endpoint: agent runs, tool-call success rate, cost, latency histogram.
 - [ ] **Prompt caching**: cache system prompt + tool defs; verify `cache_read_input_tokens` > 0.
 - [ ] **Cost governor**: hard cap USD/run + token budget; kill switch khi vượt.

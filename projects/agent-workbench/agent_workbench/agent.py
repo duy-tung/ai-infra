@@ -24,7 +24,11 @@ from .permissions import Decision, PermissionGate, PermissionRequest
 from .tools.registry import ToolRegistry
 from .tracing import RunTotals, Tracer, Usage
 
-if TYPE_CHECKING:  # OTel is optional — only imported for type hints
+if TYPE_CHECKING:  # all optional — imported for type hints only
+    from .audit import AuditLog
+    from .governor import Governor
+    from .metrics import Metrics
+    from .redaction import Redactor
     from .tracing_otel import OtelTracer
 
 SYSTEM_PROMPT = (
@@ -65,21 +69,30 @@ class Agent:
         llm: LLMClient | None = None,
         verbose: bool = True,
         otel: "OtelTracer | None" = None,
+        governor: "Governor | None" = None,
+        audit: "AuditLog | None" = None,
+        metrics: "Metrics | None" = None,
+        redactor: "Redactor | None" = None,
     ) -> None:
         self.settings = settings
         self.registry = registry
         self.gate = gate
         self.llm = llm or LLMClient(settings)
         self.verbose = verbose
-        # Optional OpenTelemetry tracer. None = JSONL trace only (default).
-        self.otel = otel
+        # All optional (default None = behavior unchanged):
+        self.otel = otel            # OpenTelemetry spans
+        self.governor = governor    # cost/token/tool-call budget + kill switch
+        self.audit = audit          # append-only hash-chained audit log
+        self.metrics = metrics      # Prometheus metrics
+        self.redactor = redactor    # PII/secrets scrubbing on the trace
+        self._budget_reason = ""
 
     def _log(self, text: str) -> None:
         if self.verbose:
             sys.stderr.write(text + "\n")
 
     def run(self, task: str) -> AgentResult:
-        tracer = Tracer(self.settings)
+        tracer = Tracer(self.settings, redactor=self.redactor)
         tracer.run_start(task)
         tools = self.registry.api_schemas()
         messages: list[dict[str, Any]] = [{"role": "user", "content": task}]
@@ -99,6 +112,11 @@ class Agent:
                     cost = tracer.llm_call(usage, stop_reason, latency)
                     if self.otel:
                         self.otel.llm_call(usage, stop_reason, latency, cost)
+                    if self.metrics:
+                        self.metrics.record_llm(latency, cost)
+                    if self._over_budget(tracer):
+                        status, final_text = "budget_exceeded", self._budget_reason
+                        break
 
                     tool_uses = []
                     for block in response.content:
@@ -127,11 +145,16 @@ class Agent:
                     messages.append({"role": "assistant", "content": response.content})
                     tool_results = [self._handle_tool(tracer, b) for b in tool_uses]
                     messages.append({"role": "user", "content": tool_results})
+                    if self._over_budget(tracer):
+                        status, final_text = "budget_exceeded", self._budget_reason
+                        break
             except Exception as exc:  # noqa: BLE001 - surface the failure, don't crash the harness
                 status = "error"
                 final_text = f"agent error: {exc}"
                 self._log(f"[error] {exc}")
 
+            if self.metrics:
+                self.metrics.record_run(status)
             tracer.run_end(status, final_text)
             if self.otel:
                 self.otel.run_end(status, tracer.totals)
@@ -141,6 +164,21 @@ class Agent:
             f"trace={tracer.path}"
         )
         return AgentResult(status, final_text, tracer.totals, str(tracer.path))
+
+    def _over_budget(self, tracer: Tracer) -> bool:
+        """Ask the governor whether the run has blown its budget (kill switch)."""
+        if not self.governor:
+            return False
+        status = self.governor.check(tracer.totals)
+        if status.exceeded:
+            self._budget_reason = f"stopped: {status.reason}"
+            self._log(f"[governor] {status.reason}")
+            return True
+        return False
+
+    def _audit_target(self, tool_input: dict[str, Any]) -> str:
+        text = ", ".join(f"{k}={str(v)[:80]}" for k, v in tool_input.items())
+        return self.redactor.redact(text) if self.redactor else text
 
     def _handle_tool(self, tracer: Tracer, block: Any) -> dict[str, Any]:
         name = block.name
@@ -175,6 +213,17 @@ class Agent:
         )
         if self.otel:
             self.otel.tool_call(name=name, decision=decision.value, is_error=is_error, latency_s=latency)
+        if self.metrics:
+            self.metrics.record_tool(name, is_error, latency)
+        if self.audit and mutating:
+            # Audit every state-changing action and the decision that gated it.
+            self.audit.record(
+                action=name,
+                target=self._audit_target(tool_input),
+                decision=decision.value,
+                reason=reason,
+                extra={"is_error": is_error},
+            )
         return {
             "type": "tool_result",
             "tool_use_id": block.id,

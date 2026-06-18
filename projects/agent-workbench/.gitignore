@@ -14,3 +14,7 @@ traces/*.jsonl
 
 # Sandbox dir created by `make demo` / `make mcp-server`
 .sandbox/
+
+# Run artifacts
+*.prom
+audit*.jsonl

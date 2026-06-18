@@ -100,6 +100,12 @@ message history **verbatim** before tool results — the API requires that pairi
 | `mcp_server.py` | Expose the tools over MCP (Sprint 2). |
 | `mcp_bridge.py` | Consume a remote MCP server as `Tool`s (Sprint 2). |
 | `tracing_otel.py` | OpenTelemetry GenAI spans alongside the JSONL trace (Sprint 2). |
+| `governor.py` | Cost/token/tool-call budget + kill switch (Sprint 3). |
+| `redaction.py` | PII/secrets scrubbing on traces + audit (Sprint 3). |
+| `policy.py` | Policy-as-code permission gate from YAML (Sprint 3). |
+| `audit.py` | Append-only, hash-chained audit log (Sprint 3). |
+| `metrics.py` | Prometheus metrics (Sprint 3). |
+| `sandbox.py` | Local / Docker execution backends for `run_shell` (Sprint 3). |
 
 ## Evaluation methodology
 
@@ -164,14 +170,45 @@ python -m agent_workbench.cli --route --otel --workdir .sandbox --permission-mod
 open http://localhost:16686        # see the trace
 ```
 
-## Production considerations (what's intentionally *not* here yet)
+## Sprint 3 additions — production hardening
 
-This is a learning starter. Sprint 2 added MCP + OTel + routing (above). The
-remaining Sprint 3 layers: a sandboxed executor (container per run),
-parallel-safe tool scheduling, prompt caching, a Prometheus metrics endpoint,
-PII/secrets redaction on traces, a cost governor + kill switch, and a richer
-policy-as-code permission layer. The code is structured so each slots in without
-a rewrite.
+The harness now has the governance/security/observability backbone a "type 3"
+engineer is expected to build:
+
+- **Cost governor + kill switch** (`governor.py`): per-run budget on dollars,
+  tokens, and tool calls. The loop checks it after every LLM/tool call and stops
+  with status `budget_exceeded`. `--max-usd`, `--max-tool-calls`.
+- **PII / secrets redaction** (`redaction.py`): scrub emails, cards (Luhn),
+  AWS/JWT/`sk-`/`ghp_` tokens, private keys, and high-entropy secrets from the
+  trace and audit log before they hit disk. `--redact`.
+- **Policy-as-code gate** (`policy.py` + `policy.example.yaml`): per-tool
+  allow/ask/deny plus path and command denylists, from a reviewable YAML file —
+  drop-in for the simple permission gate. `--policy policy.example.yaml`.
+- **Audit log** (`audit.py`): append-only, **hash-chained** record of every
+  mutating action + the decision that gated it. `verify()` detects tampering —
+  the fintech audit-trail pattern in miniature. `--audit audit.jsonl`.
+- **Prometheus metrics** (`metrics.py`): run/LLM/tool counters, cost counter,
+  latency histograms. `--metrics-file agent.prom` (textfile-collector pattern).
+- **Sandboxed execution** (`sandbox.py`): run `run_shell` in an ephemeral Docker
+  container with networking off, instead of on the host. `--sandbox docker`.
+- **Prompt caching** (`config.py` / `llm.py`): the stable system+tools prefix is
+  cached so turns 2+ in a run read it at ~0.1x. `AGENT_CACHE=0` to disable.
+
+```bash
+# hardened run: budget cap, redaction, audit, policy-as-code, sandbox
+python -m agent_workbench.cli \
+    --policy policy.example.yaml --redact --audit audit.jsonl \
+    --max-usd 0.50 --sandbox docker \
+    --workdir .sandbox "refactor greet.py to take a name and run it"
+```
+
+## Production considerations (what's still ahead)
+
+This is a learning starter. Still on the roadmap: parallel-safe tool scheduling,
+a long-running service form with a live `/metrics` endpoint + Grafana
+dashboards, semantic caching, rollback/compensating actions, and wiring the
+audit log into an append-only store. The code is structured so each slots in
+without a rewrite — see the per-sprint guides in `../../learning/sprints/`.
 
 ## What I learned
 

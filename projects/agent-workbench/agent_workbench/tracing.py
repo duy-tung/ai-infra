@@ -58,8 +58,19 @@ class Tracer:
     settings: Settings
     run_id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
     totals: RunTotals = field(default_factory=RunTotals)
+    # Optional PII/secrets redactor applied to tool I/O and final text before
+    # anything is written to disk. None = write verbatim.
+    redactor: Any = None
     _fh: Any = field(default=None, init=False, repr=False)
     _path: Path = field(init=False, repr=False)
+
+    def _scrub(self, text: str) -> str:
+        return self.redactor.redact(text) if self.redactor else text
+
+    def _scrub_input(self, tool_input: dict[str, Any]) -> dict[str, Any]:
+        if not self.redactor:
+            return tool_input
+        return {k: (self._scrub(v) if isinstance(v, str) else v) for k, v in tool_input.items()}
 
     def __post_init__(self) -> None:
         self.settings.trace_dir.mkdir(parents=True, exist_ok=True)
@@ -119,19 +130,19 @@ class Tracer:
         self._emit(
             "tool_call",
             name=name,
-            input=tool_input,
+            input=self._scrub_input(tool_input),
             permission=decision,
             permission_reason=reason,
             is_error=is_error,
             latency_s=round(latency_s, 3),
-            result_preview=result_preview[:500],
+            result_preview=self._scrub(result_preview[:500]),
         )
 
     def run_end(self, status: str, final_text: str) -> None:
         self._emit(
             "run_end",
             status=status,
-            final_text=final_text[:2000],
+            final_text=self._scrub(final_text[:2000]),
             totals={
                 "llm_calls": self.totals.llm_calls,
                 "tool_calls": self.totals.tool_calls,

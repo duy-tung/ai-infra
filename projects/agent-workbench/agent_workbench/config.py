@@ -52,6 +52,9 @@ class Settings:
     # Adaptive thinking lets the model decide how much to reason. "summarized"
     # shows a readable summary so you can watch the agent think.
     thinking: bool = field(default_factory=lambda: _env_flag("AGENT_THINKING", True))
+    # Prompt caching: cache the stable system+tools prefix so turns 2+ in a run
+    # read it cheaply (~0.1x). Verify via cache_read_input_tokens in the trace.
+    cache: bool = field(default_factory=lambda: _env_flag("AGENT_CACHE", True))
     # Hard stop on the agent loop so a misbehaving run can't spin forever.
     max_turns: int = field(default_factory=lambda: int(os.environ.get("AGENT_MAX_TURNS", "20")))
     # Where to write JSONL traces (one file per run).

@@ -30,5 +30,12 @@ otel-up:
 otel-down:
 	docker compose -f observability/docker-compose.yml down
 
+# Hardened demo: policy-as-code gate + redaction + audit + cost budget (Sprint 3).
+harden-demo:
+	rm -rf .sandbox && mkdir -p .sandbox
+	python -m agent_workbench.cli --policy policy.example.yaml --redact \
+		--audit audit.jsonl --max-usd 0.50 --workdir .sandbox \
+		"create greet.py that prints hello, then run it"
+
 clean:
-	rm -rf .sandbox traces/*.jsonl .pytest_cache **/__pycache__
+	rm -rf .sandbox traces/*.jsonl .pytest_cache **/__pycache__ *.prom audit*.jsonl
