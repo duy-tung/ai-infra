@@ -1,0 +1,6 @@
+# The deterministic static-check core needs nothing.
+# The LLM reviewer needs the Anthropic SDK:
+anthropic>=0.40
+
+# Dev / testing
+pytest>=7

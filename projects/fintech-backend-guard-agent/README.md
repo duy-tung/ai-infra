@@ -1,8 +1,10 @@
 # fintech-backend-guard-agent
 
-> **Status: 🔜 specification — not yet implemented.** This is the headline
-> portfolio project (Sprint 4 / Month 30–90). It reuses the harness from
-> [`../agent-workbench/`](../agent-workbench/). Build it after Sprint 1–3.
+> **Status: ✅ runnable starter.** The deterministic static-check core and the
+> offline eval are implemented and tested (31 unit tests; 7 eval fixtures at
+> precision/recall = 1.00). The LLM reviewer layer is wired and testable with a
+> scripted client (real runs need `ANTHROPIC_API_KEY`). Sprint 4 of the plan;
+> pairs with the hardening patterns from [`../agent-workbench/`](../agent-workbench/).
 
 An AI agent that reviews a backend pull request **for fintech-specific risk** —
 not code style. It reads the diff, migrations, tests, and service context, then
@@ -16,6 +18,43 @@ A generic "AI code reviewer" is a commodity. A reviewer that understands
 it pairs AI-infrastructure skill with fintech domain knowledge. That combination
 is what a "type 3" engineer offers. See
 [`../../learning/00-goal-and-target-roles.md`](../../learning/00-goal-and-target-roles.md).
+
+## Quickstart
+
+```bash
+cd projects/fintech-backend-guard-agent
+python -m pip install -e ".[dev]"
+
+make test          # 31 unit tests (offline, no API key)
+make eval          # static-check eval over fixture PRs (offline)
+
+# review a diff — static checks only, no API key
+git diff main | python -m fintech_guard.cli
+# enforce a merge gate (exit 1 if any finding >= threshold)
+git diff main | python -m fintech_guard.cli --enforce --threshold high
+# add the LLM reviewer (needs ANTHROPIC_API_KEY)
+git diff main | python -m fintech_guard.cli --llm
+# JSON for a bot / CI
+python -m fintech_guard.cli --diff pr.diff --json
+```
+
+## What's implemented vs. ahead
+
+| Piece | Module | Status |
+|-------|--------|--------|
+| Diff parser | `diff.py` | ✅ |
+| Static checks (risk taxonomy) | `checks.py` | ✅ money_float, migration locks, idempotency, secrets/PII, error-swallow, audit |
+| Secret/PII detection + pre-LLM scrubbing | `redaction.py` | ✅ |
+| LLM reviewer (structured output) | `reviewer.py` | ✅ (fake-client tested; real runs need a key) |
+| Merge + severity gate + report (md/json) | `report.py` | ✅ advisory by default |
+| Pipeline (workflow) | `pipeline.py` | ✅ |
+| CLI | `cli.py` | ✅ |
+| Offline eval (precision/recall) | `evals/` | ✅ 7 fixtures |
+| PR comment bot, OTel/metrics, more checks, sandboxed test-run | — | 🔜 next |
+
+It's a **workflow**, not an agent loop: PR review is well-specified, so the code
+orchestrates the steps and only calls the model for the judgment-heavy part. The
+deterministic path runs with no API key — which is what makes the eval offline.
 
 ## What it checks (the risk taxonomy)
 

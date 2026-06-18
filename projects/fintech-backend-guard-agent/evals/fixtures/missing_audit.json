@@ -1,0 +1,6 @@
+{
+  "id": "missing_audit",
+  "description": "Ledger write with no audit-trail entry.",
+  "diff": "diff --git a/ledger.py b/ledger.py\n--- a/ledger.py\n+++ b/ledger.py\n@@ -0,0 +1,2 @@\n+def post(db, acct, cents):\n+    db.execute(\"INSERT INTO ledger (acct, cents) VALUES (?, ?)\", (acct, cents))\n",
+  "expected_categories": ["missing_audit"]
+}

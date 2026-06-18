@@ -37,8 +37,8 @@ ai-infra/
 │   ├── sprints/                        4 sprint map tới phases cụ thể
 │   └── notes/                          ghi chú học theo phase (+ template)
 └── projects/                     ← portfolio (3 repo)
-    ├── agent-workbench/                ✅ Sprint 1 starter — RUNNABLE
-    ├── fintech-backend-guard-agent/    🔜 project chính (90 ngày)
+    ├── agent-workbench/                ✅ RUNNABLE (Sprint 1–3)
+    ├── fintech-backend-guard-agent/    ✅ RUNNABLE starter (Sprint 4)
     └── ai-incident-triage-agent/       🔜 project 2 (6–9 tháng)
 ```
 
@@ -63,8 +63,8 @@ Theo dõi tiến độ: [`learning/progress-tracker.md`](learning/progress-track
 
 | # | Repo | Vai trò | Trạng thái |
 |---|------|---------|-----------|
-| 1 | `agent-workbench` | Minimal agent harness: loop, tool registry, permission gate, sandbox, eval, tracing | ✅ Starter chạy được |
-| 2 | `fintech-backend-guard-agent` | PR-review agent cho backend fintech (idempotency, migration, ledger, audit, PII) | 🔜 Spec sẵn sàng |
+| 1 | `agent-workbench` | Agent harness: loop, tool registry, permission/policy, sandbox, eval, tracing+OTel, MCP, governor, redaction, audit, metrics | ✅ Chạy được (Sprint 1–3) |
+| 2 | `fintech-backend-guard-agent` | PR-review agent cho backend fintech (idempotency, migration, ledger, audit, PII) | ✅ Starter chạy được (Sprint 4) |
 | 3 | `ai-incident-triage-agent` | Incident assistant: parse logs/traces, correlate deploys, root cause, runbook | 🔜 Spec sẵn sàng |
 
 Sau 12 tháng, gom lại thành narrative: **"Agent Control Plane for AI-native

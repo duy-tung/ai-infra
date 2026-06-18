@@ -1,0 +1,6 @@
+{
+  "id": "missing_idempotency",
+  "description": "New charge handler with no idempotency key.",
+  "diff": "diff --git a/charge.py b/charge.py\n--- a/charge.py\n+++ b/charge.py\n@@ -0,0 +1,2 @@\n+def charge_card(token, cents):\n+    return gateway.charge(token, cents)\n",
+  "expected_categories": ["missing_idempotency"]
+}

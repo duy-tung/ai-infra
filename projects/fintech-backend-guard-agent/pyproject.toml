@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fintech-backend-guard-agent"
+version = "0.1.0"
+description = "An AI PR-review agent for fintech backends: idempotency, money precision, migration locks, ledger/audit, secrets/PII."
+readme = "README.md"
+requires-python = ">=3.10"
+# The deterministic core has no runtime deps. The LLM reviewer needs anthropic.
+dependencies = []
+
+[project.optional-dependencies]
+llm = ["anthropic>=0.40"]
+dev = ["pytest>=7", "anthropic>=0.40"]
+
+[project.scripts]
+fintech-guard = "fintech_guard.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["fintech_guard*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -20,9 +20,19 @@ eval harness · OTel GenAI spans · Prometheus metrics · end-to-end coding agen
 
 ## Build (70%) → [`projects/fintech-backend-guard-agent/`](../../projects/fintech-backend-guard-agent/)
 
+> 💡 Đã có **starter chạy được** trong `fintech-backend-guard-agent/` (diff parser,
+> static checks, secret/PII scrubbing, LLM reviewer structured-output, report +
+> severity gate, CLI, eval 7 fixture P/R=1.00, 31 test). Việc của bạn: **đọc hiểu,
+> chạy `make eval` + `--llm` với key thật, và mở rộng** các mục dưới.
+
 Theo spec trong README của project đó. Tối thiểu cho v1:
 
-- [ ] Context loader: đọc Git diff + migration SQL + test output.
+- [x] Context loader: đọc Git diff + migration SQL _(starter: `diff.py`, `pipeline.py`)_
+- [x] Static checks (idempotency, money precision, migration lock, audit, PII) _(starter: `checks.py`)_
+- [x] LLM reviewer với severity rubric (structured output) _(starter: `reviewer.py`)_
+- [x] Report: severity + suggested patch + confidence; human approval gate (advisory) _(starter: `report.py`)_
+- [ ] Eval set mở rộng 30–50 fixture PRs (starter có 7 — thêm mỗi loại rủi ro nhiều case)
+- [ ] Context loader: đọc thêm test output + service ownership doc.
 - [ ] Fintech risk classifier (rule + LLM).
 - [ ] Static checks (idempotency, money precision, migration lock, audit, PII).
 - [ ] LLM reviewer với severity rubric (structured output).
