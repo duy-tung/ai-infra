@@ -109,10 +109,28 @@ incident · % incidents with correct rollback suggestion · operator time saved.
 prod. Permission gate runs in `readonly` mode; any suggested query/rollback is
 *advisory* and executed only by a human. PII scrubbing on all ingested logs.
 
-## Required README sections (fill when building)
+## What I learned
 
-What I learned · Production considerations · Failure modes · Security model ·
-Evaluation methodology · Architecture diagram · Demo.
+> _Draft — personalize before publishing._
+
+- **Most of incident triage is correlation, and correlation is deterministic.**
+  Lining up alert time ↔ deploy time ↔ error onset gets you most of the way to a
+  hypothesis with no model; the LLM adds value only on the ambiguous cases.
+- **Read-only is a feature, not a limitation.** Making the agent incapable of
+  acting removes the scariest failure mode in incident response and makes it
+  something on-call will actually trust.
+- **Normalize before you cluster.** Raw error lines never group; normalized
+  signatures (ids/numbers/uuids stripped) do — and the normalization doubles as
+  light PII reduction before text reaches the model.
+- **Send the model a summary, not raw logs** — cheaper, and it limits PII egress.
+
+## Failure modes
+
+- Correlation isn't causation — the top suspect is a *candidate* surfaced with a
+  confidence score, not a verdict.
+- Signature normalization can over- or under-cluster.
+- With no deploy in the window it reports low confidence rather than inventing a
+  culprit (covered by the `no_recent_deploy` fixture).
 
 ---
 

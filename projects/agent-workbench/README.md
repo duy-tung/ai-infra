@@ -212,8 +212,19 @@ without a rewrite — see the per-sprint guides in `../../learning/sprints/`.
 
 ## What I learned
 
-_(Fill this in as you build — it's the highest-signal part of a portfolio repo.)_
-Examples to write up: why the assistant turn must be replayed verbatim with
-thinking blocks; how token/cost accounting maps to `usage`; why deterministic
-eval checks beat LLM-as-judge for a regression suite; where the permission gate
-belongs in the architecture.
+> _Draft — personalize before publishing._
+
+- **Drive the loop by hand when you want control.** Using a manual agentic loop
+  (not the SDK tool runner) is what lets the harness gate, log, time, and
+  cost-account every tool call — the whole point of a workbench.
+- **Replay the assistant turn verbatim.** Text, thinking, and `tool_use` blocks
+  must go back into the message history unchanged before tool results, or the
+  `tool_use`/`tool_result` pairing breaks; thinking blocks must be replayed
+  unedited on the same model.
+- **Bridging sync↔async is a real design problem.** The loop is synchronous, the
+  MCP client is async — a background event loop holding one `ClientSession`, with
+  `run_coroutine_threadsafe` per call, keeps the sync loop/gate/tracing intact.
+- **Deterministic eval checks beat LLM-as-judge for a regression suite** — they're
+  reproducible and free, so they run in CI.
+- **Safety is layered and mostly boring code:** path jail, permission/policy
+  gate, hash-chained audit log, redaction, cost governor + kill switch.

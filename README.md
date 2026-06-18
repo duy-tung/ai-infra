@@ -35,6 +35,7 @@ ai-infra/
 │   ├── progress-tracker.md             theo dõi tiến độ hàng tuần
 │   ├── brag-doc.md                     ghi lại impact (cho CV + review)
 │   ├── sprints/                        4 sprint map tới phases cụ thể
+│   ├── blog-drafts/                    nháp README/blog tiếng Anh (portfolio)
 │   └── notes/                          ghi chú học theo phase (+ template)
 └── projects/                     ← portfolio (3 repo)
     ├── agent-workbench/                ✅ RUNNABLE (Sprint 1–3)

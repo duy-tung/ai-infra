@@ -140,10 +140,47 @@ bugs after adopting the checklist.
 6. Dashboard (runs, pass/fail, cost, latency, risk categories).
 7. PR comment bot + OTel spans + Prometheus metrics + canary mode.
 
-## Required README sections (fill when building)
+## What I learned
 
-What I learned · Production considerations · Failure modes · Security model ·
-Evaluation methodology · Architecture diagram · Demo.
+> _Draft — personalize before publishing._
+
+- **Evals catch a different class of bug than unit tests.** Expanding the eval
+  set from 7 to 33 fixtures surfaced two bugs every unit test had passed: a regex
+  that matched `account` but not `accounts` (the `\b` boundary breaks on the
+  plural `s`, silently dropping ledger writes), and a case-insensitive `POST`
+  pattern that matched "post" inside `audit.record("post")`. Unit tests encode
+  what you already imagined; a broad fixture set encodes what the system should
+  do — and the gap is where the bugs were.
+- **Workflow, not agent loop.** PR review is well-specified, so a deterministic
+  core + one LLM step beats an open-ended agent — cheaper, reproducible, and the
+  eval runs offline.
+- **Prompt for recall, filter at the gate.** Recent models follow "be
+  conservative" literally and drop findings; ask for everything-with-confidence
+  and filter downstream.
+- **Scrub before egress.** The diff is redacted before it reaches the model.
+
+## Failure modes
+
+- Pattern-based checks have false positives/negatives by nature — mitigated by
+  the advisory gate, a clean-PR fixture set as a precision guard, and the LLM
+  layer for fuzzy risks.
+- The diff parser is minimal (added lines only); it won't reason about removed
+  context.
+- The LLM layer is non-deterministic; the deterministic checks are the
+  guaranteed floor.
+
+## Production considerations
+
+Advisory-only first (it ships that way); enforce later once precision is trusted
+on real PRs. Add Prometheus metrics + a dashboard, more checks (read-modify-write
+without row locks, settlement edge cases), and a sandboxed test-run step. The
+code is structured so each slots in without a rewrite.
+
+## Security model
+
+Diffs are scrubbed (PII/secrets) before reaching the model; the API key comes
+from the environment, never code; the bot uses the repo's `GITHUB_TOKEN` with
+`pull-requests: write`. Treat the LLM's output as advice, not authority.
 
 ---
 
