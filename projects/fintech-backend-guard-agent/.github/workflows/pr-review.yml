@@ -1,0 +1,74 @@
+# Fintech Backend Guard — PR review bot.
+#
+# Runs the guard on each pull request and posts (or updates) a single sticky
+# review comment. Advisory by default: it never blocks merge.
+#
+# NOTE on location: GitHub only runs workflows from `.github/workflows/` at the
+# REPOSITORY ROOT. In the `ai-infra` monorepo this file lives under the project
+# directory, so it is intentionally INERT here. When this project is split into
+# its own repo, this file sits at the repo root and activates automatically.
+#
+# Secrets:
+#   ANTHROPIC_API_KEY (optional) — if set, the LLM reviewer runs too (--llm).
+#   GITHUB_TOKEN (provided automatically) — used to post the comment.
+
+name: fintech-guard PR review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need the base commit to diff against
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: pip install -e ".[llm]"
+
+      - name: Compute PR diff
+        run: git diff "${{ github.event.pull_request.base.sha }}...HEAD" > pr.diff
+
+      - name: Run guard
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          args="--diff pr.diff --comment"
+          if [ -n "$ANTHROPIC_API_KEY" ]; then args="$args --llm"; fi
+          python -m fintech_guard.cli $args > report.md
+          # JSON artifact for the job summary / downstream gating.
+          python -m fintech_guard.cli --diff pr.diff --json > report.json
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post or update sticky review comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          marker="<!-- fintech-guard -->"
+          cid=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+            --jq ".[] | select(.body | contains(\"$marker\")) | .id" | head -n1)
+          if [ -n "$cid" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$cid" -F body=@report.md >/dev/null
+            echo "updated existing review comment ($cid)"
+          else
+            gh pr comment "$PR" --body-file report.md
+            echo "posted new review comment"
+          fi
+
+      # To ENFORCE instead of advise, uncomment: fails the check on HIGH+ findings.
+      # - name: Enforce gate
+      #   run: python -m fintech_guard.cli --diff pr.diff --enforce --threshold high

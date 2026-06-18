@@ -33,7 +33,7 @@ Theo spec trong README của project đó. Tối thiểu cho v1:
 - [x] Report: severity + suggested patch + confidence; human approval gate (advisory) _(starter: `report.py`)_
 - [x] Eval set 33 fixture PRs / 14 risk categories (P/R=1.00) — `evals/fixtures/*.json` _(target 30–50: đã đạt 33; thêm nữa khi gặp case thật)_
 - [ ] Context loader: đọc thêm test output + service ownership doc.
-- [ ] PR comment bot (GitHub Action chạy trên PR → post review).
+- [x] PR comment bot (GitHub Action → sticky review comment, advisory) — `.github/workflows/pr-review.yml`, `pr_comment.py`
 - [ ] Fintech risk classifier (rule + LLM).
 - [ ] Static checks (idempotency, money precision, migration lock, audit, PII).
 - [ ] LLM reviewer với severity rubric (structured output).

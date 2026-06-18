@@ -36,7 +36,23 @@ git diff main | python -m fintech_guard.cli --enforce --threshold high
 git diff main | python -m fintech_guard.cli --llm
 # JSON for a bot / CI
 python -m fintech_guard.cli --diff pr.diff --json
+# sticky PR-comment body (markdown + marker) for the CI bot
+python -m fintech_guard.cli --diff pr.diff --comment
 ```
+
+## CI / PR comment bot
+
+[`.github/workflows/pr-review.yml`](.github/workflows/pr-review.yml) runs the
+guard on every pull request and posts a **single sticky comment** (found and
+updated by a marker, so it doesn't spam on each push). It's **advisory** — never
+blocks merge. Static-only by default (no API key needed); if an
+`ANTHROPIC_API_KEY` repo secret is set, the LLM reviewer runs too.
+
+> **Workflow location:** GitHub only runs workflows from `.github/workflows/` at
+> the repository root. In the `ai-infra` monorepo this file sits under the
+> project directory and is therefore inert; when this project is split into its
+> own repo it lives at the root and activates automatically. To enforce instead
+> of advise, uncomment the "Enforce gate" step (fails the check on HIGH+ findings).
 
 ## What's implemented vs. ahead
 
@@ -50,7 +66,8 @@ python -m fintech_guard.cli --diff pr.diff --json
 | Pipeline (workflow) | `pipeline.py` | ✅ |
 | CLI | `cli.py` | ✅ |
 | Offline eval (precision/recall) | `evals/` | ✅ 33 fixtures, 14 categories (thematic files), all P/R = 1.00 |
-| PR comment bot, OTel/metrics, more checks, sandboxed test-run | — | 🔜 next |
+| CI / PR comment bot | `pr_comment.py`, `.github/workflows/pr-review.yml` | ✅ sticky comment, advisory; `--llm` if a key secret is set |
+| OTel/metrics, more checks, sandboxed test-run | — | 🔜 next |
 
 It's a **workflow**, not an agent loop: PR review is well-specified, so the code
 orchestrates the steps and only calls the model for the judgment-heavy part. The

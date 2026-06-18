@@ -42,6 +42,8 @@ def main(argv: list[str] | None = None) -> int:
                    help="Severity at/above which findings would block (default: high).")
     p.add_argument("--enforce", action="store_true", help="Enforce the gate (exit 1 if blocked). Default is advisory.")
     p.add_argument("--json", action="store_true", help="Emit JSON instead of markdown.")
+    p.add_argument("--comment", action="store_true",
+                   help="Emit a sticky PR-comment body (markdown + marker) for the CI bot.")
     args = p.parse_args(argv)
 
     diff_text = _read_diff(args)
@@ -59,7 +61,14 @@ def main(argv: list[str] | None = None) -> int:
     guard = Guard(reviewer=reviewer, threshold=Severity(args.threshold), advisory=not args.enforce)
     report = guard.review_diff(diff_text, migration_sql=migration_sql)
 
-    print(report.json() if args.json else report.markdown())
+    if args.comment:
+        from .pr_comment import to_comment
+
+        print(to_comment(report))
+    elif args.json:
+        print(report.json())
+    else:
+        print(report.markdown())
     return 1 if report.gate_result.blocked else 0
 
 
