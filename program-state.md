@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 7 (IG-T006 done; IG-T005 dispatched; IB chain running), 2026-07-09.
+Last updated: iteration 8 (IB-T002/3/4 done; IG-T007/T008 + IB-T005/T006 dispatched; PostgreSQL native; registry blocks found), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -11,7 +11,7 @@ Last updated: iteration 7 (IG-T006 done; IG-T005 dispatched; IB chain running), 
 - kind / kubectl / kustomize / k3s: **not installed** — install at Wave 4 (IO-T002); network permitting.
 - Network: outbound HTTPS via agent proxy. Verified working: Go module proxy (go get succeeded). PyPI assumed working (not yet exercised). GitHub API via MCP tools only (no `gh` CLI).
 - Remote repos: session GitHub scope is `duy-tung/ai-infra` only. Creating six GitHub repos = external-resource hard block → review-queued (RQ-1). Components are **local-only git repos** until decided.
-- Network policy (measured iter 3): package registries bypass the proxy (PyPI, proxy.golang.org, npm, crates — all work); **huggingface.co and github.com downloads are DENIED** by the gateway (CONNECT 403). Consequences: no GGUF model download, no GitHub release binaries (llama-server, kind, kubectl). Verified fallback: `llama-cpp-python` 0.3.33 installs from PyPI (vendored llama.cpp) and imports; `gguf` package available to craft a tiny random-weight model locally if policy can't change (deviation would be recorded — I3 realism reduced). → RQ-4.
+- Network policy (measured iters 3–8): package registries bypass the proxy (PyPI, proxy.golang.org, npm, crates work); Ubuntu main apt archive WORKS (PPAs blocked). **DENIED: huggingface.co, github.com downloads, and Docker Hub blob CDN (production.cloudfront.docker.com → 403)** — no container images can be pulled at all. Consequences: no GGUF download; no GitHub release binaries; no postgres/otel/grafana/prometheus images; kind/k3s cluster images unavailable → **Wave 4/5 Kubernetes milestones (I5, in-cluster I7) are NOT executable in this environment as planned** without a network-policy change. Working fallbacks proven: native llama-server built from PyPI sdist; PostgreSQL 16 via apt (running at 127.0.0.1:5432, dev/test DBs created); OTel collector / Prometheus are Go programs installable via the Go module proxy (unverified yet); Grafana/Tempo TBD. → RQ-4 (expanded).
 - Remaining unknown unknowns: kind/kubectl acquisition path under this policy (Wave 4); GPU rental provider access (Wave 4, G6); container ephemerality until RQ-1 decided.
 
 ## Workspace layout
@@ -44,9 +44,13 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IG-T003 SSE relay + cancellation | done — **GATE G2 PASSED** (fresh verifier: all checks PASS, zero defects; noted minor test-design caveats in verifier report) | infergate `0d5256b..c27e93d` |
 | IG-T006 observability per contract | done (orchestrator re-ran: telemetry tests race-green, CONFORMANCE PASS; 7 metrics live exact-per-contract, queue/retry metrics honestly deferred to IG-T010/T013; spans recv→connect→ttft→relay→settle evidenced) | infergate `8d3afd8`,`c906780` |
 | IG-T005 llama.cpp adapter | in-progress (agent dispatched iter 7 vs native llama-server) | — |
-| IB-T002 open-loop generator | in-progress (agent dispatched iter 4) | — |
-| IB-T003 workload suite v1 | in-progress (same agent) | — |
-| IB-T004 streaming client correctness | in-progress (same agent) | — |
+| IB-T002 open-loop generator | done (schema-valid events; deterministic replay proven by digest; CO-safety test; race+vet green) | inferbench `6708154` |
+| IB-T003 workload suite v1 | done (8 workloads validate; dry-runs green vs gateway+mock) | inferbench `19d8ba2` |
+| IB-T004 streaming client correctness | done (calibration: client TTFT/ITL within ~1–2ms of configured; 17/17 cancels observed at mock) | inferbench `3b12013` |
+| IB-T005 analysis core | in-progress (agent dispatched iter 8) | — |
+| IB-T006 report generator | in-progress (same agent) | — |
+| IG-T007 tenancy+auth+registry | in-progress (agent dispatched iter 8; pulled forward from Wave 3 — Scenario A/I2 requires PostgreSQL usage write) | — |
+| IG-T008 usage accounting | in-progress (same agent) | — |
 | IB-T001 inferbench docs bootstrap | done (verified iter 2: 15 docs + 5 ADRs, pin v0.1.0 recorded, clean tree) | inferbench `b5cf196` |
 | All other tasks | todo | — |
 
@@ -61,7 +65,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 |---|---|---|---|
 | RQ-1 | Remote hosting: create six GitHub repos (`serving-contracts`, `infergate`, `inferbench`, `fleetlab`, `inferops`, `inference-lab`) under your account? Needed for durability (this container is ephemeral) and for OSS-visible portfolio. | Nothing immediately; durability risk grows each wave | open (surfaced iter 0) |
 | RQ-3 | Wave-1 exit review batch (non-blocking, queue-and-continue): infergate boundary doc (`infergate/docs/architecture.md` §1 + ADR-0001), inference-lab skeleton structure, and (when released) contracts v0.1.0 release notes. | Nothing — deviation policy allows continuing; feedback folded in when received | open (accumulating until Wave 1 exit) |
-| RQ-4 | Environment network policy denies `huggingface.co` and `github.com` downloads (CONNECT 403). Please allow at least huggingface.co (GGUF model for I3 realism) and ideally github.com release assets (native llama-server; kind/kubectl for Wave 4) in the environment's network settings — see https://code.claude.com/docs/en/claude-code-on-the-web. Fallback if not: locally-crafted tiny random GGUF + llama-cpp-python server (recorded deviation; correctness evidence unaffected, benchmark realism reduced). | I3 realism (Wave 2 exit); Wave 4 tooling | open (surfaced iter 3) |
+| RQ-4 | Network policy blocks huggingface.co, github.com downloads, AND all container-image pulls (Docker Hub CDN 403). Wave 2/3 proceed fine with proven fallbacks (native llama-server from PyPI sdist; apt PostgreSQL; local tiny GGUF). **But Wave 4/5 Kubernetes work (kind/k3s clusters, I5) cannot run without images.** Request: allow huggingface.co (I3/I4 model realism), github.com release assets, and container registries (registry-1.docker.io + production.cloudfront.docker.com, registry.k8s.io, quay.io, ghcr.io) in the environment network settings — or tell me to plan I5/I7 around process-based (non-K8s) fallbacks with a recorded scope deviation. | I3/I4 realism; **I5 (Wave 4/5) entirely** | open (surfaced iter 3, expanded iter 8) |
 | RQ-2 | Confirm four planning defaults (13 §7): six-repo strategy (default: yes), GPU budget envelope (default $150–250, alerts 50%/80%), OSS primary target (default: Gateway API Inference Extension), career overlay excluded (default: yes). | GPU spend (Wave 4) blocks on budget; rest proceed on defaults | open — defaults applied provisionally (surfaced iter 0) |
 
 ## Toolchain (local, outside component repos)
@@ -81,6 +85,7 @@ Envelope: $150–250 (default, unconfirmed — RQ-2). Spent: $0. Sessions used: 
 - L1: Docker daemon must be started manually (`sudo dockerd &`) after container restart — check before any compose/scenario work.
 - L2: Component repos are local-only; commit early and often, and treat container loss as a real risk until RQ-1 is decided.
 - L3: Deterministic hashing in the mock needed a splitmix64 finalizer (raw FNV-64a clustered badly on short IDs) — reuse that pattern for any seeded determinism elsewhere.
+- L4: Environment acquisition order that works: PyPI/Go-proxy/apt-main only. Anything shipped as 'download from GitHub/HF/DockerHub' must be re-sourced via PyPI sdists, Go module proxy (go install), or apt — check before planning any task that needs new binaries/images.
 
 ## Deviations index
 
