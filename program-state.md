@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 8 (IB-T002/3/4 done; IG-T007/T008 + IB-T005/T006 dispatched; PostgreSQL native; registry blocks found), 2026-07-09.
+Last updated: iteration 9 (IG-T005 done incl. real-engine cancellation; IG-T007/8 dispatched; IB-T005/6 running), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -43,14 +43,14 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IG-T004 config snapshots + drain | done (reload under traffic 5421 req / 0 fail; publish 2.1ms vs 5s budget; e2e drain test green) | infergate `9f83e0a` |
 | IG-T003 SSE relay + cancellation | done — **GATE G2 PASSED** (fresh verifier: all checks PASS, zero defects; noted minor test-design caveats in verifier report) | infergate `0d5256b..c27e93d` |
 | IG-T006 observability per contract | done (orchestrator re-ran: telemetry tests race-green, CONFORMANCE PASS; 7 metrics live exact-per-contract, queue/retry metrics honestly deferred to IG-T010/T013; spans recv→connect→ttft→relay→settle evidenced) | infergate `8d3afd8`,`c906780` |
-| IG-T005 llama.cpp adapter | in-progress (agent dispatched iter 7 vs native llama-server) | — |
+| IG-T005 llama.cpp adapter | done (orchestrator re-ran full harness: LLAMACPP VERIFY PASS, 31 engine cancel confirmations; descriptor validates; 3-pt cancel: mid-stream p95 9.7ms, pre-first-token p95 62ms incl. prefill nuance, queued bounded by slot availability ~3s; failover both directions; deviation D2 = tiny model, RQ-4) | infergate `b3df27d..3674768` |
 | IB-T002 open-loop generator | done (schema-valid events; deterministic replay proven by digest; CO-safety test; race+vet green) | inferbench `6708154` |
 | IB-T003 workload suite v1 | done (8 workloads validate; dry-runs green vs gateway+mock) | inferbench `19d8ba2` |
 | IB-T004 streaming client correctness | done (calibration: client TTFT/ITL within ~1–2ms of configured; 17/17 cancels observed at mock) | inferbench `3b12013` |
 | IB-T005 analysis core | in-progress (agent dispatched iter 8) | — |
 | IB-T006 report generator | in-progress (same agent) | — |
-| IG-T007 tenancy+auth+registry | todo — pulled forward from Wave 3 (Scenario A/I2 needs PostgreSQL usage write); dispatch when IG-T005 frees the repo | — |
-| IG-T008 usage accounting | todo (after IG-T007, same agent) | — |
+| IG-T007 tenancy+auth+registry | in-progress (agent dispatched iter 9) | — |
+| IG-T008 usage accounting | in-progress (same agent) | — |
 | IB-T001 inferbench docs bootstrap | done (verified iter 2: 15 docs + 5 ADRs, pin v0.1.0 recorded, clean tree) | inferbench `b5cf196` |
 | All other tasks | todo | — |
 
