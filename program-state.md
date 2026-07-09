@@ -27,17 +27,17 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 
 | Task | Status | Evidence / commit |
 |---|---|---|
-| SC-T001 policy+docs bootstrap | in-progress (agent dispatched iter 0) | — |
-| SC-T002 inference API contract | in-progress | — |
-| SC-T003 benchmark data schemas | in-progress | — |
-| SC-T004 backend-capability schema | in-progress | — |
-| SC-T005 metrics vocabulary | in-progress | — |
-| SC-T008 consumer compatibility kit | in-progress | — |
-| SC-T009 release v0.1.0 | todo (needs SC-T002–T005,T008 verified) | — |
+| SC-T001 policy+docs bootstrap | implementer-done; fresh verifier running | serving-contracts `8a4de1f` |
+| SC-T002 inference API contract | implementer-done; fresh verifier running (spot-check: spec validates, 36 fixtures) | serving-contracts `116d903` |
+| SC-T003 benchmark data schemas | implementer-done; fresh verifier running (8 workloads validate) | serving-contracts `d604a72` |
+| SC-T004 backend-capability schema | implementer-done; fresh verifier running | serving-contracts `f2d1b2d` |
+| SC-T005 metrics vocabulary | implementer-done; fresh verifier running (11/11 metrics; semconv pin v1.36.0 dated 2026-07) | serving-contracts `15edc81` |
+| SC-T008 consumer compatibility kit | implementer-done; fresh verifier running (orchestrator re-ran `make contracts-verify`: 65 checks, 0 failures) | serving-contracts `8173098` |
+| SC-T009 release v0.1.0 | blocked-on(verifier verdict); tag is orchestrator's job; release-notes review = queue-and-continue (pre-1.0, not a MAJOR, so not a hard block) | — |
 | IL-T001 inference-lab skeleton | done (verified iter 0: pins validator green, 15-doc set present, clean tree) | inference-lab `4fb1036` |
 | IG-T001 infergate docs bootstrap | done (verified iter 0: 15 docs + 7 ADRs, clean tree) | infergate `60458ac` |
-| IG-T002 gateway skeleton + mock | todo (needs SC-T002) | — |
-| IG-T004 config snapshots + drain | todo (needs IG-T002) | — |
+| IG-T002 gateway skeleton + mock | in-progress (agent dispatched; SC-T002 evidence exists, pin = SC HEAD `8173098`, re-pin at tag) | — |
+| IG-T004 config snapshots + drain | in-progress (same agent, sequential after IG-T002) | — |
 | All other tasks | todo | — |
 
 ## Pins
