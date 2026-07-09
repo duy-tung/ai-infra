@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 3 (IG-T002/T004 + SC-T006/T007 done; v0.2.0 tagged; IG-T003 dispatched), 2026-07-09.
+Last updated: iteration 4 (IG-T003 implementer-done; G2 verifier + IB-T002/3/4 dispatched), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -41,7 +41,10 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IG-T001 infergate docs bootstrap | done (verified iter 0: 15 docs + 7 ADRs, clean tree) | infergate `60458ac` |
 | IG-T002 gateway skeleton + mock | done (orchestrator re-ran: vet clean, race tests ok, CONFORMANCE PASS; auth/permission/rate_limited deferred to IG-T007/T009 by design) | infergate `3d089cb`,`27969ae`,`1cd4431` |
 | IG-T004 config snapshots + drain | done (reload under traffic 5421 req / 0 fail; publish 2.1ms vs 5s budget; e2e drain test green) | infergate `9f83e0a` |
-| IG-T003 SSE relay + cancellation | in-progress (agent dispatched iter 3; G2 gate follows) | — |
+| IG-T003 SSE relay + cancellation | implementer-done (100 streams zero mixing; 3-pt cancel p95 0.3–1.4ms; 10× stability PASS; orchestrator re-ran race+conformance green); **G2 verifier running** | infergate `0d5256b..c27e93d` |
+| IB-T002 open-loop generator | in-progress (agent dispatched iter 4) | — |
+| IB-T003 workload suite v1 | in-progress (same agent) | — |
+| IB-T004 streaming client correctness | in-progress (same agent) | — |
 | IB-T001 inferbench docs bootstrap | done (verified iter 2: 15 docs + 5 ADRs, pin v0.1.0 recorded, clean tree) | inferbench `b5cf196` |
 | All other tasks | todo | — |
 
