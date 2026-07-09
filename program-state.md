@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 1 (contracts v0.1.0 released), 2026-07-09.
+Last updated: iteration 2 (IB-T001 done), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -40,6 +40,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IG-T001 infergate docs bootstrap | done (verified iter 0: 15 docs + 7 ADRs, clean tree) | infergate `60458ac` |
 | IG-T002 gateway skeleton + mock | in-progress (agent dispatched; SC-T002 evidence exists, pin = SC HEAD `8173098`, re-pin at tag) | — |
 | IG-T004 config snapshots + drain | in-progress (same agent, sequential after IG-T002) | — |
+| IB-T001 inferbench docs bootstrap | done (verified iter 2: 15 docs + 5 ADRs, pin v0.1.0 recorded, clean tree) | inferbench `b5cf196` |
 | All other tasks | todo | — |
 
 ## Pins
