@@ -35,7 +35,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | SC-T008 consumer compatibility kit | in-progress | — |
 | SC-T009 release v0.1.0 | todo (needs SC-T002–T005,T008 verified) | — |
 | IL-T001 inference-lab skeleton | done (verified iter 0: pins validator green, 15-doc set present, clean tree) | inference-lab `4fb1036` |
-| IG-T001 infergate docs bootstrap | in-progress (agent dispatched iter 0) | — |
+| IG-T001 infergate docs bootstrap | done (verified iter 0: 15 docs + 7 ADRs, clean tree) | infergate `60458ac` |
 | IG-T002 gateway skeleton + mock | todo (needs SC-T002) | — |
 | IG-T004 config snapshots + drain | todo (needs IG-T002) | — |
 | All other tasks | todo | — |
@@ -50,6 +50,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | ID | Question | Blocks | Status |
 |---|---|---|---|
 | RQ-1 | Remote hosting: create six GitHub repos (`serving-contracts`, `infergate`, `inferbench`, `fleetlab`, `inferops`, `inference-lab`) under your account? Needed for durability (this container is ephemeral) and for OSS-visible portfolio. | Nothing immediately; durability risk grows each wave | open (surfaced iter 0) |
+| RQ-3 | Wave-1 exit review batch (non-blocking, queue-and-continue): infergate boundary doc (`infergate/docs/architecture.md` §1 + ADR-0001), inference-lab skeleton structure, and (when released) contracts v0.1.0 release notes. | Nothing — deviation policy allows continuing; feedback folded in when received | open (accumulating until Wave 1 exit) |
 | RQ-2 | Confirm four planning defaults (13 §7): six-repo strategy (default: yes), GPU budget envelope (default $150–250, alerts 50%/80%), OSS primary target (default: Gateway API Inference Extension), career overlay excluded (default: yes). | GPU spend (Wave 4) blocks on budget; rest proceed on defaults | open — defaults applied provisionally (surfaced iter 0) |
 
 ## Budget ledger (GPU)
