@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 4 (IG-T003 implementer-done; G2 verifier + IB-T002/3/4 dispatched), 2026-07-09.
+Last updated: iteration 5 (G2 PASSED; IG-T006 + toolchain-prep dispatched; IB chain running), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -21,8 +21,8 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 
 ## Wave & gate status
 
-- **Current wave: 1** (contracts core + gateway spine).
-- Gates G1–G10: none passed. Milestones I1–I8: none accepted.
+- **Current wave: 2** (streaming ✓, first engine, bench core). Wave 1 exit criteria met: v0.1.0 released ✓, gateway serves non-streaming from mock ✓, fixture validation green in the consumer that exists (infergate CI) — I1-partial by design (4-consumer I1 completes as consumers gain CI).
+- **G2 PASSED** (2026-07-09, fresh-context verifier, zero defects). G1: v0.1.0 fixture layer green; full I1 pending consumer wiring. Others: not reached. Milestones I1–I8: none accepted yet.
 
 ## Task board (Wave 1 scope; full register in portfolio-planning/05 §8)
 
@@ -41,7 +41,9 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IG-T001 infergate docs bootstrap | done (verified iter 0: 15 docs + 7 ADRs, clean tree) | infergate `60458ac` |
 | IG-T002 gateway skeleton + mock | done (orchestrator re-ran: vet clean, race tests ok, CONFORMANCE PASS; auth/permission/rate_limited deferred to IG-T007/T009 by design) | infergate `3d089cb`,`27969ae`,`1cd4431` |
 | IG-T004 config snapshots + drain | done (reload under traffic 5421 req / 0 fail; publish 2.1ms vs 5s budget; e2e drain test green) | infergate `9f83e0a` |
-| IG-T003 SSE relay + cancellation | implementer-done (100 streams zero mixing; 3-pt cancel p95 0.3–1.4ms; 10× stability PASS; orchestrator re-ran race+conformance green); **G2 verifier running** | infergate `0d5256b..c27e93d` |
+| IG-T003 SSE relay + cancellation | done — **GATE G2 PASSED** (fresh verifier: all checks PASS, zero defects; noted minor test-design caveats in verifier report) | infergate `0d5256b..c27e93d` |
+| IG-T006 observability per contract | in-progress (agent dispatched iter 5) | — |
+| IG-T005 llama.cpp adapter | todo (blocked-on toolchain prep; RQ-4 fallback in build) | — |
 | IB-T002 open-loop generator | in-progress (agent dispatched iter 4) | — |
 | IB-T003 workload suite v1 | in-progress (same agent) | — |
 | IB-T004 streaming client correctness | in-progress (same agent) | — |
@@ -61,6 +63,10 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | RQ-3 | Wave-1 exit review batch (non-blocking, queue-and-continue): infergate boundary doc (`infergate/docs/architecture.md` §1 + ADR-0001), inference-lab skeleton structure, and (when released) contracts v0.1.0 release notes. | Nothing — deviation policy allows continuing; feedback folded in when received | open (accumulating until Wave 1 exit) |
 | RQ-4 | Environment network policy denies `huggingface.co` and `github.com` downloads (CONNECT 403). Please allow at least huggingface.co (GGUF model for I3 realism) and ideally github.com release assets (native llama-server; kind/kubectl for Wave 4) in the environment's network settings — see https://code.claude.com/docs/en/claude-code-on-the-web. Fallback if not: locally-crafted tiny random GGUF + llama-cpp-python server (recorded deviation; correctness evidence unaffected, benchmark realism reduced). | I3 realism (Wave 2 exit); Wave 4 tooling | open (surfaced iter 3) |
 | RQ-2 | Confirm four planning defaults (13 §7): six-repo strategy (default: yes), GPU budget envelope (default $150–250, alerts 50%/80%), OSS primary target (default: Gateway API Inference Extension), career overlay excluded (default: yes). | GPU spend (Wave 4) blocks on budget; rest proceed on defaults | open — defaults applied provisionally (surfaced iter 0) |
+
+## Toolchain (local, outside component repos)
+
+- /home/user/toolchain/ (being built iter 5): native llama-server from llama-cpp-python 0.3.33 sdist (PyPI; GitHub blocked) + locally-crafted tiny GGUF (fallback while RQ-4 open). Provenance recorded there when done.
 
 ## Budget ledger (GPU)
 
