@@ -15,7 +15,9 @@ Last updated: iteration 17 (CONTAINER LOSS RECOVERY — see event log below), 20
 
 | Stream | Scope | Status |
 |---|---|---|
-| serving-contracts | SC-T001..T005,T008,T009 (v0.1.0) then SC-T006/T007 (v0.2.0) | agent dispatched iter 17 |
+| serving-contracts | SC-T001..T005,T008,T009 (v0.1.0) then SC-T006/T007 (v0.2.0) | **REBUILT + orchestrator-verified iter 17** (tags v0.1.0=`538f95e`, v0.2.0=`9199e45`; orchestrator re-ran: 149/149 checks green, negative-canary exits 1, Scenario E chain in validator manifest, v0.1.0→v0.2.0 diff 50 files all-insertions; new evidence commits supersede old board hashes: T001 `ef578b4`, T002 `d10b6b0` [41 fixtures], T003 `b0f46f0`, T004 `e29b3be`, T005 `f0f840e`, T008 `4d178d9`, T009 `538f95e`, T006 `2661383` [FS-01..12], T007 `9cfbf1e`; D-R1 recorded) |
+| infergate impl | IG-T002+T003+T004 rebuild (contracts v0.1.0 now on disk) | agent dispatched iter 17; G2 fresh verifier queued after |
+| inferbench | IB-T001 docs + IB-T002 generator (contracts v0.2.0 now on disk) | agent dispatched iter 17 |
 | toolchain | llama-server + tiny GGUF + otelcol-file | **REBUILT + orchestrator-verified iter 17** (smoke-test 8/8 exit 0 re-run by orchestrator; new model sha256 95e428ca…7354 byte-reproducible; sdist sha256 matches recorded pin; llama.cpp 78d2f52 self-reported by binary — provenance caveat recorded in toolchain README: not diffable vs upstream under network policy) |
 | inference-lab | IL-T001 skeleton | **REBUILT + orchestrator-verified iter 17** (pins validator green 5 pins, 15 docs, clean tree; commits `3b5927b`→`a9df75c`; pins carry no proven_at claims from lost evidence) |
 | infergate | IG-T001 docs (iter 17); IG-T002..T010 queued behind contracts fixtures | IG-T001 **REBUILT + orchestrator-verified iter 17** (15 docs, 7 ADRs, clean tree, commit `8b6210f`; D2/D3 re-recorded as standing deviations, D-R1 rebuild deviation added) |
