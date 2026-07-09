@@ -20,7 +20,7 @@ Last updated: iteration 17 (CONTAINER LOSS RECOVERY — see event log below), 20
 | inference-lab | IL-T001 skeleton | **REBUILT + orchestrator-verified iter 17** (pins validator green 5 pins, 15 docs, clean tree; commits `3b5927b`→`a9df75c`; pins carry no proven_at claims from lost evidence) |
 | infergate | IG-T001 docs (iter 17); IG-T002..T010 queued behind contracts fixtures | IG-T001 **REBUILT + orchestrator-verified iter 17** (15 docs, 7 ADRs, clean tree, commit `8b6210f`; D2/D3 re-recorded as standing deviations, D-R1 rebuild deviation added) |
 | fleetlab docs | FL-T001 bootstrap | **REBUILT + orchestrator-verified iter 17** (15 docs + ADR-0001 hybrid simulator, clean tree, commit `6a92e1b`; R9 guardrails structural as rules G-1..G-8 with named enforcement checks; D-R1/D-R2 recorded) |
-| inferops docs | IO-T001 bootstrap (incl. RQ-4 dual-path ADR) | agent dispatched iter 17 |
+| inferops docs | IO-T001 bootstrap (incl. RQ-4 dual-path ADR) | **REBUILT + orchestrator-verified iter 17** (15 docs + ADR-0001 Kustomize+raw + ADR-0002 dual-path with 21-feature semantics map [7 preserved / 8 partial / 6 not], clean tree, commit `81e8e9b`; D1/D2 recorded) |
 | inferbench | IB-T001..T006 queued behind contracts v0.2.0 | todo |
 | re-verification | fresh-context verifiers per gate (G2 re-pass required) after streams rebuild | todo |
 
