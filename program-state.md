@@ -34,7 +34,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | SC-T005 metrics vocabulary | in-progress | — |
 | SC-T008 consumer compatibility kit | in-progress | — |
 | SC-T009 release v0.1.0 | todo (needs SC-T002–T005,T008 verified) | — |
-| IL-T001 inference-lab skeleton | in-progress (agent dispatched iter 0) | — |
+| IL-T001 inference-lab skeleton | done (verified iter 0: pins validator green, 15-doc set present, clean tree) | inference-lab `4fb1036` |
 | IG-T001 infergate docs bootstrap | in-progress (agent dispatched iter 0) | — |
 | IG-T002 gateway skeleton + mock | todo (needs SC-T002) | — |
 | IG-T004 config snapshots + drain | todo (needs IG-T002) | — |
