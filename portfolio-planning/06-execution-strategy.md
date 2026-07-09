@@ -54,6 +54,12 @@ Architecture reviews, controlled experiments, debugging sessions, upstream sourc
 
 Single reviewer. Mandatory reviews: contract releases; G2/G4/G5/G8 evidence; ADRs; GPU session plans; OSS submissions; consolidation triggers; anything touching the §5 pause list. Batched at wave exits. Expected review artifacts are always: a short summary, the evidence links, and the specific question to decide — never raw logs.
 
+Optional comprehension check (from the Fable field-guide "quiz" pattern): before accepting a major wave exit, the user may ask the session for a change report with a short quiz over what was built and why; acceptance waits until the reviewer passes it. Use sparingly — it is a reviewer aid, not a gate.
+
+## 7a. Session conduct (Claude Fable 5)
+
+Every standalone prompt embeds a shared "Working style (Claude Fable 5)" block derived from the two prompting guides supplied by the user (Anthropic platform guide "Prompting Claude Fable 5", 2026-07; Thariq's "A Field Guide to Fable"). Its rules: session-start blind-spot pass with user interviews limited to architecture-changing ambiguities; act-when-informed (no re-deriving settled decisions); simplest-thing scope discipline (no unrequested features/refactors/abstractions; validate at system boundaries only); pause only for destructive/irreversible actions, real scope changes, or user-only input, and never end a turn on a promise; progress claims audited against session tool results; parallel subagent delegation with fresh-context verifier subagents at milestone gates; final messages that lead with the outcome and read standalone. Prompts deliberately remain prescriptive about *what* to build (contracts, tasks, acceptance criteria) and brief about *how* to behave — per the platform guide, over-prescribing behavior degrades Fable output, while well-specified problems get first-shot correctness.
+
 ## 8. Evidence and honesty rules (program-wide)
 
 - Never fabricate repository state, tests, benchmarks, hardware, costs, or maintainer activity.

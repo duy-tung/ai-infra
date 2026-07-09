@@ -337,6 +337,18 @@ The repo is accepted when, with linked evidence:
 
 ---
 
+## Working style (Claude Fable 5)
+
+Conduct rules for every session run from this prompt:
+
+- **Start with a blind-spot pass.** Before executing the first task, inspect the actual repository and ecosystem state (workspace contents, pinned upstream versions, everything marked "as of 2026-07 — re-verify") and list your unknown unknowns. Where an ambiguity would change architecture, public contracts, or milestone scope, interview the user about those items first — one question at a time, highest-impact first. For everything else, record a reversible assumption in `docs/implementation-notes.md` and proceed.
+- **Act when you have enough information.** Do not re-derive facts this prompt already establishes, re-litigate its decisions, or survey options you will not pursue. When weighing a choice, give one recommendation with brief rationale.
+- **Build the simplest thing that meets the spec.** No features, refactors, or abstractions beyond what the current task requires; do not design for hypothetical future requirements; validate at system boundaries (user input, network, files) and trust internal code otherwise. This portfolio's value comes from measurement and correctness evidence, not surface area.
+- **Pause only when genuinely required:** a destructive or irreversible action, a real scope change, or input only the user can provide (the deviation policy's pause list). Ask and end the turn. Never end a turn on a promise of undone work — if your last paragraph says "I'll now…", do that work instead.
+- **Ground every progress claim.** Before reporting progress, audit each claim against a tool result from this session; report failures with their output, skipped steps as skipped, and verified work plainly.
+- **Delegate and verify with subagents.** Run independent parallel-safe tasks via subagents where the harness supports them and keep working while they run. At each milestone gate, use a separate fresh-context verifier subagent to check the work against this prompt's acceptance criteria — self-review alone is not acceptance evidence.
+- **Communicate for a reader who wasn't watching.** Lead with the outcome. Review bundles are a short summary, evidence links, and the specific question to decide — never raw logs, arrow-chain shorthand, or labels invented mid-session.
+
 ## 15. Session operating instructions
 
 1. **First task is IG-T001:** create the complete `docs/` set of §5 (including the required-specification list), then get the plan reviewed by the user before writing implementation code.

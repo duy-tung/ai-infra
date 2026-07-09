@@ -2,7 +2,7 @@
 
 **Method:** a fresh-context verifier (separate subagent with no knowledge of how the documents were produced) read all 20 artifacts in full and audited them against a twelve-section checklist, mechanically checking task-ID uniqueness, dependency references, wave assignments, score arithmetic, deviation-policy text equality, and workspace claims against git. Its findings were then fixed by the orchestrator; this report records the audit results, the fixes, and what remains unverified.
 
-**Verdict after fixes:** PASS. The audit found 0 blockers, 1 major and 10 minor defects — all reversible document defects, all fixed in this run (see §3).
+**Verdict after fixes:** PASS. The audit found 0 blockers, 1 major and 10 minor defects — all reversible document defects, all fixed in this run (see §2).
 
 ---
 
@@ -52,6 +52,10 @@ Originals of ChatGPT Deep Research (Report A), Gemini Deep Research (Report B), 
 - The GPU budget envelope ($150–250) is a source-derived assumption pending user confirmation.
 - All performance targets (gateway overhead, cancellation propagation, settle variance, overload degradation bounds) are design targets derived from source research — nothing has been measured; no benchmark or test has run.
 
-## 5. Planning-only compliance (final statement)
+## 5. Post-audit amendment: Fable 5 prompting-guide revision
+
+After the audit above, the user supplied two prompting guides ("Prompting Claude Fable 5", Anthropic platform docs, retrieved 2026-07-09; "A Field Guide to Fable: Finding Your Unknowns", Thariq). All six prompts were reviewed against them. Assessment: the prompts' domain prescriptiveness (contracts, tasks, acceptance criteria) matches the guides' "well-specified problem" recommendation and was retained; the gaps were behavioral. Fix applied: one shared unnumbered "Working style (Claude Fable 5)" section inserted into every prompt (blind-spot pass with architecture-only user interviews, act-when-informed, simplest-thing scope discipline, pause-only-when-required + no promise-endings, tool-result-grounded progress claims, parallel subagents + fresh-context milestone verification, outcome-first communication), plus `06` §7a documenting the alignment and an optional reviewer quiz in `06` §7. A scan confirmed no artifact contains reasoning-extraction instructions ("show/explain/transcribe your thinking"), which the platform guide flags as a refusal trigger. Consistency checks re-run after the insertion: deviation policy still present exactly once per prompt; no calendar durations introduced; internal section cross-references unaffected (the inserted section is unnumbered).
+
+## 6. Planning-only compliance (final statement)
 
 No runtime code, no infrastructure provisioning, no model downloads, no GPU workloads, no test/benchmark executions, no upstream issues or PRs, and no initialization of the six implementation repositories occurred in this run. The run produced Markdown planning documents and prompts in `portfolio-planning/` and committed them to the designated branch. This was re-verified against `git log` by the fresh-context auditor.

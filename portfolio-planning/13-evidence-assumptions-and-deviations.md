@@ -8,6 +8,8 @@
 | Final 24-week curriculum (VI) | uploads: `9cc8f2ab-finalaiinfrastructurecurriculum24weeksvi.md` | 64,339 bytes / 786 lines | full read + structured extraction by dedicated subagent |
 | Consolidated 24-week plan (VI) | uploads: `28042399-kehoachtonghopaiinfra24tuan.md` | 96,888 bytes / 707 lines | full read + structured extraction by dedicated subagent |
 | Final consolidated report (VI) | uploads: `4ec9849f-baocaotonghopcuoicungaiinfra24tuan.md` | 92,122 bytes / 739 lines | full read + structured extraction by dedicated subagent |
+| "A Field Guide to Fable: Finding Your Unknowns" (Thariq) | uploads: `0018cb39-…pdf` | ~13k chars extracted | full text extraction + review (supplied after the initial planning pass; drove the prompts' working-style revision) |
+| "Prompting Claude Fable 5" (Anthropic platform docs, retrieved 2026-07-09) | uploads: `ec095e21-…pdf` | ~18k chars extracted | full text extraction + review (same revision) |
 
 Workspace findings: no source code, tests, docs, ADRs, `CLAUDE.md`, CI, Docker/Compose, Kubernetes/Helm/Kustomize/Terraform/Argo CD, benchmark, observability, schema, release, or experiment artifacts exist. The repository was effectively empty; nothing was overwritten, deleted, or reorganized. The six implementation repositories do not exist and were **not** initialized (planning-only rule).
 
