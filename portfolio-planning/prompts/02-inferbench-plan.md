@@ -70,6 +70,46 @@ You are working on the repository **`inferbench`**, one of six repositories in t
 
 ## 4. Architecture guidance
 
+**Data flow.**
+
+```text
+workload file (versioned, seeded, schema-valid)
+      │
+      ▼
+seeded arrival scheduler ──► SSE streaming client ──HTTP/SSE──► target
+(send times fixed by seed,      │        │                (mock | llama.cpp | vLLM |
+ never by responses)            │        │                 infergate in front | any
+      │                         │        │                 OpenAI-compatible endpoint)
+      │              cancellation      slow-client
+      │              controller        emulator
+      ▼                         │        │
+raw-event recorder ◄────────────┴────────┘        manifest capturer ──► run manifest (JSON)
+(JSONL, streaming writes)                          engine-metrics poller (side channel)
+      │
+      ▼
+Python analysis: load/validate ─► pooled stats ─► knee/goodput/cost ─► report + result file
+                                                                        (benchmark-result
+                                                                         schema, consumed
+                                                                         by fleetlab &
+                                                                         inference-lab)
+```
+
+**Suggested repository layout.**
+
+```text
+cmd/inferbench/          # single CLI: run, sweep, replay, compare, experiment
+internal/schedule/       # seeded arrival processes (open-loop poisson, closed-loop flagged)
+internal/client/         # SSE client, monotonic timing, cancellation, slow-client
+internal/events/         # raw-event JSONL recorder
+internal/sweep/          # rate-sweep orchestration
+internal/replay/         # deterministic replay
+internal/experiment/     # hypothesis-file governance
+internal/manifest/       # manifest capture + refusal logic
+workloads/               # the 8 versioned seeded workload files
+analysis/                # Python package: stats, knee, goodput, cost, compare, report
+docs/                    # §6 documentation set
+```
+
 **Components (Go generator).** Workload loader/validator (reads versioned workload files, validates against the pinned schema); seeded arrival scheduler (open-loop: send times computed from the seed + arrival process BEFORE and INDEPENDENT of any response — this is the coordinated-omission defense); SSE streaming client (monotonic clocks for TTFT/ITL capture, per-chunk timestamps, max-stall tracking); cancellation controller (issues deliberate cancels at declared points: queued / pre-first-token / mid-stream, per the workload's cancellation profile); slow-client emulator (bounded read rate); raw-event recorder (streaming JSONL writes, bounded memory); sweep orchestrator (≥6 rate points, repetition control); replay runner (re-issues a recorded workload deterministically); manifest capturer (collects target/engine/hardware/config facts before the run; refuses to run without them); optional engine-metrics poller (scrapes `/metrics` via the capability mapping, records as side-channel series, never blocks the load path).
 
 **Components (Python analysis).** Loader/validator (raw events + manifests, schema-checked; refuses undeclared or manifest-less data); statistics core (pooled percentiles, bootstrap CIs, warm-up exclusion); knee detector; goodput@SLO calculator (with shed rate and stall rate computed in the same pass — a goodput figure can never be produced without them); cost calculator (per successful request / per 1M tokens from cost-profile files); comparison engine (A/B across runs sharing all variables except one declared variable); plotting; report generator (template embeds manifest, interpretation rules, threats-to-validity and unexplained-anomalies sections; emits schema-valid benchmark-result files).
@@ -99,7 +139,20 @@ These rules are the repo's reason to exist. Violating them is the program's R4 r
 
 **Metrics measured:** TTFT; ITL/TPOT (full distribution + max stall + stall rate); end-to-end latency; throughput (tokens in/out per second); goodput at declared SLO (shed rate adjacent); stream completion rate; queue delay (gateway-reported, correlated by request ID); shed/retry/error rates; engine cache info when the capability descriptor exposes it; cost per successful request and per 1M tokens.
 
-**Workload suite (versioned, seeded, per the workload schema):** `chat-short`, `rag-long-in`, `gen-long-out`, `shared-prefix` (controlled prefix-sharing ratio), `mixed`, `bursty`, `cancel-storm`, `slow-client`.
+**Workload suite (versioned, seeded, per the workload schema):**
+
+| Workload | Intent | Key controlled parameters |
+|---|---|---|
+| `chat-short` | interactive chat baseline | short input/output length distributions |
+| `rag-long-in` | prefill-heavy (long context in) | long input, short output |
+| `gen-long-out` | decode-heavy (long generation) | short input, long directed output |
+| `shared-prefix` | prefix-cache behavior | **controlled prefix-sharing ratio** (measurable, tunable) |
+| `mixed` | realistic blend | declared mix proportions of the above |
+| `bursty` | queueing/admission behavior | burst amplitude + period over a base Poisson rate |
+| `cancel-storm` | cancellation correctness under load | cancellation-rate profile with declared cancel points |
+| `slow-client` | backpressure/write-buffer behavior | bounded client read rate profile |
+
+All eight: name, version, seed, arrival process, input/output-length distributions (output length capped/directed — never uncontrolled), duration or request count, per the workload schema.
 
 **Controlled experiments (hypothesis-driven, single-variable, with stop conditions; NO full-matrix sweeps):** `max_num_seqs`; `max_num_batched_tokens` (reproduce the Sarathi-Serve TTFT/ITL trade-off with your own numbers); `gpu_memory_utilization` (including preemption onset); context length; prefix caching on/off with controlled prefix-sharing ratio; chunked prefill; quantization (AWQ/GPTQ vs FP16 where budget allows); KV-cache dtype. Stretch (IB-T012 only): speculative decoding/MTP, KV offloading, SGLang comparison.
 
