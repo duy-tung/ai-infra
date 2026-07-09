@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 5 (G2 PASSED; IG-T006 + toolchain-prep dispatched; IB chain running), 2026-07-09.
+Last updated: iteration 6 (toolchain ready: native llama-server + local GGUF), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -43,7 +43,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IG-T004 config snapshots + drain | done (reload under traffic 5421 req / 0 fail; publish 2.1ms vs 5s budget; e2e drain test green) | infergate `9f83e0a` |
 | IG-T003 SSE relay + cancellation | done — **GATE G2 PASSED** (fresh verifier: all checks PASS, zero defects; noted minor test-design caveats in verifier report) | infergate `0d5256b..c27e93d` |
 | IG-T006 observability per contract | in-progress (agent dispatched iter 5) | — |
-| IG-T005 llama.cpp adapter | todo (blocked-on toolchain prep; RQ-4 fallback in build) | — |
+| IG-T005 llama.cpp adapter | todo — unblocked (toolchain ready); dispatch after IG-T006 finishes (same repo) | — |
 | IB-T002 open-loop generator | in-progress (agent dispatched iter 4) | — |
 | IB-T003 workload suite v1 | in-progress (same agent) | — |
 | IB-T004 streaming client correctness | in-progress (same agent) | — |
@@ -66,7 +66,11 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 
 ## Toolchain (local, outside component repos)
 
-- /home/user/toolchain/ (being built iter 5): native llama-server from llama-cpp-python 0.3.33 sdist (PyPI; GitHub blocked) + locally-crafted tiny GGUF (fallback while RQ-4 open). Provenance recorded there when done.
+- /home/user/toolchain/ DONE (iter 5, orchestrator spot-checked: server starts, /health ok, deterministic completion):
+  - bin/llama-server — native, CPU, llama.cpp commit `78d2f524682d9fee790a6460c93d018dafeb5229` via llama-cpp-python 0.3.33 sdist (PyPI, sha256 369ba03d…acd92); UI disabled (needs blocked downloads).
+  - models/tiny-llama-local.gguf — 38 MiB, ~19.7M params F16, random weights seed 42 + vendored SPM vocab, byte-reproducible, provenance in models/PROVENANCE.md. RQ-4 fallback model; swap for real 1–3B GGUF if network policy opens.
+  - Cancellation observability: no dedicated cancel counter; slot release + `llamacpp:requests_processing` gauge → capability descriptor for IG-T005. Metrics prefix `llamacpp:` (no labels).
+  - Scripts: build.sh, make-model.sh, run-llama-server.sh, smoke-test.sh (all reproducible).
 
 ## Budget ledger (GPU)
 
