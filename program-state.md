@@ -49,8 +49,8 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IB-T004 streaming client correctness | done (calibration: client TTFT/ITL within ~1–2ms of configured; 17/17 cancels observed at mock) | inferbench `3b12013` |
 | IB-T005 analysis core | in-progress (agent dispatched iter 8) | — |
 | IB-T006 report generator | in-progress (same agent) | — |
-| IG-T007 tenancy+auth+registry | in-progress (agent dispatched iter 8; pulled forward from Wave 3 — Scenario A/I2 requires PostgreSQL usage write) | — |
-| IG-T008 usage accounting | in-progress (same agent) | — |
+| IG-T007 tenancy+auth+registry | todo — pulled forward from Wave 3 (Scenario A/I2 needs PostgreSQL usage write); dispatch when IG-T005 frees the repo | — |
+| IG-T008 usage accounting | todo (after IG-T007, same agent) | — |
 | IB-T001 inferbench docs bootstrap | done (verified iter 2: 15 docs + 5 ADRs, pin v0.1.0 recorded, clean tree) | inferbench `b5cf196` |
 | All other tasks | todo | — |
 
@@ -85,6 +85,7 @@ Envelope: $150–250 (default, unconfirmed — RQ-2). Spent: $0. Sessions used: 
 - L1: Docker daemon must be started manually (`sudo dockerd &`) after container restart — check before any compose/scenario work.
 - L2: Component repos are local-only; commit early and often, and treat container loss as a real risk until RQ-1 is decided.
 - L3: Deterministic hashing in the mock needed a splitmix64 finalizer (raw FNV-64a clustered badly on short IDs) — reuse that pattern for any seeded determinism elsewhere.
+- L5: One implementation agent per repo at a time — dispatched IG-T007/8 while IG-T005 still held infergate (iter 8); stopped it before damage. Check running agents' repos before every dispatch.
 - L4: Environment acquisition order that works: PyPI/Go-proxy/apt-main only. Anything shipped as 'download from GitHub/HF/DockerHub' must be re-sourced via PyPI sdists, Go module proxy (go install), or apt — check before planning any task that needs new binaries/images.
 
 ## Deviations index
