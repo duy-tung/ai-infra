@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 12 (IB-T005/6 done+verified; otelcol built; IB-T008/9 dispatched; IG-T008 still running), 2026-07-09.
+Last updated: iteration 13 (IG-T007/8 done+verified; 5 agents running: IB-T008/9, IL-T002 P1, IO-T001, FL-T001, IG-T009/10), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -47,8 +47,13 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IB-T002 open-loop generator | done (schema-valid events; deterministic replay proven by digest; CO-safety test; race+vet green) | inferbench `6708154` |
 | IB-T003 workload suite v1 | done (8 workloads validate; dry-runs green vs gateway+mock) | inferbench `19d8ba2` |
 | IB-T004 streaming client correctness | done (calibration: client TTFT/ITL within ~1–2ms of configured; 17/17 cancels observed at mock) | inferbench `3b12013` |
-| IG-T007 tenancy+auth+registry | implementer-committed (2 commits, unverified) — agent killed by session rate limit mid-IG-T008 | infergate `f2f168a`,`1e2c138` |
-| IG-T008 usage accounting | in-progress (agent RESUMED 15:05 UTC from intact WIP) | — |
+| IG-T007 tenancy+auth+registry | done (orchestrator re-ran store/auth tests + conformance; revocation 506ms poller / 5.5ms reload vs 5s bound; 0 hot-path DB queries) | infergate `f2f168a`,`1e2c138` |
+| IG-T008 usage accounting | done (orchestrator re-ran usage tests + conformance; settle variance 0.0000% engine-grounded; DB-outage max enqueue 79.7µs, exactly-once drain; invariants doc w/ 10 invariants→tests) | infergate `fcd49b1`,`2d45fb9`,`562a641` |
+| IG-T009 RPM/TPM quotas | in-progress (agent dispatched iter 13) | — |
+| IG-T010 admission control | in-progress (same agent; G5 mechanism) | — |
+| IL-T002 Scenario A / I2 | in-progress (Phase-1 prep agent dispatched iter 13; Phase 2 after images rebuilt at IG-T008 HEAD) | — |
+| IO-T001 inferops docs bootstrap | in-progress (agent dispatched iter 13; pulled forward, parallel-safe) | — |
+| FL-T001 fleetlab docs bootstrap | in-progress (agent dispatched iter 13; pulled forward, parallel-safe) | — |
 | IB-T005 analysis core | done (orchestrator re-ran: 74 pytest + race green; pooled≠averaged proof; known-answer stats) | inferbench `d2ce815` |
 | IB-T006 report generator | done (orchestrator re-ran contracts-verify: result/manifests/events all ok; G4-candidate report at inferbench/reports/ib-t006-sample/report.md — review-queued in RQ-3) | inferbench `5a3da84` |
 | IB-T008 sweeps/replay/comparison | in-progress (agent dispatched iter 12) | — |
