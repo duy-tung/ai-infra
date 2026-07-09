@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 11 (post-reset: both interrupted agents resumed via SendMessage with WIP intact), 2026-07-09.
+Last updated: iteration 12 (IB-T005/6 done+verified; otelcol built; IB-T008/9 dispatched; IG-T008 still running), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -49,14 +49,16 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IB-T004 streaming client correctness | done (calibration: client TTFT/ITL within ~1–2ms of configured; 17/17 cancels observed at mock) | inferbench `3b12013` |
 | IG-T007 tenancy+auth+registry | implementer-committed (2 commits, unverified) — agent killed by session rate limit mid-IG-T008 | infergate `f2f168a`,`1e2c138` |
 | IG-T008 usage accounting | in-progress (agent RESUMED 15:05 UTC from intact WIP) | — |
-| IB-T005 analysis core | implementer-committed (unverified) | inferbench `664a9f4` |
-| IB-T006 report generator | in-progress (agent RESUMED 15:05 UTC from intact WIP) | — |
+| IB-T005 analysis core | done (orchestrator re-ran: 74 pytest + race green; pooled≠averaged proof; known-answer stats) | inferbench `d2ce815` |
+| IB-T006 report generator | done (orchestrator re-ran contracts-verify: result/manifests/events all ok; G4-candidate report at inferbench/reports/ib-t006-sample/report.md — review-queued in RQ-3) | inferbench `5a3da84` |
+| IB-T008 sweeps/replay/comparison | in-progress (agent dispatched iter 12) | — |
+| IB-T009 experiment governance | in-progress (same agent) | — |
 | IB-T001 inferbench docs bootstrap | done (verified iter 2: 15 docs + 5 ADRs, pin v0.1.0 recorded, clean tree) | inferbench `b5cf196` |
 | All other tasks | todo | — |
 
 ## Pins
 
-- contracts bundle: **v0.2.0** latest (additive MINOR: Contracts 5–7); infergate + inference-lab pin **v0.1.0** (sufficient for Contracts 1–4 consumers until IO/FL wire in). I1 not yet run (consumers not wired).
+- contracts bundle: **v0.2.0** latest; inferbench pins **v0.2.0** (needs cost/slo schemas; verified additive vs v0.1.0); infergate + inference-lab pin **v0.1.0**. I1 not yet run in full.
 - engine pins (from plan, re-verify at use): vLLM v0.24.x; llama.cpp by commit at IG-T005; OTel GenAI semconv pinned at SC-T005.
 
 ## Review queue
@@ -75,6 +77,8 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
   - models/tiny-llama-local.gguf — 38 MiB, ~19.7M params F16, random weights seed 42 + vendored SPM vocab, byte-reproducible, provenance in models/PROVENANCE.md. RQ-4 fallback model; swap for real 1–3B GGUF if network policy opens.
   - Cancellation observability: no dedicated cancel counter; slot release + `llamacpp:requests_processing` gauge → capability descriptor for IG-T005. Metrics prefix `llamacpp:` (no labels).
   - Scripts: build.sh, make-model.sh, run-llama-server.sh, smoke-test.sh (all reproducible).
+  - bin/otelcol-file — minimal OTel collector (otlp receiver → file/debug exporters), built iter 12 via ocb v0.114.0 from Go proxy; bin/builder. Prometheus via go install FAILED (module-path quirk) — revisit at Wave 4 (IO-T003) with a different acquisition route.
+  - docker build FROM scratch works (no registry needed) — static-Go images for gateway/mock are buildable locally.
 
 ## Budget ledger (GPU)
 
