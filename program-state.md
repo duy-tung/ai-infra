@@ -1,7 +1,27 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 16 (IG-T009/10 done+verified; IL-T002 Phase 2 + IG-T011 dispatched; running: IB-T008/9, FL-T002, IL-T002 P2, IG-T011), 2026-07-09.
+Last updated: iteration 17 (CONTAINER LOSS RECOVERY — see event log below), 2026-07-09.
+
+## ⚠ Container loss event (iteration 17, 2026-07-09 ~22:59 UTC)
+
+- The previous session's container was reclaimed. A **new session** started with a fresh container (new orchestration branch `claude/inference-portfolio-orchestration-i3cj4t`; old branch preserved on origin at same commit).
+- Only `/home/user/ai-infra` survived (re-cloned from GitHub). **All six local component repos and `/home/user/toolchain` are LOST** — confirmed by filesystem-wide search. In-flight agents from iter 16 (IG-T011, IL-T002 P2, IB-T008/9, FL-T002) died with the session; their partial work is lost too.
+- Consequence: every "done" status in the task board below is **knowledge, not evidence**. Per protocol, tasks count as done only when their verification evidence exists on disk. All component tasks are therefore in **rebuild** state; the board's evidence descriptions now serve as the rebuild acceptance bars.
+- Recovery strategy (iter 17+): rebuild in dependency order (contracts → toolchain/infergate → inferbench → the rest), one agent per repo (L5), re-verify each gate with fresh verifiers. New durability mitigation until RQ-1 is decided: after each iteration, git-bundle snapshots of changed component repos are sent into the user-visible chat (survives container loss; restorable via `git clone <bundle>`).
+- RQ-1 escalated to **CRITICAL** — the feared event happened and will happen again on the next reclaim.
+
+## Rebuild tracker (iteration 17+; a task leaves this list when re-verified on disk)
+
+| Stream | Scope | Status |
+|---|---|---|
+| serving-contracts | SC-T001..T005,T008,T009 (v0.1.0) then SC-T006/T007 (v0.2.0) | agent dispatched iter 17 |
+| toolchain | llama-server + tiny GGUF + otelcol-file | agent dispatched iter 17 |
+| inference-lab | IL-T001 skeleton | agent dispatched iter 17 |
+| infergate | IG-T001 docs (iter 17); IG-T002..T010 queued behind contracts fixtures | IG-T001 agent dispatched iter 17 |
+| inferbench | IB-T001..T006 queued behind contracts v0.2.0 | todo |
+| fleetlab / inferops | FL-T001, IO-T001 docs bootstraps | todo (after first wave of rebuild agents completes) |
+| re-verification | fresh-context verifiers per gate (G2 re-pass required) after streams rebuild | todo |
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -16,8 +36,8 @@ Last updated: iteration 16 (IG-T009/10 done+verified; IL-T002 Phase 2 + IG-T011 
 
 ## Workspace layout
 
-Planning repo: `/home/user/ai-infra` (branch `claude/inference-systems-orchestration-77l8wk`).
-Components (side-by-side local git repos, branch `main`): `/home/user/serving-contracts`, `/home/user/infergate`, `/home/user/inferbench`, `/home/user/fleetlab`, `/home/user/inferops`, `/home/user/inference-lab`.
+Planning repo: `/home/user/ai-infra` (branch `claude/inference-portfolio-orchestration-i3cj4t` since iter 17; old branch `claude/inference-systems-orchestration-77l8wk` preserved on origin at the same commit).
+Components (side-by-side local git repos, branch `main`): `/home/user/serving-contracts`, `/home/user/infergate`, `/home/user/inferbench`, `/home/user/fleetlab`, `/home/user/inferops`, `/home/user/inference-lab` — being rebuilt as of iter 17.
 
 ## Wave & gate status
 
@@ -72,7 +92,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 
 | ID | Question | Blocks | Status |
 |---|---|---|---|
-| RQ-1 | Remote hosting: create six GitHub repos (`serving-contracts`, `infergate`, `inferbench`, `fleetlab`, `inferops`, `inference-lab`) under your account? Needed for durability (this container is ephemeral) and for OSS-visible portfolio. | Nothing immediately; durability risk grows each wave | open (surfaced iter 0) |
+| RQ-1 | **CRITICAL (escalated iter 17 — the risk materialized: all component work was lost in a container reclaim).** Remote hosting: approve creation of six GitHub repos (`serving-contracts`, `infergate`, `inferbench`, `fleetlab`, `inferops`, `inference-lab`) under your account, then add them to session scope so I can push. Interim mitigation active: git-bundle snapshots delivered to chat each iteration. | Durability of ALL rebuilt work; every idle gap risks another loss | open — **needs answer** (surfaced iter 0, escalated iter 17) |
 | RQ-3 | Wave-1 exit review batch (non-blocking, queue-and-continue): infergate boundary doc (`infergate/docs/architecture.md` §1 + ADR-0001), inference-lab skeleton structure, and (when released) contracts v0.1.0 release notes. | Nothing — deviation policy allows continuing; feedback folded in when received | open (accumulating until Wave 1 exit) |
 | RQ-4 | Network policy blocks huggingface.co, github.com downloads, AND all container-image pulls (Docker Hub CDN 403). Wave 2/3 proceed fine with proven fallbacks (native llama-server from PyPI sdist; apt PostgreSQL; local tiny GGUF). **But Wave 4/5 Kubernetes work (kind/k3s clusters, I5) cannot run without images.** Request: allow huggingface.co (I3/I4 model realism), github.com release assets, and container registries (registry-1.docker.io + production.cloudfront.docker.com, registry.k8s.io, quay.io, ghcr.io) in the environment network settings — or tell me to plan I5/I7 around process-based (non-K8s) fallbacks with a recorded scope deviation. | I3/I4 realism; **I5 (Wave 4/5) entirely** | open (surfaced iter 3, expanded iter 8) |
 | RQ-2 | Confirm four planning defaults (13 §7): six-repo strategy (default: yes), GPU budget envelope (default $150–250, alerts 50%/80%), OSS primary target (default: Gateway API Inference Extension), career overlay excluded (default: yes). | GPU spend (Wave 4) blocks on budget; rest proceed on defaults | open — defaults applied provisionally (surfaced iter 0) |
@@ -98,6 +118,7 @@ Envelope: $150–250 (default, unconfirmed — RQ-2). Spent: $0. Sessions used: 
 - L3: Deterministic hashing in the mock needed a splitmix64 finalizer (raw FNV-64a clustered badly on short IDs) — reuse that pattern for any seeded determinism elsewhere.
 - L5: One implementation agent per repo at a time — dispatched IG-T007/8 while IG-T005 still held infergate (iter 8); stopped it before damage. Check running agents' repos before every dispatch.
 - L4: Environment acquisition order that works: PyPI/Go-proxy/apt-main only. Anything shipped as 'download from GitHub/HF/DockerHub' must be re-sourced via PyPI sdists, Go module proxy (go install), or apt — check before planning any task that needs new binaries/images.
+- L6: Container reclaim DID happen (iter 17) and erased all local-only repos + in-flight agent work. Until remotes exist: (a) send git-bundle snapshots to chat every iteration, (b) keep program-state evidence bars detailed enough to rebuild from, (c) never leave long idle gaps with unsnapshotted work.
 
 ## Deviations index
 
