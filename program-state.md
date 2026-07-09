@@ -17,7 +17,7 @@ Last updated: iteration 17 (CONTAINER LOSS RECOVERY — see event log below), 20
 |---|---|---|
 | serving-contracts | SC-T001..T005,T008,T009 (v0.1.0) then SC-T006/T007 (v0.2.0) | agent dispatched iter 17 |
 | toolchain | llama-server + tiny GGUF + otelcol-file | agent dispatched iter 17 |
-| inference-lab | IL-T001 skeleton | agent dispatched iter 17 |
+| inference-lab | IL-T001 skeleton | **REBUILT + orchestrator-verified iter 17** (pins validator green 5 pins, 15 docs, clean tree; commits `3b5927b`→`a9df75c`; pins carry no proven_at claims from lost evidence) |
 | infergate | IG-T001 docs (iter 17); IG-T002..T010 queued behind contracts fixtures | IG-T001 agent dispatched iter 17 |
 | inferbench | IB-T001..T006 queued behind contracts v0.2.0 | todo |
 | fleetlab / inferops | FL-T001, IO-T001 docs bootstraps | todo (after first wave of rebuild agents completes) |
