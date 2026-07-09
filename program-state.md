@@ -19,7 +19,7 @@ Last updated: iteration 17 (CONTAINER LOSS RECOVERY — see event log below), 20
 | toolchain | llama-server + tiny GGUF + otelcol-file | **REBUILT + orchestrator-verified iter 17** (smoke-test 8/8 exit 0 re-run by orchestrator; new model sha256 95e428ca…7354 byte-reproducible; sdist sha256 matches recorded pin; llama.cpp 78d2f52 self-reported by binary — provenance caveat recorded in toolchain README: not diffable vs upstream under network policy) |
 | inference-lab | IL-T001 skeleton | **REBUILT + orchestrator-verified iter 17** (pins validator green 5 pins, 15 docs, clean tree; commits `3b5927b`→`a9df75c`; pins carry no proven_at claims from lost evidence) |
 | infergate | IG-T001 docs (iter 17); IG-T002..T010 queued behind contracts fixtures | IG-T001 **REBUILT + orchestrator-verified iter 17** (15 docs, 7 ADRs, clean tree, commit `8b6210f`; D2/D3 re-recorded as standing deviations, D-R1 rebuild deviation added) |
-| fleetlab docs | FL-T001 bootstrap | agent dispatched iter 17 |
+| fleetlab docs | FL-T001 bootstrap | **REBUILT + orchestrator-verified iter 17** (15 docs + ADR-0001 hybrid simulator, clean tree, commit `6a92e1b`; R9 guardrails structural as rules G-1..G-8 with named enforcement checks; D-R1/D-R2 recorded) |
 | inferops docs | IO-T001 bootstrap (incl. RQ-4 dual-path ADR) | agent dispatched iter 17 |
 | inferbench | IB-T001..T006 queued behind contracts v0.2.0 | todo |
 | re-verification | fresh-context verifiers per gate (G2 re-pass required) after streams rebuild | todo |
