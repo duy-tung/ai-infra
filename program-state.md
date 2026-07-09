@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 0 (bootstrap), 2026-07-09.
+Last updated: iteration 1 (contracts v0.1.0 released), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -27,13 +27,15 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 
 | Task | Status | Evidence / commit |
 |---|---|---|
-| SC-T001 policy+docs bootstrap | implementer-done; fresh verifier running | serving-contracts `8a4de1f` |
-| SC-T002 inference API contract | implementer-done; fresh verifier running (spot-check: spec validates, 36 fixtures) | serving-contracts `116d903` |
-| SC-T003 benchmark data schemas | implementer-done; fresh verifier running (8 workloads validate) | serving-contracts `d604a72` |
-| SC-T004 backend-capability schema | implementer-done; fresh verifier running | serving-contracts `f2d1b2d` |
-| SC-T005 metrics vocabulary | implementer-done; fresh verifier running (11/11 metrics; semconv pin v1.36.0 dated 2026-07) | serving-contracts `15edc81` |
-| SC-T008 consumer compatibility kit | implementer-done; fresh verifier running (orchestrator re-ran `make contracts-verify`: 65 checks, 0 failures) | serving-contracts `8173098` |
-| SC-T009 release v0.1.0 | blocked-on(verifier verdict); tag is orchestrator's job; release-notes review = queue-and-continue (pre-1.0, not a MAJOR, so not a hard block) | — |
+| SC-T001 policy+docs bootstrap | done (verifier PASS) | serving-contracts `8a4de1f` |
+| SC-T002 inference API contract | done (verifier PASS: exact field subset, 10 error classes, 36 fixtures) | serving-contracts `116d903` |
+| SC-T003 benchmark data schemas | done (verifier PASS: pooled-percentile/shed-adjacent/validity-block enforced structurally) | serving-contracts `d604a72` |
+| SC-T004 backend-capability schema | done (verifier PASS) | serving-contracts `f2d1b2d` |
+| SC-T005 metrics vocabulary | done (verifier PASS: 11/11 metrics match Contract 2; semconv v1.36.0 pinned) | serving-contracts `15edc81` |
+| SC-T008 consumer compatibility kit | done (verifier PASS: 65 checks green, negative tests exit 1) | serving-contracts `8173098` |
+| SC-T009 release v0.1.0 | done — tag `v0.1.0` created after RELEASE-READY audit; release notes in docs/releases/v0.1.0.md; review queued (RQ-3); deviation D1 recorded in SC implementation-notes | serving-contracts `6619185` + tag |
+| SC-T006 deployment+fault contracts | in-progress (agent dispatched) | — |
+| SC-T007 fleet schemas | in-progress (same agent) | — |
 | IL-T001 inference-lab skeleton | done (verified iter 0: pins validator green, 15-doc set present, clean tree) | inference-lab `4fb1036` |
 | IG-T001 infergate docs bootstrap | done (verified iter 0: 15 docs + 7 ADRs, clean tree) | infergate `60458ac` |
 | IG-T002 gateway skeleton + mock | in-progress (agent dispatched; SC-T002 evidence exists, pin = SC HEAD `8173098`, re-pin at tag) | — |
@@ -42,7 +44,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 
 ## Pins
 
-- contracts bundle: none released yet (target v0.1.0 at SC-T009).
+- contracts bundle: **v0.1.0** (tag in /home/user/serving-contracts; archive digest pinned in inference-lab pins.yaml, commit aff5426). I1 not yet run (consumers not wired).
 - engine pins (from plan, re-verify at use): vLLM v0.24.x; llama.cpp by commit at IG-T005; OTel GenAI semconv pinned at SC-T005.
 
 ## Review queue
