@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 14b (FL-T001 + IO-T001 done; 3 agents running: IB-T008/9, IL-T002 P1, IG-T009/10), 2026-07-09.
+Last updated: iteration 15 (IL-T002 Phase 1 done; FL-T002 dispatched; running: IB-T008/9, IG-T009/10, FL-T002), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -51,7 +51,8 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IG-T008 usage accounting | done (orchestrator re-ran usage tests + conformance; settle variance 0.0000% engine-grounded; DB-outage max enqueue 79.7µs, exactly-once drain; invariants doc w/ 10 invariants→tests) | infergate `fcd49b1`,`2d45fb9`,`562a641` |
 | IG-T009 RPM/TPM quotas | in-progress (agent dispatched iter 13) | — |
 | IG-T010 admission control | in-progress (same agent; G5 mechanism) | — |
-| IL-T002 Scenario A / I2 | in-progress (Phase-1 prep agent dispatched iter 13; Phase 2 after images rebuilt at IG-T008 HEAD) | — |
+| IL-T002 Scenario A / I2 | Phase 1 DONE (scenario runnable; partial evidence: 162 peak in-flight, TTFT agreement +0.72ms, cancel p95 0.59ms, traces/metrics/schema verdicts PASS; images already at post-IG-T008 commit 562a641 — usage rows observed informationally). Phase 2 (final acceptance) deliberately waits for IG-T010 so queue.wait span completes the sequence | inference-lab `3eb2abc` |
+| FL-T002 fleetlab ingestion | in-progress (agent dispatched iter 15) | — |
 | IO-T001 inferops docs bootstrap | done (verified iter 14: 15 docs + tooling ADR Kustomize+raw; RQ-4 dual-path A/B with semantics-preservation map) | inferops `2231096` |
 | FL-T001 fleetlab docs bootstrap | done (verified iter 14: 15 docs + ADR-0001 hybrid simulator; R9 guardrails structural; pins v0.2.0) | fleetlab `19222e8` |
 | IB-T005 analysis core | done (orchestrator re-ran: 74 pytest + race green; pooled≠averaged proof; known-answer stats) | inferbench `d2ce815` |
