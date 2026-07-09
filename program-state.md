@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 2 (IB-T001 done), 2026-07-09.
+Last updated: iteration 3 (IG-T002/T004 + SC-T006/T007 done; v0.2.0 tagged; IG-T003 dispatched), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -34,18 +34,19 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | SC-T005 metrics vocabulary | done (verifier PASS: 11/11 metrics match Contract 2; semconv v1.36.0 pinned) | serving-contracts `15edc81` |
 | SC-T008 consumer compatibility kit | done (verifier PASS: 65 checks green, negative tests exit 1) | serving-contracts `8173098` |
 | SC-T009 release v0.1.0 | done — tag `v0.1.0` created after RELEASE-READY audit; release notes in docs/releases/v0.1.0.md; review queued (RQ-3); deviation D1 recorded in SC implementation-notes | serving-contracts `6619185` + tag |
-| SC-T006 deployment+fault contracts | in-progress (agent dispatched) | — |
-| SC-T007 fleet schemas | in-progress (same agent) | — |
+| SC-T006 deployment+fault contracts | done (orchestrator re-ran validator: 103 checks green; 12 fault scenarios FS-01..12; grace>max-stream structural) | serving-contracts `f219e05` |
+| SC-T007 fleet schemas | done (provenance-mandatory quantities; Scenario E worked example chain) | serving-contracts `f8a21a7`; released as tag `v0.2.0` |
 | IL-T001 inference-lab skeleton | done (verified iter 0: pins validator green, 15-doc set present, clean tree) | inference-lab `4fb1036` |
 | IG-T001 infergate docs bootstrap | done (verified iter 0: 15 docs + 7 ADRs, clean tree) | infergate `60458ac` |
-| IG-T002 gateway skeleton + mock | in-progress (agent dispatched; SC-T002 evidence exists, pin = SC HEAD `8173098`, re-pin at tag) | — |
-| IG-T004 config snapshots + drain | in-progress (same agent, sequential after IG-T002) | — |
+| IG-T002 gateway skeleton + mock | done (orchestrator re-ran: vet clean, race tests ok, CONFORMANCE PASS; auth/permission/rate_limited deferred to IG-T007/T009 by design) | infergate `3d089cb`,`27969ae`,`1cd4431` |
+| IG-T004 config snapshots + drain | done (reload under traffic 5421 req / 0 fail; publish 2.1ms vs 5s budget; e2e drain test green) | infergate `9f83e0a` |
+| IG-T003 SSE relay + cancellation | in-progress (agent dispatched iter 3; G2 gate follows) | — |
 | IB-T001 inferbench docs bootstrap | done (verified iter 2: 15 docs + 5 ADRs, pin v0.1.0 recorded, clean tree) | inferbench `b5cf196` |
 | All other tasks | todo | — |
 
 ## Pins
 
-- contracts bundle: **v0.1.0** (tag in /home/user/serving-contracts; archive digest pinned in inference-lab pins.yaml, commit aff5426). I1 not yet run (consumers not wired).
+- contracts bundle: **v0.2.0** latest (additive MINOR: Contracts 5–7); infergate + inference-lab pin **v0.1.0** (sufficient for Contracts 1–4 consumers until IO/FL wire in). I1 not yet run (consumers not wired).
 - engine pins (from plan, re-verify at use): vLLM v0.24.x; llama.cpp by commit at IG-T005; OTel GenAI semconv pinned at SC-T005.
 
 ## Review queue
@@ -64,6 +65,7 @@ Envelope: $150–250 (default, unconfirmed — RQ-2). Spent: $0. Sessions used: 
 
 - L1: Docker daemon must be started manually (`sudo dockerd &`) after container restart — check before any compose/scenario work.
 - L2: Component repos are local-only; commit early and often, and treat container loss as a real risk until RQ-1 is decided.
+- L3: Deterministic hashing in the mock needed a splitmix64 finalizer (raw FNV-64a clustered badly on short IDs) — reuse that pattern for any seeded determinism elsewhere.
 
 ## Deviations index
 
