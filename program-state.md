@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 6 (toolchain ready: native llama-server + local GGUF), 2026-07-09.
+Last updated: iteration 7 (IG-T006 done; IG-T005 dispatched; IB chain running), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -42,8 +42,8 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IG-T002 gateway skeleton + mock | done (orchestrator re-ran: vet clean, race tests ok, CONFORMANCE PASS; auth/permission/rate_limited deferred to IG-T007/T009 by design) | infergate `3d089cb`,`27969ae`,`1cd4431` |
 | IG-T004 config snapshots + drain | done (reload under traffic 5421 req / 0 fail; publish 2.1ms vs 5s budget; e2e drain test green) | infergate `9f83e0a` |
 | IG-T003 SSE relay + cancellation | done — **GATE G2 PASSED** (fresh verifier: all checks PASS, zero defects; noted minor test-design caveats in verifier report) | infergate `0d5256b..c27e93d` |
-| IG-T006 observability per contract | in-progress (agent dispatched iter 5) | — |
-| IG-T005 llama.cpp adapter | todo — unblocked (toolchain ready); dispatch after IG-T006 finishes (same repo) | — |
+| IG-T006 observability per contract | done (orchestrator re-ran: telemetry tests race-green, CONFORMANCE PASS; 7 metrics live exact-per-contract, queue/retry metrics honestly deferred to IG-T010/T013; spans recv→connect→ttft→relay→settle evidenced) | infergate `8d3afd8`,`c906780` |
+| IG-T005 llama.cpp adapter | in-progress (agent dispatched iter 7 vs native llama-server) | — |
 | IB-T002 open-loop generator | in-progress (agent dispatched iter 4) | — |
 | IB-T003 workload suite v1 | in-progress (same agent) | — |
 | IB-T004 streaming client correctness | in-progress (same agent) | — |
