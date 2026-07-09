@@ -11,7 +11,8 @@ Last updated: iteration 3 (IG-T002/T004 + SC-T006/T007 done; v0.2.0 tagged; IG-T
 - kind / kubectl / kustomize / k3s: **not installed** — install at Wave 4 (IO-T002); network permitting.
 - Network: outbound HTTPS via agent proxy. Verified working: Go module proxy (go get succeeded). PyPI assumed working (not yet exercised). GitHub API via MCP tools only (no `gh` CLI).
 - Remote repos: session GitHub scope is `duy-tung/ai-infra` only. Creating six GitHub repos = external-resource hard block → review-queued (RQ-1). Components are **local-only git repos** until decided.
-- Unknown unknowns logged: llama.cpp availability via proxy (Wave 2); model download (HuggingFace GGUF) via proxy (Wave 2); kind image pulls via proxy (Wave 4); GPU rental provider access from this environment (Wave 4, G6); container ephemerality — local component repos live only in this container until remotes exist (mitigation: RQ-1 decision, or bundle backups).
+- Network policy (measured iter 3): package registries bypass the proxy (PyPI, proxy.golang.org, npm, crates — all work); **huggingface.co and github.com downloads are DENIED** by the gateway (CONNECT 403). Consequences: no GGUF model download, no GitHub release binaries (llama-server, kind, kubectl). Verified fallback: `llama-cpp-python` 0.3.33 installs from PyPI (vendored llama.cpp) and imports; `gguf` package available to craft a tiny random-weight model locally if policy can't change (deviation would be recorded — I3 realism reduced). → RQ-4.
+- Remaining unknown unknowns: kind/kubectl acquisition path under this policy (Wave 4); GPU rental provider access (Wave 4, G6); container ephemerality until RQ-1 decided.
 
 ## Workspace layout
 
@@ -55,6 +56,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 |---|---|---|---|
 | RQ-1 | Remote hosting: create six GitHub repos (`serving-contracts`, `infergate`, `inferbench`, `fleetlab`, `inferops`, `inference-lab`) under your account? Needed for durability (this container is ephemeral) and for OSS-visible portfolio. | Nothing immediately; durability risk grows each wave | open (surfaced iter 0) |
 | RQ-3 | Wave-1 exit review batch (non-blocking, queue-and-continue): infergate boundary doc (`infergate/docs/architecture.md` §1 + ADR-0001), inference-lab skeleton structure, and (when released) contracts v0.1.0 release notes. | Nothing — deviation policy allows continuing; feedback folded in when received | open (accumulating until Wave 1 exit) |
+| RQ-4 | Environment network policy denies `huggingface.co` and `github.com` downloads (CONNECT 403). Please allow at least huggingface.co (GGUF model for I3 realism) and ideally github.com release assets (native llama-server; kind/kubectl for Wave 4) in the environment's network settings — see https://code.claude.com/docs/en/claude-code-on-the-web. Fallback if not: locally-crafted tiny random GGUF + llama-cpp-python server (recorded deviation; correctness evidence unaffected, benchmark realism reduced). | I3 realism (Wave 2 exit); Wave 4 tooling | open (surfaced iter 3) |
 | RQ-2 | Confirm four planning defaults (13 §7): six-repo strategy (default: yes), GPU budget envelope (default $150–250, alerts 50%/80%), OSS primary target (default: Gateway API Inference Extension), career overlay excluded (default: yes). | GPU spend (Wave 4) blocks on budget; rest proceed on defaults | open — defaults applied provisionally (surfaced iter 0) |
 
 ## Budget ledger (GPU)
