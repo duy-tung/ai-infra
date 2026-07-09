@@ -91,7 +91,7 @@ Any core runtime logic, any duplicated capability. It composes released artifact
 |---|---|
 | Request/response/SSE shapes needed by infergate, inferbench, inferops smoke tests | `serving-contracts` OpenAPI + examples; consumers validate against fixtures |
 | TTFT/ITL/goodput definitions needed by infergate (metrics), inferbench (analysis), fleetlab (models) | `serving-contracts` metric vocabulary defines names, units, histogram buckets, and measurement points |
-| Workload definitions needed by inferbench (generation) and fleetlab (arrival models) | `serving-contracts` workload schema; both consume the same versioned files |
+| Workload definitions needed by inferbench (generation) and fleetlab (arrival models) | `serving-contracts` owns the workload **schema** (plus non-normative fixtures); `inferbench` authors the canonical versioned workload files; `fleetlab` consumes inferbench's files |
 | Fault scenarios needed by inferops (injection) and infergate (expected semantics tests) | `serving-contracts` fault-scenario schema enumerates the 12 scenarios and expected client-visible behavior |
 | Deployment expectations needed by infergate (image) and inferops (manifests) | `serving-contracts` deployment contract (image/digest, ports, probes, env, model mount, resources, termination) |
 | Mock backend needed by infergate CI and inferbench targets | Owned by infergate, consumed by others as a released image — not copied |

@@ -11,10 +11,10 @@ Task fields (schema from the program brief): **Repo · Complexity (S/M/L) · Cri
 **Wave 0 — Inspect & lock boundaries.** Completed by this planning run: source inspection, evidence inventory, blind-spot pass (`13-evidence-assumptions-and-deviations.md`), boundaries locked (`02`, `03`).
 
 **Wave 1 — Contracts core + gateway spine.** Start: user approves plan. Tasks: SC-T001–T005, SC-T008–T009; IL-T001; IG-T001–T002, IG-T004. Exit gate: contracts `v0.1.0` released; gateway serves non-streaming completions from mock; consumer fixture validation green (I1 partial).
-**Wave 2 — Streaming, cancellation, first engine, bench core.** Tasks: IG-T003, IG-T005–T006; IB-T001–T004; SC-T006–T007; IL-T002 (→ **I2**), IL-T003 (→ **I3**). Exit gate: I2 and I3 accepted.
-**Wave 3 — Multi-tenancy, admission, bench validity, OSS start.** Tasks: IG-T007–T011; IB-T005–T006, IB-T009–T010; IL-T010. Exit gate: overload evidence produced (admission on/off, goodput protected); analysis pipeline emits schema-valid results; OSS primary target built locally.
+**Wave 2 — Streaming, cancellation, first engine, bench core.** Tasks: IG-T003, IG-T005–T006; IB-T001–T006; SC-T006–T007; IL-T002 (→ **I2**), IL-T003 (→ **I3**). Exit gate: I2 and I3 accepted (I3 requires the IB-T005/T006 analysis+report pipeline, so both sit in this wave).
+**Wave 3 — Multi-tenancy, admission, bench validity, OSS start.** Tasks: IG-T007–T011; IB-T008–T010; IL-T010. Exit gate: overload evidence produced (admission on/off, goodput protected); sweep/replay tooling proven on mock; OSS primary target built locally.
 **Wave 4 — GPU path + ops baseline.** Tasks: IG-T012–T014, IG-T016; IB-T007, IB-T011; IO-T001–T004; IL-T004 (→ **I4**). GPU gate opens here (budget rules below). Exit gate: I4 accepted; kind cluster runs gateway+mock with observability.
-**Wave 5 — Kubernetes operations, failure campaigns begin, fleetlab core, study artifacts, OSS reproduction.** Tasks: IO-T005–T006, IO-T008; FL-T001–T005; IG-T015, IG-T017–T018; IL-T005 (→ **I5**); IL-T011; SC-T010. Exit gate: I5 accepted; fleetlab ingests real benchmark results; OSS reproducer communicated upstream.
+**Wave 5 — Kubernetes operations, failure campaigns begin, fleetlab core, study artifacts, OSS reproduction.** Tasks: IO-T005–T006, IO-T008, IO-T010; FL-T001–T005; IG-T015, IG-T017–T018; IL-T005 (→ **I5**); IL-T011; SC-T010. Exit gate: I5 accepted; fleetlab ingests real benchmark results; OSS reproducer communicated upstream.
 **Wave 6 — Capacity feedback + autoscaling comparison + campaign completion.** Tasks: FL-T006–T009; IO-T007, IO-T009; IB-T012 (stretch); IL-T006 (→ **I6**), IL-T007 (→ **I7**). Exit gate: I6 and I7 accepted with published evidence.
 **Wave 7 — Freeze, reproducibility audit, release, OSS follow-through.** Tasks: IL-T008–T009, IL-T012. Feature freeze at wave entry; only reliability fixes, evidence, and docs after. Exit gate: **I8** accepted.
 
@@ -25,12 +25,14 @@ Start/pause/skip conditions per wave: a wave starts when its listed prerequisite
 ```text
 SC-T001 → SC-T002/T003 → SC-T009 (v0.1.0)
   → IG-T002 → IG-T003 → IB-T002 → IB-T004 → IL-T002 (I2)
-  → IG-T005 → IL-T003 (I3) → IB-T005 → IB-T006
+  → IG-T005 → IB-T005 → IB-T006 → IL-T003 (I3)
   → IG-T010 → IG-T012 → IG-T013 → IG-T014 (GPU) → IL-T004 (I4)
-  → IO-T002 → IO-T003 → IO-T004 → IO-T005 → IL-T005 (I5)
+  → IG-T016 → IO-T002 → IO-T003 → IO-T004 → IO-T005 → IL-T005 (I5)
   → FL-T002 → FL-T003 → FL-T004 → FL-T006 → FL-T009 → IL-T006 (I6)
   → IO-T006/T007 → IL-T007 (I7) → IL-T009 (I8)
 ```
+
+This listing is the primary spine. Register tasks flagged `CP` that do not appear on the spine (SC-T005, SC-T008, IG-T001, IB-T010, IL-T001) sit on **binding side-chains**: they must complete before a spine gate passes (e.g. SC-T005/SC-T008 before G1, IG-T001 before any IG implementation task, IB-T010 before G5, IL-T001 before I2) but are not themselves spine hops.
 
 Everything else runs off-path in parallel. The longest risk concentrations: IG-T003 (streaming/cancellation correctness), IG-T014 + IL-T004 (first GPU work), FL-T004→I6 (models must fit real data), and OSS latency (external).
 
@@ -82,6 +84,8 @@ Single reviewer (the user). Mandatory review points: contract releases (SC-T009,
 ---
 
 ## 8. Task register
+
+Abbreviation rule: docs-bootstrap tasks (`*-T001`) and pattern-repeat entries (e.g. IO-T007, IL-T003–T005) are abbreviated here; their full schema fields (requirement, expected files, review focus, verification, evidence, integration impact, stop condition) are embedded in the corresponding repository prompt under `prompts/`, which is the normative source for those entries.
 
 ### serving-contracts
 
@@ -144,8 +148,8 @@ Requirement: token estimation, estimate-debit/settle-refund, async idempotent ap
 **IG-T009 — RPM/TPM quotas.** IG · S · CP:no · Par:yes · Required.
 Requirement: two-sided token buckets per tenant; typed 429 + `Retry-After`. Deps: IG-T008. Review: estimate-vs-settle interaction. Verify: quota tests. Evidence: tests. Integration: fairness experiments. Stop: tests green.
 
-**IG-T010 — Admission control.** IG · L · CP · Par:no · Required.
-Requirement: bounded per-tenant queues, queue deadlines, global in-flight budget, load shedding with typed errors. Deps: IG-T003; parallel-safe with T007–T009. Review: bound choices; shed reason taxonomy. Verify: saturation test (queue full → shed; accepted work protected). Evidence: tests + metrics. Integration: G5, fault scenario 6. Stop: overload behavior matches spec.
+**IG-T010 — Admission control.** IG · L · CP · Par:yes (with the tenancy stream IG-T007–T009 only; serialize with other CP tasks) · Required.
+Requirement: bounded per-tenant queues, queue deadlines, global in-flight budget, load shedding with typed errors. Deps: IG-T003. Review: bound choices; shed reason taxonomy. Verify: saturation test (queue full → shed; accepted work protected). Evidence: tests + metrics. Integration: G5, fault scenario 6. Stop: overload behavior matches spec.
 
 **IG-T011 — Fairness + starvation prevention.** IG · M · CP:no · Par:yes · Required.
 Requirement: priority tiers, WRR, aging; noisy-neighbor protection (tenant A 10× load → tenant B p95 shift bounded). Deps: IG-T010. Review: fairness policy. Verify: noisy-neighbor test. Evidence: test + graphs. Integration: overload evidence. Stop: bounded-shift criterion met.

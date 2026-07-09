@@ -136,7 +136,7 @@ fleetlab does NOT own and must never grow: provisioning; Kubernetes controllers;
 
 | # | Milestone | Depends on | Acceptance criteria |
 |---|---|---|---|
-| M1 | Docs bootstrap | approved plan | all 16 docs/ entries exist and are repo-specific; reviewed |
+| M1 | Docs bootstrap | approved plan | all 15 docs/ files + the `adr/` directory exist and are repo-specific; reviewed |
 | M2 | Contract-conformant ingestion | M1; contracts bundle pinned; sample data from inferbench | golden-file tests green; real inferbench files ingest cleanly; provenance-less profiles and fabricated defaults rejected with typed errors; consumer fixture validation wired into CI (I1 obligation) |
 | M3 | Core models validated | M2 | arrival/length/token-rate/Little's-law/KV-memory models unit-tested with known-answer limits; KV formula cross-checked against measured llama.cpp/vLLM engine memory where available, within stated error; model-validation note published with all assumptions flagged |
 | M4 | Fitted profiles + G8 holdout | M3; benchmark corpus (IB-T010 CPU, IB-T011 GPU if available) | per-(hardware, model, engine-config) goodput/memory profiles fitted with error bars; **G8 gate: prediction of a holdout benchmark run (not used for fitting) within stated error bars, or the miss documented as a limitation** — either outcome is publishable; validation report reviewed (mandatory human review point) |
@@ -153,7 +153,7 @@ Field key: **Goal/Repo · Requirement/Hypothesis · Deps/Expected files · Compl
 
 ### FL-T001 — Planning docs bootstrap
 - **Goal/Repo:** create the full docs set (§5) in fleetlab.
-- **Requirement:** all 16 docs/ entries, repo-specific, embedding non-goals, the simulation-≠-production pledge, and the G8 holdout protocol.
+- **Requirement:** all 15 docs/ files + the `adr/` directory, repo-specific, embedding non-goals, the simulation-≠-production pledge, and the G8 holdout protocol.
 - **Deps:** approved plan. **Expected files:** `docs/*`, `docs/adr/0001-stack-and-simulator-style.md`.
 - **Complexity:** M. **CP:** no. **Par:** yes. **Required.**
 - **Review focus:** scope/non-goals honesty; holdout protocol correctness; no boilerplate.

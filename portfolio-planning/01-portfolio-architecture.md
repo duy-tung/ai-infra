@@ -95,7 +95,7 @@ Consolidation triggers (any of these forces a user-review decision, see `10-risk
 
 | Area | Decision | Basis |
 |---|---|---|
-| Gateway language | Go | Existing strength; ecosystem fit (GAIE EPP, llm-d, AIBrix, Envoy AI Gateway control planes are Go) |
+| Gateway language | Go | Existing strength; ecosystem fit (GAIE EPP, llm-d, AIBrix, Envoy AI Gateway control planes are Go — source-reported, as of 2026-07) |
 | Load generator | Go (open-loop, Poisson, seeded) | Correct latency measurement requires open-loop; Go concurrency strength |
 | Analysis | Python (pandas/matplotlib or equivalent) | Deliberate Python-deepening goal; standard analysis stack |
 | Simulation | Python (`fleetlab`) | Numeric/statistical tooling; second Python artifact |

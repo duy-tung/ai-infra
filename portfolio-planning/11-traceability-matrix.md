@@ -60,4 +60,4 @@ Three mappings: (1) program-brief requirements → artifacts/tasks/milestones; (
 | OSS as post-program option | **Deviated** — in-scope track with minimum target | `09`; `13` |
 | No university courses at all | **Partially deviated** — selected 6.5840/15-445 topics with mandatory artifacts (brief mandate); artifact-or-drop rule preserved | `08`; `13` |
 | Interview/English/application overlay | **Excluded** from repository planning (out of scope for this program) | `13` |
-| Agent runtime design note (study exercise) | **Adopted as optional stretch note** (not a milestone) | `08` §7 context; excluded from baseline scope |
+| Agent runtime design note (study exercise) | **Adopted as optional stretch note** (not a milestone) | `08` §7; excluded from baseline scope |

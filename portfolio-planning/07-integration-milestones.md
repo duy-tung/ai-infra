@@ -66,7 +66,8 @@ Common rules: every milestone runs against pinned released artifacts recorded in
 
 ## I8 — Portfolio release
 
-**Owner:** inference-lab. **Prerequisites:** I1–I7 accepted; OSS minimum target met or contingency documented; IL-T009.
+**Owner:** inference-lab. **Prerequisites:** I1–I7 accepted; OSS minimum target met or contingency documented; IL-T009. **Pins:** the full frozen release set recorded in the compatibility matrix (contracts v1.0.x, final infergate/mock images, inferbench/fleetlab/inferops release tags, engine/model/driver pins from the accepted milestones).
+**Future commands (indicative):** timed fresh-clone quickstart run (`git clone … && make quickstart`, stopwatch ≤15 min); reproducibility-audit checklist script over the headline claims.
 **Acceptance:** fresh-clone quickstart reproduces Scenario A in ≤15 minutes on a GPU-free machine; demo script + recorded demo; benchmark report(s) and capacity report published with validity blocks; failure-campaign evidence linked; OSS evidence (public links) recorded; compatibility matrix current; reproducibility audit passed (a fresh session can re-derive every headline claim from pinned artifacts); honest limitations section published.
 **Failure handling:** any headline claim that cannot be reproduced is removed or re-measured — no exceptions.
 **Evidence:** release tag of inference-lab + the audit checklist.

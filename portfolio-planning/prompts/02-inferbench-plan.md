@@ -184,7 +184,7 @@ docs/
 
 | # | Milestone | Contents | Acceptance criteria |
 |---|---|---|---|
-| M1 | Plan & docs | IB-T001 | all 16 docs entries exist with repo-specific content; reviewed |
+| M1 | Plan & docs | IB-T001 | all 15 docs/ files + the `adr/` directory exist with repo-specific content; reviewed |
 | M2 | Generator core | IB-T002, IB-T003 | open-loop + Poisson + seeds; 8 workloads validate against pinned schema and dry-run vs the released mock image; emitted JSONL events schema-valid; same seed → identical send schedule; CO-safety design reviewed |
 | M3 | Measurement correctness | IB-T004 | client TTFT/ITL vs mock's configured latencies agree within declared tolerance (calibration report vs mock); cancellation issuance works at all 3 points; slow-client emulation bounded-rate verified |
 | M4 | Analysis & reports (G4) | IB-T005, IB-T006 | synthetic known-answer statistics tests green; pooled-percentile + shed-adjacent-goodput + stall-rate enforced in code; sample end-to-end report from a mock run is schema-valid and passes G4 methodology review |

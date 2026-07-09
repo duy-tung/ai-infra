@@ -159,7 +159,7 @@ docs/
 
 | # | Milestone | Depends on | Acceptance criteria |
 |---|---|---|---|
-| M1 | Docs + tooling ADR | prompt approval | all 16 docs exist with content; ADR-0001 (tooling) reviewed |
+| M1 | Docs + tooling ADR | prompt approval | all 15 docs/ files + the `adr/` directory exist with content; ADR-0001 (tooling) reviewed |
 | M2 | CPU cluster baseline | M1; infergate release IG-T016; contracts bundle with deployment/fault schemas | released infergate + mock + dev PostgreSQL deployed by digest; contract-fixture smoke test green against in-cluster gateway; zero source checkouts (auditable) |
 | M3 | Observability stack | M2 | OTel Collector, Prometheus, Grafana, Tempo running; golden dashboards render from a test stream using exact Contract 2 metric names; exemplars link a histogram panel to a Tempo trace |
 | M4 | Lifecycle semantics | M2 | scripted rolling-update-under-load test: zero client-visible errors; warm-up-aware readiness demonstrated (llama.cpp/mock warm-up simulation on CPU); preStop drain verified; PDB in place; grace period > max stream duration recorded with arithmetic |
@@ -180,13 +180,13 @@ Schema per task: Goal/Repo · Requirement or hypothesis · Dependencies · Expec
 
 ### IO-T001 — Planning docs bootstrap + tooling ADR
 - **Goal/Repo:** create the full `docs/` set (§5) and decide the deployment tooling. inferops.
-- **Requirement:** all 16 docs with repo-specific content; ADR-0001 records the smallest justified tooling set — program default: Kustomize + raw manifests; Helm only on a proven templating need; no Argo CD/Terraform in baseline.
+- **Requirement:** all 15 docs/ files + the `adr/` directory with repo-specific content; ADR-0001 records the smallest justified tooling set — program default: Kustomize + raw manifests; Helm only on a proven templating need; no Argo CD/Terraform in baseline.
 - **Dependencies:** this prompt; pinned contracts bundle (read-only). **Expected files:** `docs/*`, `docs/adr/0001-deployment-tooling.md`.
 - **Complexity:** M. **Critical path:** no. **Parallel-safe:** yes.
 - **Human-review focus:** tooling ADR reasoning (does each admitted tool have a concrete justification?); released-images-only rule stated in scope.
 - **Verification:** docs checklist against §5; ADR review.
 - **Evidence:** committed docs + ADR. **Integration impact:** unblocks all IO tasks. **Required.**
-- **Stop condition:** 16 docs exist with content + tooling ADR reviewed.
+- **Stop condition:** 15 docs/ files + `adr/` exist with content + tooling ADR reviewed.
 
 ### IO-T002 — Local cluster baseline
 - **Goal/Repo:** kind/k3s cluster running released infergate + mock backend + dev PostgreSQL, deployed by digest per the deployment contract. inferops.

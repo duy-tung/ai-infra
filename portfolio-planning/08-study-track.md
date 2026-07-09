@@ -58,7 +58,7 @@ Selected topics: concurrency control, MVCC, logging, crash recovery, distributed
 | SGLang scheduler + radix cache (read-only) | vLLM-vs-SGLang caching comparison 1-pager | stretch experiment design | 1-pager done |
 | LiteLLM (product docs only) | accurate "Why not LiteLLM?" related-work section | inference-lab portfolio | section written |
 
-Reading rule: follow one HTTP request's execution path; pin the commit; `git log -- <path>` before reading (paths drift). Do-not-read-deeply list: Triton/TensorRT-LLM, TGI (archived 2026-03), Ray Serve/KServe controllers, Kubernetes scheduler internals, CUDA kernels.
+Reading rule: follow one HTTP request's execution path; pin the commit; `git log -- <path>` before reading (paths drift). Do-not-read-deeply list: Triton/TensorRT-LLM, TGI (source-reported as archived 2026-03; as of 2026-07), Ray Serve/KServe controllers, Kubernetes scheduler internals, CUDA kernels.
 
 ## 5. Books (program-brief additions; chapter-selective, artifact-or-drop)
 
@@ -77,7 +77,11 @@ Duplication check: books never produce standalone summaries — only inputs to a
 
 If provided by the user, index it as a companion for: inference economics, autoscaling, vLLM/SGLang internals, metrics, gateways, load testing, chaos, FinOps, serving stacks, orchestration, kill switches, circuit breakers — mapped chapter-by-chapter to the same consuming tasks as above with the same artifact-or-drop rule. Until then, no entries claim it.
 
-## 7. Point resources
+## 7. Agent-runtime design note (optional stretch, design-only)
+
+One short design note (durable tool execution, idempotency keys for tool calls, approval signals, sandbox boundary, prompt-injection boundary) — consumed by `inference-lab` as related-work/interview depth. Relevance threshold: must sharpen the portfolio's "what I deliberately did not build" narrative. Stop condition: note reviewed. Explicitly **not** a milestone, not implemented, and outside the baseline scope (a full agent runtime is excluded by the program charter).
+
+## 8. Point resources
 
 - OTel GenAI semantic conventions (pin version; status "Development" as of 2026-07) → contracts trace-attribute section (SC-T005).
 - Kubernetes "Schedule GPUs" docs → inferops GPU-node profile (IO-T005).

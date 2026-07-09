@@ -6,7 +6,7 @@ Minimum completion target (mandatory for I8): one acknowledged issue reproductio
 
 ## 1. Candidate scoring
 
-Criteria (0–3 each): Go/distributed-systems fit; portfolio relevance; local reproducibility without GPU; low GPU need; maintainer responsiveness visibility; availability of small well-scoped issues; testability; learning value; hiring signal.
+Criteria (0–3 each, eight columns): Go/distributed-systems fit; portfolio relevance; local reproducibility without GPU (this column also covers low GPU need); maintainer responsiveness visibility; availability of small well-scoped issues; testability; learning value; hiring signal.
 
 Honesty note on provenance: rows marked ⚠ rely on facts reported in the source documents as of 2026-07 (e.g. project language splits, GA status, repo migrations). **Maintainer responsiveness and current issue availability were NOT verified in this planning run** — they are scored as expectations and must be re-verified live at IL-T010 before committing.
 
