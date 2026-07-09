@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 9 (IG-T005 done incl. real-engine cancellation; IG-T007/8 dispatched; IB-T005/6 running), 2026-07-09.
+Last updated: iteration 10 (SESSION RATE LIMIT hit ~13:50 UTC, resets 14:00 UTC; IG-T008 + IB-T006 interrupted mid-task with WIP in trees — do not discard; resume agents after reset), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -49,8 +49,10 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IB-T004 streaming client correctness | done (calibration: client TTFT/ITL within ~1–2ms of configured; 17/17 cancels observed at mock) | inferbench `3b12013` |
 | IB-T005 analysis core | in-progress (agent dispatched iter 8) | — |
 | IB-T006 report generator | in-progress (same agent) | — |
-| IG-T007 tenancy+auth+registry | in-progress (agent dispatched iter 9) | — |
-| IG-T008 usage accounting | in-progress (same agent) | — |
+| IG-T007 tenancy+auth+registry | implementer-committed (2 commits, unverified) — agent killed by session rate limit mid-IG-T008 | infergate `f2f168a`,`1e2c138` |
+| IG-T008 usage accounting | in-progress-interrupted: uncommitted WIP in tree (internal/usage/, 0002_usage_ledger migrations, 4 modified files) — RESUME via SendMessage after 14:00 UTC limit reset | — |
+| IB-T005 analysis core | implementer-committed (unverified) | inferbench `664a9f4` |
+| IB-T006 report generator | in-progress-interrupted (6 dirty files; agent last checkpointed mid 3-repetition run) — check/resume after reset | — |
 | IB-T001 inferbench docs bootstrap | done (verified iter 2: 15 docs + 5 ADRs, pin v0.1.0 recorded, clean tree) | inferbench `b5cf196` |
 | All other tasks | todo | — |
 
