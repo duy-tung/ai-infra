@@ -1,7 +1,7 @@
 # Program State — inference-systems portfolio
 
 Orchestrator state file. Rewritten every iteration; recoverable from this file + git alone.
-Last updated: iteration 14 (FL-T001 done; 4 agents running: IB-T008/9, IL-T002 P1, IO-T001, IG-T009/10), 2026-07-09.
+Last updated: iteration 14b (FL-T001 + IO-T001 done; 3 agents running: IB-T008/9, IL-T002 P1, IG-T009/10), 2026-07-09.
 
 ## Environment (blind-spot pass, iteration 0 — re-verify on container restart)
 
@@ -52,7 +52,7 @@ Components (side-by-side local git repos, branch `main`): `/home/user/serving-co
 | IG-T009 RPM/TPM quotas | in-progress (agent dispatched iter 13) | — |
 | IG-T010 admission control | in-progress (same agent; G5 mechanism) | — |
 | IL-T002 Scenario A / I2 | in-progress (Phase-1 prep agent dispatched iter 13; Phase 2 after images rebuilt at IG-T008 HEAD) | — |
-| IO-T001 inferops docs bootstrap | in-progress (agent dispatched iter 13; pulled forward, parallel-safe) | — |
+| IO-T001 inferops docs bootstrap | done (verified iter 14: 15 docs + tooling ADR Kustomize+raw; RQ-4 dual-path A/B with semantics-preservation map) | inferops `2231096` |
 | FL-T001 fleetlab docs bootstrap | done (verified iter 14: 15 docs + ADR-0001 hybrid simulator; R9 guardrails structural; pins v0.2.0) | fleetlab `19222e8` |
 | IB-T005 analysis core | done (orchestrator re-ran: 74 pytest + race green; pooled≠averaged proof; known-answer stats) | inferbench `d2ce815` |
 | IB-T006 report generator | done (orchestrator re-ran contracts-verify: result/manifests/events all ok; G4-candidate report at inferbench/reports/ib-t006-sample/report.md — review-queued in RQ-3) | inferbench `5a3da84` |
