@@ -23,7 +23,7 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | SC-T004 backend-capability schema | done (3 descriptors re-validated) | examples/capabilities | serving-contracts@f933c43 |
 | SC-T005 metrics vocabulary | done (agent cross-check: 11/11 Contract-2 metrics exact; semconv pinned v1.34.0 flagged re-verify) | /home/user/serving-contracts/metrics | serving-contracts@80f2507 |
 | SC-T008 consumer compat kit | done (selftest independently re-run: GREEN, 32/32 pos, 20/20 neg) | /home/user/serving-contracts/kit | serving-contracts@6e92e1e |
-| SC-T009 release v0.1.0 | review-queued (prep done, checklist steps 1-4 green, NO tag yet; needs user: license, $id namespace, ship-without-C5/6/7 sign-off) | /home/user/serving-contracts/RELEASES.md | serving-contracts@8c58863 |
+| SC-T009 release v0.1.0 | done (user review passed 2026-07-10; tag v0.1.0 cut at 2df9f81; Apache-2.0 + github $id applied; post-review validation green) | RELEASES.md + tag v0.1.0 | serving-contracts@2df9f81 |
 | IG-T001 docs bootstrap | done (15 docs + 7 ADRs verified present; boundary section + ADRs join Wave-1-exit review batch) | /home/user/infergate/docs | infergate@a8bb988 |
 | IG-T002 skeleton+mock+non-stream | done (orchestrator re-ran go vet + go test -race: all green; 45 tests/62 subtests; conformance vs kit fixtures green, streaming skipped per scope) | /home/user/infergate | infergate@a5a2c02 |
 | IG-T004 config snapshots+drain | todo (dep IG-T002) | — | — |
@@ -48,12 +48,14 @@ All other register tasks (05 §8): todo, gated by wave order.
 
 ## 2. Wave & gate status
 
-- Wave 1: **build work complete 2026-07-10**; exit gate awaits user review (v0.1.0 tag). Gateway serves non-streaming from mock (verified); infergate conformance vs fixtures green (I1 partial — other consumers wire at their T00x tasks). Wave 2 overlap-started per roadmap overlap rule.
+- Wave 1: **EXITED 2026-07-10.** Contracts v0.1.0 released (reviewed + tagged); gateway serves non-streaming from mock (verified); infergate conformance green vs fixtures (I1 partial — inferbench wires the kit at IB-T002, fleetlab/inferops at their first consuming tasks). G1 = partially satisfied (fixtures validate + first consumer green); full I1 needs all four consumers.
+- Wave 2: **active** (IG-T003, IB-T002 running).
 - G1–G10: none passed. I1–I8: none accepted.
 
 ## 3. Pins
 
-Nothing pinned yet (mirrors inference-lab pins file once IL-T001 lands). Planning repo HEAD at bootstrap: `74acaf7`.
+Mirrors /home/user/inference-lab/pins/pins.yaml (validator green):
+- contracts-bundle: serving-contracts **v0.1.0** (tag at 2df9f81, local-only until remotes exist), pinned 2026-07-10.
 
 ## 4. Review queue
 
@@ -64,9 +66,10 @@ Nothing pinned yet (mirrors inference-lab pins file once IL-T001 lands). Plannin
 | RQ-3 | OSS primary target | IL-T010 (Wave 3) | **answered 2026-07-10: GAIE primary, OTel GenAI semconv secondary, vLLM fallback** |
 | RQ-4 | Remote hosting: user approved creating 6 public GitHub repos, but the GitHub integration returned 403 (cannot create repos). **User action needed:** create empty repos duy-tung/{serving-contracts,infergate,inferbench,fleetlab,inferops,inference-lab} (public, no README) and say "repos created" — orchestrator then adds them via add_repo and pushes. | durable component hosting (work is container-local until then) | waiting-on-user since 2026-07-10 |
 | RQ-5 | Career-overlay exclusion (13 §7.4) | nothing | default applied (excluded); user may override |
-| RQ-6 | ADR review: inferops ADR-0001 deployment tooling (Kustomize + raw manifests; Helm/Argo/Terraform rejected with re-entry conditions) — /home/user/inferops/docs/adr/0001-deployment-tooling.md | IO-T002 (Wave 4) | queued 2026-07-10; batch at Wave 1 exit |
-| RQ-7 | ADR review: fleetlab ADR-0001 stack + simulator style (numpy/scipy/pandas stack; analytic-first + small owned discrete-event core, SimPy rejected) — /home/user/fleetlab/docs/adr/0001-stack-and-simulator-style.md | FL-T002 (Wave 5) | queued 2026-07-10; batch at Wave 1 exit |
-| RQ-8 | SC-T001 compatibility policy + 4 SC ADRs (SemVer bundle rules, JSON Schema 2020-12, OpenAPI 3.1.x, fixture layout) — /home/user/serving-contracts/compatibility/compatibility-policy.md | SC-T009 release (schema drafting proceeds; release waits for this review) | queued 2026-07-10; batch at Wave 1 exit |
+| RQ-9 | Wave-1 exit review | — | **passed 2026-07-10: v0.1.0 approved+tagged; Apache-2.0 license all repos; $id -> github.com/duy-tung path; ALL queued ADRs accepted** (infergate/inferbench ADR status-line flips deferred until their active agents land — avoid concurrent-commit conflicts) |
+| RQ-6 | inferops ADR-0001 | — | **accepted 2026-07-10** (inferops@7ca8870) |
+| RQ-7 | fleetlab ADR-0001 | — | **accepted 2026-07-10** (fleetlab@da01bb4) |
+| RQ-8 | SC compatibility policy + ADRs | — | **accepted 2026-07-10** (part of release review) |
 
 ## 5. Budget ledger
 
@@ -90,6 +93,7 @@ GPU spend: $0. Envelope: $150–250 (user-confirmed 2026-07-10). Alerts at 50%/8
 
 - (2026-07-10) Remote-branch `claude/impl-infer-status-check-8mjyak` had been deleted on GitHub while the local clone still showed a stale tracking ref — always `fetch --prune` before reasoning about remote state.
 - (2026-07-10) dockerd must be started manually in this container (`nohup dockerd &`); it initializes in ~6s.
+- (2026-07-10) A heredoc quoting bug silently skipped a pins.yaml edit while the commit (with a message claiming the pin) still went through — always re-run the relevant validator/check AFTER the edit and BEFORE committing; caught because the validator printed "0 artifact entries".
 
 ## 8. Deviations index
 
