@@ -34,8 +34,9 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | Task | Status | Evidence | Commit |
 |---|---|---|---|
 | IG-T003 SSE relay + cancellation (G2) | in-progress (subagent) | — | — |
-| IB-T002 open-loop generator + raw events | done-pending-CO-review (orchestrator re-ran go vet + race tests: 6 pkgs ok; kit raw-event validation green; live 3x200 req vs pinned gateway+mock 200/200; fresh-context CO verifier dispatched) | /home/user/inferbench + docs/evidence/ib-t002 | inferbench@bc3280a |
-| IB-T002 CO-safety review (stop condition) | in-progress (fresh-context verifier) | — | — |
+| IB-T002 open-loop generator + raw events | CO-review-failed → fix queued (schedule half sound; measurement half defective) (orchestrator re-ran go vet + race tests: 6 pkgs ok; kit raw-event validation green; live 3x200 req vs pinned gateway+mock 200/200; fresh-context CO verifier dispatched) | /home/user/inferbench + docs/evidence/ib-t002 | inferbench@bc3280a |
+| IB-T002 CO-safety review (stop condition) | **FAILED 2026-07-10** — verifier demonstrated hidden connect-time queueing (latency clock starts at wire-write, not scheduled send; watchdog blind to dial/TLS/write window; 2s hidden per request in probe, run still reported VALID). Send-schedule half PASSED. Fix plan below. | verifier report (task afc43a0f) | — |
+| IB-T002-fix: measure from scheduled send | blocked-on(IB-T003 agent finishing in inferbench + SC-T006/T007 agent finishing in serving-contracts) — then: contract v0.2.0 adds required raw-event.scheduled_send_ts (+optional send_slip_seconds); inferbench threads scheduled ts into client, defines TTFT/E2E from it, extends watchdog to the wire, adds slow-dial CO test, fixes all-zero-rate phase hang; then CO verifier re-runs | — | — |
 | IB-T003 workload suite v1 | in-progress (subagent; also applies license + ADR flips per review) | — | — |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
