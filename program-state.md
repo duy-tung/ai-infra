@@ -17,12 +17,12 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 
 | Task | Status | Evidence | Commit |
 |---|---|---|---|
-| SC-T001 docs+policy bootstrap | in-progress (subagent) | — | — |
+| SC-T001 docs+policy bootstrap | done (21 files; policy review queued RQ-8) | /home/user/serving-contracts/docs, compatibility | serving-contracts@e4b93ba |
 | SC-T002 inference API contract | done (spec valid: redocly 0 errors + openapi-spec-validator OK re-run by orchestrator; 17 positive + 14 negative fixtures, 81/81 checks) | /home/user/serving-contracts/openapi, examples/api | serving-contracts@40e2127 |
-| SC-T003 benchmark data schemas | todo (dep SC-T001) | — | — |
-| SC-T004 backend-capability schema | todo (dep SC-T001) | — | — |
-| SC-T005 metrics vocabulary | todo (dep SC-T001) | — | — |
-| SC-T008 consumer compat kit | todo (dep SC-T002/T003) | — | — |
+| SC-T003 benchmark data schemas | done (orchestrator re-validated: 5 schemas meta-valid, 8 workloads valid) | /home/user/serving-contracts/schemas, examples | serving-contracts@2df86b1 |
+| SC-T004 backend-capability schema | done (3 descriptors re-validated) | examples/capabilities | serving-contracts@f933c43 |
+| SC-T005 metrics vocabulary | done (agent cross-check: 11/11 Contract-2 metrics exact; semconv pinned v1.34.0 flagged re-verify) | /home/user/serving-contracts/metrics | serving-contracts@80f2507 |
+| SC-T008 consumer compat kit | in-progress (subagent) | — | — |
 | SC-T009 release v0.1.0 | todo (dep SC-T002–T005,T008) | — | — |
 | IG-T001 docs bootstrap | done (15 docs + 7 ADRs verified present; boundary section + ADRs join Wave-1-exit review batch) | /home/user/infergate/docs | infergate@a8bb988 |
 | IG-T002 skeleton+mock+non-stream | in-progress (subagent, dispatched after SC-T002 verified) | — | — |
