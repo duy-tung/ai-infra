@@ -42,7 +42,8 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | IB-T003 workload suite v1 | done (orchestrator re-verified: 8/8 kit-valid, race tests green; 5 runnable workloads dry-ran 574/574 ok; 3 deferred features show typed refusals; contracts re-pinned v0.1.0) | /home/user/inferbench/workloads + docs/evidence/ib-t003 | inferbench@05ab858 |
 
 | IG-T005 llama.cpp adapter | done (orchestrator re-verified: backend tests race-green incl. real-engine suite; descriptor kit-valid 1/1; 3-point cancel on real llama-server — mid-stream slot release 1.25-5.24ms, pre-first-token 0.77-2.19s at decode-batch granularity (real-engine finding, R14 material); failover demo clean; D2 tiny-GGUF deviation standing) | /home/user/infergate/internal/backend/llamacpp | infergate@74f2372 |
-| IB-T005 analysis core (Python) | in-progress (subagent; incl. error/shed-rate gating from CO re-review) | — | — |
+| IB-T005 analysis core (Python) | done (orchestrator re-ran: 70/70 pytest green, 7/7 result files kit-valid; pooling guard structural; error-gate makes quoting latency impossible above 5% error+shed; contract observations queued: nullable latency tables + CI fields for a future MINOR) | /home/user/inferbench/analysis + docs/evidence/ib-t005 | inferbench@10b2e61 |
+| IB-T006 report generator + validity block (G4 artifact) | in-progress (subagent) | — | — |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
