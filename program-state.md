@@ -22,8 +22,8 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | SC-T003 benchmark data schemas | done (orchestrator re-validated: 5 schemas meta-valid, 8 workloads valid) | /home/user/serving-contracts/schemas, examples | serving-contracts@2df86b1 |
 | SC-T004 backend-capability schema | done (3 descriptors re-validated) | examples/capabilities | serving-contracts@f933c43 |
 | SC-T005 metrics vocabulary | done (agent cross-check: 11/11 Contract-2 metrics exact; semconv pinned v1.34.0 flagged re-verify) | /home/user/serving-contracts/metrics | serving-contracts@80f2507 |
-| SC-T008 consumer compat kit | in-progress (subagent) | — | — |
-| SC-T009 release v0.1.0 | todo (dep SC-T002–T005,T008) | — | — |
+| SC-T008 consumer compat kit | done (selftest independently re-run: GREEN, 32/32 pos, 20/20 neg) | /home/user/serving-contracts/kit | serving-contracts@6e92e1e |
+| SC-T009 release v0.1.0 | in-progress (prep subagent; tag itself review-gated at Wave-1 exit) | — | — |
 | IG-T001 docs bootstrap | done (15 docs + 7 ADRs verified present; boundary section + ADRs join Wave-1-exit review batch) | /home/user/infergate/docs | infergate@a8bb988 |
 | IG-T002 skeleton+mock+non-stream | in-progress (subagent, dispatched after SC-T002 verified) | — | — |
 | IG-T004 config snapshots+drain | todo (dep IG-T002) | — | — |
@@ -63,7 +63,7 @@ Nothing pinned yet (mirrors inference-lab pins file once IL-T001 lands). Plannin
 
 ## 5. Budget ledger
 
-GPU spend: $0. Envelope: default $150–250 (unconfirmed). Alerts at 50%/80%. Additional environment constraint: no GPU rental access from this remote container — GPU sessions will need user-provided access or CPU fallback (05 §5).
+GPU spend: $0. Envelope: $150–250 (user-confirmed 2026-07-10). Alerts at 50%/80%. Additional environment constraint: no GPU rental access from this remote container — GPU sessions will need user-provided access or CPU fallback (05 §5).
 
 ## 6. Environment blind-spot register (iteration-0 pass, all facts measured 2026-07-10)
 
