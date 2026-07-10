@@ -41,7 +41,8 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | IB-T002 CO-safety review (stop condition) | **FAILED 2026-07-10** — verifier demonstrated hidden connect-time queueing (latency clock starts at wire-write, not scheduled send; watchdog blind to dial/TLS/write window; 2s hidden per request in probe, run still reported VALID). Send-schedule half PASSED. Fix plan below. | verifier report (task afc43a0f) | — |
 | IB-T003 workload suite v1 | done (orchestrator re-verified: 8/8 kit-valid, race tests green; 5 runnable workloads dry-ran 574/574 ok; 3 deferred features show typed refusals; contracts re-pinned v0.1.0) | /home/user/inferbench/workloads + docs/evidence/ib-t003 | inferbench@05ab858 |
 
-| IG-T005 llama.cpp adapter | in-progress (subagent; tiny-GGUF correctness path per probe; real-GGUF deviation recorded, RQ-10 still open) | — | — |
+| IG-T005 llama.cpp adapter | done (orchestrator re-verified: backend tests race-green incl. real-engine suite; descriptor kit-valid 1/1; 3-point cancel on real llama-server — mid-stream slot release 1.25-5.24ms, pre-first-token 0.77-2.19s at decode-batch granularity (real-engine finding, R14 material); failover demo clean; D2 tiny-GGUF deviation standing) | /home/user/infergate/internal/backend/llamacpp | infergate@74f2372 |
+| IB-T005 analysis core (Python) | in-progress (subagent; incl. error/shed-rate gating from CO re-review) | — | — |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
