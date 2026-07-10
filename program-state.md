@@ -48,6 +48,10 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | FL-T001 docs bootstrap | done (15 docs + ADR-0001 verified present; ADR review queued) | /home/user/fleetlab/docs | fleetlab@adf7122 |
 | IO-T001 docs bootstrap + tooling ADR | done (15 docs + ADR-0001 verified present; ADR review queued) | /home/user/inferops/docs | inferops@2c25196 |
 
+| SC-T006 deployment+fault contracts | done (orchestrator re-ran selftest GREEN 52/52+28/28; git diff v0.1.0 over old surface empty = strictly additive; 12/12 scenarios) | schemas + examples/{deployment,faults} | serving-contracts@a69da9a |
+| SC-T007 fleet schemas | done (same verification; provenance structural; Scenario E expressible end-to-end) | schemas + examples/{fleet,capacity} | serving-contracts@0daabd7 |
+| SC v0.2.0 prep + raw-event CO amendment | in-progress (agent adding required scheduled_send_ts + migration note to untagged v0.2.0) | RELEASES.md v0.2.0 entry | serving-contracts@5fbadaa |
+
 All other register tasks (05 §8): todo, gated by wave order.
 
 ## 2. Wave & gate status
