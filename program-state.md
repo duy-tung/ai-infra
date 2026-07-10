@@ -52,11 +52,11 @@ Nothing pinned yet (mirrors inference-lab pins file once IL-T001 lands). Plannin
 
 | Item | Question | Blocks | State |
 |---|---|---|---|
-| RQ-1 | Six-repo strategy confirm (13 §7.1) | nothing (default: proceed with six) | asked 2026-07-10 |
-| RQ-2 | GPU budget envelope (13 §7.2, default $150–250) | G6/Wave 4 GPU work only | asked 2026-07-10 |
-| RQ-3 | OSS primary target (13 §7.3, default GAIE) | IL-T010 (Wave 3) | asked 2026-07-10 |
-| RQ-4 | Remote hosting for six component repos | pushing components anywhere | asked 2026-07-10 |
-| RQ-5 | Career-overlay exclusion (13 §7.4) | nothing (default: excluded) | default applied; user may override |
+| RQ-1 | Six-repo strategy | — | **answered 2026-07-10: six repos** |
+| RQ-2 | GPU budget envelope | G6/Wave 4 GPU work | **answered 2026-07-10: $150–250, alerts 50%/80%, ≤6 sessions, per-session approval** |
+| RQ-3 | OSS primary target | IL-T010 (Wave 3) | **answered 2026-07-10: GAIE primary, OTel GenAI semconv secondary, vLLM fallback** |
+| RQ-4 | Remote hosting: user approved creating 6 public GitHub repos, but the GitHub integration returned 403 (cannot create repos). **User action needed:** create empty repos duy-tung/{serving-contracts,infergate,inferbench,fleetlab,inferops,inference-lab} (public, no README) and say "repos created" — orchestrator then adds them via add_repo and pushes. | durable component hosting (work is container-local until then) | waiting-on-user since 2026-07-10 |
+| RQ-5 | Career-overlay exclusion (13 §7.4) | nothing | default applied (excluded); user may override |
 
 ## 5. Budget ledger
 
