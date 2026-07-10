@@ -34,7 +34,9 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | Task | Status | Evidence | Commit |
 |---|---|---|---|
 | IG-T003 SSE relay + cancellation (G2) | done-pending-G2-verify (orchestrator re-ran vet + race suite: all green; agent evidence: 100 streams no mixing, cancel release 122-321µs vs 100ms bound, 10-run 260/260; fresh-context G2 verifier dispatched) | /home/user/infergate docs/implementation-notes.md | infergate@08a529c |
-| G2 gate verification | in-progress (fresh-context verifier) | — | — |
+| G2 gate verification | **PASSED 2026-07-10** — fresh-context verifier re-ran all evidence (10x race-clean, cancel release 124-630µs vs 100ms bound) + 5 adversarial fake-upstream probes all correct (EOF-without-DONE, zero-chunk-DONE, double-DONE, oversized event, death-after-usage). Non-blocking: slow-client stall test deferred to scenario-4 work (bound exists in code). Evidence queued for user review (batch, Wave-2 exit). | verifier report (task a394e35) | infergate@08a529c |
+| IG-T006 observability per contract | in-progress (subagent; also applies license + ADR flips) | — | — |
+| llama.cpp build + tiny-GGUF fallback probe (IG-T005 prep) | in-progress (env-prep agent, /home/user/tools) | — | — |
 | IB-T002 open-loop generator + raw events | CO-review-failed → fix queued (schedule half sound; measurement half defective) (orchestrator re-ran go vet + race tests: 6 pkgs ok; kit raw-event validation green; live 3x200 req vs pinned gateway+mock 200/200; fresh-context CO verifier dispatched) | /home/user/inferbench + docs/evidence/ib-t002 | inferbench@bc3280a |
 | IB-T002 CO-safety review (stop condition) | **FAILED 2026-07-10** — verifier demonstrated hidden connect-time queueing (latency clock starts at wire-write, not scheduled send; watchdog blind to dial/TLS/write window; 2s hidden per request in probe, run still reported VALID). Send-schedule half PASSED. Fix plan below. | verifier report (task afc43a0f) | — |
 | IB-T002-fix: measure from scheduled send | blocked-on(IB-T003 agent finishing in inferbench + SC-T006/T007 agent finishing in serving-contracts) — then: contract v0.2.0 adds required raw-event.scheduled_send_ts (+optional send_slip_seconds); inferbench threads scheduled ts into client, defines TTFT/E2E from it, extends watchdog to the wire, adds slow-dial CO test, fixes all-zero-rate phase hang; then CO verifier re-runs | — | — |
@@ -57,7 +59,7 @@ All other register tasks (05 §8): todo, gated by wave order.
 ## 2. Wave & gate status
 
 - Wave 1: **EXITED 2026-07-10.** Contracts v0.1.0 released (reviewed + tagged); gateway serves non-streaming from mock (verified); infergate conformance green vs fixtures (I1 partial — inferbench wires the kit at IB-T002, fleetlab/inferops at their first consuming tasks). G1 = partially satisfied (fixtures validate + first consumer green); full I1 needs all four consumers.
-- Wave 2: **active** (IG-T003, IB-T002 running).
+- Wave 2: **active**. G2 PASSED (fresh-context verified). IG-T003 done. IB-T002 awaiting measurement fix + re-review. SC v0.2.0 prepared (incl. raw-event CO fix + migration note), tag review-queued.
 - G1–G10: none passed. I1–I8: none accepted.
 
 ## 3. Pins
