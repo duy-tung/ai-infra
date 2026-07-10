@@ -24,7 +24,7 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | SC-T005 metrics vocabulary | todo (dep SC-T001) | — | — |
 | SC-T008 consumer compat kit | todo (dep SC-T002/T003) | — | — |
 | SC-T009 release v0.1.0 | todo (dep SC-T002–T005,T008) | — | — |
-| IG-T001 docs bootstrap | in-progress (subagent) | — | — |
+| IG-T001 docs bootstrap | done (15 docs + 7 ADRs verified present; boundary section + ADRs join Wave-1-exit review batch) | /home/user/infergate/docs | infergate@a8bb988 |
 | IG-T002 skeleton+mock+non-stream | todo (dep SC-T002, IG-T001) | — | — |
 | IG-T004 config snapshots+drain | todo (dep IG-T002) | — | — |
 | IL-T001 skeleton (pins/scenarios) | in-progress (subagent) | — | — |
