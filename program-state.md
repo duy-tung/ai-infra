@@ -55,7 +55,8 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | SC-T007 fleet schemas | done (same verification; provenance structural; Scenario E expressible end-to-end) | schemas + examples/{fleet,capacity} | serving-contracts@0daabd7 |
 | SC v0.2.0 prep + raw-event CO amendment | done (orchestrator verified scheduled_send_ts required=True; selftest 52/52+29/29 GREEN; migration note written; tag review-queued) | RELEASES.md v0.2.0 entry | serving-contracts@8d81492 |
 | IB-T002 CO re-review | **PASSED 2026-07-10** — verifier's original 2s-dial attack now fully surfaces (TTFT 2.002-2.014s recorded, hidden=0.000s) or trips typed wire abort (41/60 sent, ABORT); never-sent-request probe produces honest error events, nothing understated. Non-blocking notes: send_slip should be absent when send never completed (handed to IB-T004); IB-T005 analyzer MUST gate latency quotes on error/shed rate. IB-T002 stop condition met. | verifier re-report (task afc43a0f) | inferbench@2828f12 |
-| IB-T004 streaming client correctness | in-progress (subagent; incl. cancellation + slow-client profiles, mock calibration, ib-t003 evidence regen) | — | — |
+| IB-T004 streaming client correctness | done (orchestrator re-verified: client+run race tests green, kit check 7/7 valid; calibration 28/28 within tolerance, TTFT Δp50 ≈ +2.9ms; 3-point cancellation two-sided vs mock; slow-client 9.2x e2e effect; contract proposals logged for metrics.md §4 wording + nullable send_ts) | /home/user/inferbench docs/evidence/ib-t004 | inferbench@caa5074 |
+| IL-T002 Scenario A + I2 evidence | in-progress (subagent; compose from pinned builds; PostgreSQL deviation documented — usage lands at IG-T008) | — | — |
 
 All other register tasks (05 §8): todo, gated by wave order.
 
