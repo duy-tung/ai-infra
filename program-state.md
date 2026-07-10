@@ -25,9 +25,16 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | SC-T008 consumer compat kit | done (selftest independently re-run: GREEN, 32/32 pos, 20/20 neg) | /home/user/serving-contracts/kit | serving-contracts@6e92e1e |
 | SC-T009 release v0.1.0 | review-queued (prep done, checklist steps 1-4 green, NO tag yet; needs user: license, $id namespace, ship-without-C5/6/7 sign-off) | /home/user/serving-contracts/RELEASES.md | serving-contracts@8c58863 |
 | IG-T001 docs bootstrap | done (15 docs + 7 ADRs verified present; boundary section + ADRs join Wave-1-exit review batch) | /home/user/infergate/docs | infergate@a8bb988 |
-| IG-T002 skeleton+mock+non-stream | in-progress (subagent, dispatched after SC-T002 verified) | — | — |
+| IG-T002 skeleton+mock+non-stream | done (orchestrator re-ran go vet + go test -race: all green; 45 tests/62 subtests; conformance vs kit fixtures green, streaming skipped per scope) | /home/user/infergate | infergate@a5a2c02 |
 | IG-T004 config snapshots+drain | todo (dep IG-T002) | — | — |
 | IL-T001 skeleton (pins/scenarios) | done (39 files; pins validator independently re-run green; structure review joins Wave-1-exit batch) | /home/user/inference-lab (pins/, scenarios/, docs/) | inference-lab@6a219e2 |
+
+### Wave 2 (overlap-started: contracts stable + verified, tag review pending)
+
+| Task | Status | Evidence | Commit |
+|---|---|---|---|
+| IG-T003 SSE relay + cancellation (G2) | in-progress (subagent) | — | — |
+| IB-T002 open-loop generator + raw events | in-progress (subagent) | — | — |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
@@ -41,7 +48,7 @@ All other register tasks (05 §8): todo, gated by wave order.
 
 ## 2. Wave & gate status
 
-- Wave 1: **active**. Exit gate: contracts v0.1.0 released; gateway serves non-streaming completions from mock; consumer fixture validation green (I1 partial).
+- Wave 1: **build work complete 2026-07-10**; exit gate awaits user review (v0.1.0 tag). Gateway serves non-streaming from mock (verified); infergate conformance vs fixtures green (I1 partial — other consumers wire at their T00x tasks). Wave 2 overlap-started per roadmap overlap rule.
 - G1–G10: none passed. I1–I8: none accepted.
 
 ## 3. Pins
