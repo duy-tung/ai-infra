@@ -18,14 +18,14 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | Task | Status | Evidence | Commit |
 |---|---|---|---|
 | SC-T001 docs+policy bootstrap | in-progress (subagent) | — | — |
-| SC-T002 inference API contract | todo (dep SC-T001) | — | — |
+| SC-T002 inference API contract | done (spec valid: redocly 0 errors + openapi-spec-validator OK re-run by orchestrator; 17 positive + 14 negative fixtures, 81/81 checks) | /home/user/serving-contracts/openapi, examples/api | serving-contracts@40e2127 |
 | SC-T003 benchmark data schemas | todo (dep SC-T001) | — | — |
 | SC-T004 backend-capability schema | todo (dep SC-T001) | — | — |
 | SC-T005 metrics vocabulary | todo (dep SC-T001) | — | — |
 | SC-T008 consumer compat kit | todo (dep SC-T002/T003) | — | — |
 | SC-T009 release v0.1.0 | todo (dep SC-T002–T005,T008) | — | — |
 | IG-T001 docs bootstrap | done (15 docs + 7 ADRs verified present; boundary section + ADRs join Wave-1-exit review batch) | /home/user/infergate/docs | infergate@a8bb988 |
-| IG-T002 skeleton+mock+non-stream | todo (dep SC-T002, IG-T001) | — | — |
+| IG-T002 skeleton+mock+non-stream | in-progress (subagent, dispatched after SC-T002 verified) | — | — |
 | IG-T004 config snapshots+drain | todo (dep IG-T002) | — | — |
 | IL-T001 skeleton (pins/scenarios) | done (39 files; pins validator independently re-run green; structure review joins Wave-1-exit batch) | /home/user/inference-lab (pins/, scenarios/, docs/) | inference-lab@6a219e2 |
 
