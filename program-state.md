@@ -23,7 +23,7 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | SC-T004 backend-capability schema | done (3 descriptors re-validated) | examples/capabilities | serving-contracts@f933c43 |
 | SC-T005 metrics vocabulary | done (agent cross-check: 11/11 Contract-2 metrics exact; semconv pinned v1.34.0 flagged re-verify) | /home/user/serving-contracts/metrics | serving-contracts@80f2507 |
 | SC-T008 consumer compat kit | done (selftest independently re-run: GREEN, 32/32 pos, 20/20 neg) | /home/user/serving-contracts/kit | serving-contracts@6e92e1e |
-| SC-T009 release v0.1.0 | in-progress (prep subagent; tag itself review-gated at Wave-1 exit) | — | — |
+| SC-T009 release v0.1.0 | review-queued (prep done, checklist steps 1-4 green, NO tag yet; needs user: license, $id namespace, ship-without-C5/6/7 sign-off) | /home/user/serving-contracts/RELEASES.md | serving-contracts@8c58863 |
 | IG-T001 docs bootstrap | done (15 docs + 7 ADRs verified present; boundary section + ADRs join Wave-1-exit review batch) | /home/user/infergate/docs | infergate@a8bb988 |
 | IG-T002 skeleton+mock+non-stream | in-progress (subagent, dispatched after SC-T002 verified) | — | — |
 | IG-T004 config snapshots+drain | todo (dep IG-T002) | — | — |
