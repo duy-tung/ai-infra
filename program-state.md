@@ -39,8 +39,7 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | llama.cpp build + tiny-GGUF fallback probe (IG-T005 prep) | in-progress (env-prep agent, /home/user/tools) | — | — |
 | IB-T002 open-loop generator + raw events | CO-review-failed → fix queued (schedule half sound; measurement half defective) (orchestrator re-ran go vet + race tests: 6 pkgs ok; kit raw-event validation green; live 3x200 req vs pinned gateway+mock 200/200; fresh-context CO verifier dispatched) | /home/user/inferbench + docs/evidence/ib-t002 | inferbench@bc3280a |
 | IB-T002 CO-safety review (stop condition) | **FAILED 2026-07-10** — verifier demonstrated hidden connect-time queueing (latency clock starts at wire-write, not scheduled send; watchdog blind to dial/TLS/write window; 2s hidden per request in probe, run still reported VALID). Send-schedule half PASSED. Fix plan below. | verifier report (task afc43a0f) | — |
-| IB-T002-fix: measure from scheduled send | blocked-on(IB-T003 agent finishing in inferbench + SC-T006/T007 agent finishing in serving-contracts) — then: contract v0.2.0 adds required raw-event.scheduled_send_ts (+optional send_slip_seconds); inferbench threads scheduled ts into client, defines TTFT/E2E from it, extends watchdog to the wire, adds slow-dial CO test, fixes all-zero-rate phase hang; then CO verifier re-runs | — | — |
-| IB-T003 workload suite v1 | in-progress (subagent; also applies license + ADR flips per review) | — | — |
+| IB-T003 workload suite v1 | done (orchestrator re-verified: 8/8 kit-valid, race tests green; 5 runnable workloads dry-ran 574/574 ok; 3 deferred features show typed refusals; contracts re-pinned v0.1.0) | /home/user/inferbench/workloads + docs/evidence/ib-t003 | inferbench@05ab858 |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
@@ -52,7 +51,8 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 
 | SC-T006 deployment+fault contracts | done (orchestrator re-ran selftest GREEN 52/52+28/28; git diff v0.1.0 over old surface empty = strictly additive; 12/12 scenarios) | schemas + examples/{deployment,faults} | serving-contracts@a69da9a |
 | SC-T007 fleet schemas | done (same verification; provenance structural; Scenario E expressible end-to-end) | schemas + examples/{fleet,capacity} | serving-contracts@0daabd7 |
-| SC v0.2.0 prep + raw-event CO amendment | in-progress (agent adding required scheduled_send_ts + migration note to untagged v0.2.0) | RELEASES.md v0.2.0 entry | serving-contracts@5fbadaa |
+| SC v0.2.0 prep + raw-event CO amendment | done (orchestrator verified scheduled_send_ts required=True; selftest 52/52+29/29 GREEN; migration note written; tag review-queued) | RELEASES.md v0.2.0 entry | serving-contracts@8d81492 |
+| IB-T002-fix: measure from scheduled send | in-progress (implementer agent resumed with verifier's defect report; wire watchdog + slow-dial test + evidence regen) | — | — |
 
 All other register tasks (05 §8): todo, gated by wave order.
 
