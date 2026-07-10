@@ -26,7 +26,7 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | SC-T009 release v0.1.0 | done (user review passed 2026-07-10; tag v0.1.0 cut at 2df9f81; Apache-2.0 + github $id applied; post-review validation green) | RELEASES.md + tag v0.1.0 | serving-contracts@2df9f81 |
 | IG-T001 docs bootstrap | done (15 docs + 7 ADRs verified present; boundary section + ADRs join Wave-1-exit review batch) | /home/user/infergate/docs | infergate@a8bb988 |
 | IG-T002 skeleton+mock+non-stream | done (orchestrator re-ran go vet + go test -race: all green; 45 tests/62 subtests; conformance vs kit fixtures green, streaming skipped per scope) | /home/user/infergate | infergate@a5a2c02 |
-| IG-T004 config snapshots+drain | in-progress (subagent) | — | — |
+| IG-T004 config snapshots+drain | done (orchestrator re-ran config+gateway race tests green; reload-under-traffic 60 streams x 27 publishes zero-drop; drain verified live; publish latency ~200µs vs 5s bound) | /home/user/infergate/internal/config + docs | infergate@5d69aeb |
 | IL-T001 skeleton (pins/scenarios) | done (39 files; pins validator independently re-run green; structure review joins Wave-1-exit batch) | /home/user/inference-lab (pins/, scenarios/, docs/) | inference-lab@6a219e2 |
 
 ### Wave 2 (overlap-started: contracts stable + verified, tag review pending)
@@ -40,6 +40,8 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | IB-T002 open-loop generator + raw events | **done** (CO re-review passed; all verification evidence green) | /home/user/inferbench + docs/evidence/ib-t002 | inferbench@2828f12 |
 | IB-T002 CO-safety review (stop condition) | **FAILED 2026-07-10** — verifier demonstrated hidden connect-time queueing (latency clock starts at wire-write, not scheduled send; watchdog blind to dial/TLS/write window; 2s hidden per request in probe, run still reported VALID). Send-schedule half PASSED. Fix plan below. | verifier report (task afc43a0f) | — |
 | IB-T003 workload suite v1 | done (orchestrator re-verified: 8/8 kit-valid, race tests green; 5 runnable workloads dry-ran 574/574 ok; 3 deferred features show typed refusals; contracts re-pinned v0.1.0) | /home/user/inferbench/workloads + docs/evidence/ib-t003 | inferbench@05ab858 |
+
+| IG-T005 llama.cpp adapter | in-progress (subagent; tiny-GGUF correctness path per probe; real-GGUF deviation recorded, RQ-10 still open) | — | — |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
