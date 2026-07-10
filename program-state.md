@@ -33,7 +33,8 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 
 | Task | Status | Evidence | Commit |
 |---|---|---|---|
-| IG-T003 SSE relay + cancellation (G2) | in-progress (subagent) | — | — |
+| IG-T003 SSE relay + cancellation (G2) | done-pending-G2-verify (orchestrator re-ran vet + race suite: all green; agent evidence: 100 streams no mixing, cancel release 122-321µs vs 100ms bound, 10-run 260/260; fresh-context G2 verifier dispatched) | /home/user/infergate docs/implementation-notes.md | infergate@08a529c |
+| G2 gate verification | in-progress (fresh-context verifier) | — | — |
 | IB-T002 open-loop generator + raw events | CO-review-failed → fix queued (schedule half sound; measurement half defective) (orchestrator re-ran go vet + race tests: 6 pkgs ok; kit raw-event validation green; live 3x200 req vs pinned gateway+mock 200/200; fresh-context CO verifier dispatched) | /home/user/inferbench + docs/evidence/ib-t002 | inferbench@bc3280a |
 | IB-T002 CO-safety review (stop condition) | **FAILED 2026-07-10** — verifier demonstrated hidden connect-time queueing (latency clock starts at wire-write, not scheduled send; watchdog blind to dial/TLS/write window; 2s hidden per request in probe, run still reported VALID). Send-schedule half PASSED. Fix plan below. | verifier report (task afc43a0f) | — |
 | IB-T002-fix: measure from scheduled send | blocked-on(IB-T003 agent finishing in inferbench + SC-T006/T007 agent finishing in serving-contracts) — then: contract v0.2.0 adds required raw-event.scheduled_send_ts (+optional send_slip_seconds); inferbench threads scheduled ts into client, defines TTFT/E2E from it, extends watchdog to the wire, adds slow-dial CO test, fixes all-zero-rate phase hang; then CO verifier re-runs | — | — |
@@ -98,7 +99,8 @@ GPU spend: $0. Envelope: $150–250 (user-confirmed 2026-07-10). Alerts at 50%/8
 - (2026-07-10) Remote-branch `claude/impl-infer-status-check-8mjyak` had been deleted on GitHub while the local clone still showed a stale tracking ref — always `fetch --prune` before reasoning about remote state.
 - (2026-07-10) dockerd must be started manually in this container (`nohup dockerd &`); it initializes in ~6s.
 - (2026-07-10) A heredoc quoting bug silently skipped a pins.yaml edit while the commit (with a message claiming the pin) still went through — always re-run the relevant validator/check AFTER the edit and BEFORE committing; caught because the validator printed "0 artifact entries".
-- (2026-07-10) Session token limits can kill all background subagents mid-task simultaneously (window resets ~3:50am UTC); partial work survives on disk and agents resume via their transcript with a "continue from disk state" message — schedule the fallback heartbeat AFTER the reset time when a limit hit is known.
+- (2026-07-10) Session token limits can kill all background subagents mid-task simultaneously (windows observed resetting 3:50am and 9am UTC); partial work survives on disk and agents resume via their transcript with a "continue from disk state" message — schedule the fallback heartbeat AFTER the reset time when a limit hit is known.
+- (2026-07-10) The Agent tool can transiently fail when its safety classifier model is unavailable — retry later; read-only work continues meanwhile.
 
 ## 8. Deviations index
 
