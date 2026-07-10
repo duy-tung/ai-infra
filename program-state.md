@@ -27,7 +27,7 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | IG-T001 docs bootstrap | done (15 docs + 7 ADRs verified present; boundary section + ADRs join Wave-1-exit review batch) | /home/user/infergate/docs | infergate@a8bb988 |
 | IG-T002 skeleton+mock+non-stream | todo (dep SC-T002, IG-T001) | — | — |
 | IG-T004 config snapshots+drain | todo (dep IG-T002) | — | — |
-| IL-T001 skeleton (pins/scenarios) | in-progress (subagent) | — | — |
+| IL-T001 skeleton (pins/scenarios) | done (39 files; pins validator independently re-run green; structure review joins Wave-1-exit batch) | /home/user/inference-lab (pins/, scenarios/, docs/) | inference-lab@6a219e2 |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
