@@ -66,6 +66,7 @@ Mirrors /home/user/inference-lab/pins/pins.yaml (validator green):
 | RQ-3 | OSS primary target | IL-T010 (Wave 3) | **answered 2026-07-10: GAIE primary, OTel GenAI semconv secondary, vLLM fallback** |
 | RQ-4 | Remote hosting: user approved creating 6 public GitHub repos, but the GitHub integration returned 403 (cannot create repos). **User action needed:** create empty repos duy-tung/{serving-contracts,infergate,inferbench,fleetlab,inferops,inference-lab} (public, no README) and say "repos created" — orchestrator then adds them via add_repo and pushes. | durable component hosting (work is container-local until then) | waiting-on-user since 2026-07-10 |
 | RQ-5 | Career-overlay exclusion (13 §7.4) | nothing | default applied (excluded); user may override |
+| RQ-10 | Network allowlist: add huggingface.co to this environment's network policy (claude.ai/code environment settings) so IG-T005/I3 can download a small GGUF (1–3B). Alternatives exist but are worse (see blind-spot register). | IG-T005/I3 (Wave 2, soon) | waiting-on-user since 2026-07-10 |
 | RQ-9 | Wave-1 exit review | — | **passed 2026-07-10: v0.1.0 approved+tagged; Apache-2.0 license all repos; $id -> github.com/duy-tung path; ALL queued ADRs accepted** (infergate/inferbench ADR status-line flips deferred until their active agents land — avoid concurrent-commit conflicts) |
 | RQ-6 | inferops ADR-0001 | — | **accepted 2026-07-10** (inferops@7ca8870) |
 | RQ-7 | fleetlab ADR-0001 | — | **accepted 2026-07-10** (fleetlab@da01bb4) |
@@ -83,7 +84,7 @@ GPU spend: $0. Envelope: $150–250 (user-confirmed 2026-07-10). Alerts at 50%/8
 | Docker 29.3.1 + compose v5.1.1 | daemon NOT auto-started; `dockerd` starts cleanly on demand (verified) | start dockerd per session; record in runbooks |
 | kubectl / kind / k3s / helm | absent | install at Wave 4 (kind via `go install`, kubectl via dl.k8s.io — reachability unverified, re-check at IO-T001/T002) |
 | Network: proxy-mediated; pypi/proxy.golang.org/npm open; ghcr.io+docker.io reachable (401 = auth, OK) | verified | module/image pulls should work |
-| huggingface.co | **blocked** (proxy CONNECT 403, policy) | GGUF download for IG-T005/I3 needs alternative (ollama registry, mirror, or user-side allowlist) — re-test at Wave 2; queue if still blocked |
+| huggingface.co, registry.ollama.ai, hf-mirror.com, modelscope.cn | **all blocked** (proxy CONNECT 403, policy; re-tested 2026-07-10) | objects.githubusercontent.com reachable — GitHub release assets downloadable. Plan for IG-T005/I3: (a) user adds huggingface.co to the environment network allowlist (RQ-10, preferred), else (b) GGUF from a GitHub-hosted mirror repo/release asset, else (c) author a tiny GGUF via pypi `gguf` for correctness-only testing (benchmark validity then needs a real model later) |
 | Third-party GitHub clones (llama.cpp tested) | work via git proxy | llama.cpp build from source viable |
 | GPU access | none in this environment | G6 will present options: user-provided remote GPU, or documented CPU fallback (llama.cpp) per 05 §5 |
 | Disk: 30G avail; RAM 15G; 4 cores | adequate for CPU waves | kind + models may be tight — monitor |
