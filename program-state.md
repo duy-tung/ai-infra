@@ -33,9 +33,9 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 
 | Task | Status | Evidence | Commit |
 |---|---|---|---|
-| IB-T001 docs bootstrap | in-progress (subagent) | — | — |
-| FL-T001 docs bootstrap | in-progress (subagent) | — | — |
-| IO-T001 docs bootstrap + tooling ADR | in-progress (subagent) | — | — |
+| IB-T001 docs bootstrap | done (15 docs + 4 ADRs verified present; ADRs join Wave-1-exit review batch) | /home/user/inferbench/docs | inferbench@f65f15d |
+| FL-T001 docs bootstrap | done (15 docs + ADR-0001 verified present; ADR review queued) | /home/user/fleetlab/docs | fleetlab@adf7122 |
+| IO-T001 docs bootstrap + tooling ADR | done (15 docs + ADR-0001 verified present; ADR review queued) | /home/user/inferops/docs | inferops@2c25196 |
 
 All other register tasks (05 §8): todo, gated by wave order.
 
@@ -57,6 +57,9 @@ Nothing pinned yet (mirrors inference-lab pins file once IL-T001 lands). Plannin
 | RQ-3 | OSS primary target | IL-T010 (Wave 3) | **answered 2026-07-10: GAIE primary, OTel GenAI semconv secondary, vLLM fallback** |
 | RQ-4 | Remote hosting: user approved creating 6 public GitHub repos, but the GitHub integration returned 403 (cannot create repos). **User action needed:** create empty repos duy-tung/{serving-contracts,infergate,inferbench,fleetlab,inferops,inference-lab} (public, no README) and say "repos created" — orchestrator then adds them via add_repo and pushes. | durable component hosting (work is container-local until then) | waiting-on-user since 2026-07-10 |
 | RQ-5 | Career-overlay exclusion (13 §7.4) | nothing | default applied (excluded); user may override |
+| RQ-6 | ADR review: inferops ADR-0001 deployment tooling (Kustomize + raw manifests; Helm/Argo/Terraform rejected with re-entry conditions) — /home/user/inferops/docs/adr/0001-deployment-tooling.md | IO-T002 (Wave 4) | queued 2026-07-10; batch at Wave 1 exit |
+| RQ-7 | ADR review: fleetlab ADR-0001 stack + simulator style (numpy/scipy/pandas stack; analytic-first + small owned discrete-event core, SimPy rejected) — /home/user/fleetlab/docs/adr/0001-stack-and-simulator-style.md | FL-T002 (Wave 5) | queued 2026-07-10; batch at Wave 1 exit |
+| RQ-8 | SC-T001 compatibility policy + 4 SC ADRs (SemVer bundle rules, JSON Schema 2020-12, OpenAPI 3.1.x, fixture layout) — /home/user/serving-contracts/compatibility/compatibility-policy.md | SC-T009 release (schema drafting proceeds; release waits for this review) | queued 2026-07-10; batch at Wave 1 exit |
 
 ## 5. Budget ledger
 
