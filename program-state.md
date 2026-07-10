@@ -34,7 +34,9 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | Task | Status | Evidence | Commit |
 |---|---|---|---|
 | IG-T003 SSE relay + cancellation (G2) | in-progress (subagent) | — | — |
-| IB-T002 open-loop generator + raw events | in-progress (subagent) | — | — |
+| IB-T002 open-loop generator + raw events | done-pending-CO-review (orchestrator re-ran go vet + race tests: 6 pkgs ok; kit raw-event validation green; live 3x200 req vs pinned gateway+mock 200/200; fresh-context CO verifier dispatched) | /home/user/inferbench + docs/evidence/ib-t002 | inferbench@bc3280a |
+| IB-T002 CO-safety review (stop condition) | in-progress (fresh-context verifier) | — | — |
+| IB-T003 workload suite v1 | in-progress (subagent; also applies license + ADR flips per review) | — | — |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
