@@ -97,7 +97,7 @@ Mirrors /home/user/inference-lab/pins/pins.yaml (validator green):
 
 ## 5. Budget ledger
 
-GPU spend: $0. Envelope: $150–250 (user-confirmed 2026-07-10). Alerts at 50%/80%. Additional environment constraint: no GPU rental access from this remote container — GPU sessions will need user-provided access or CPU fallback (05 §5).
+GPU spend: $0. **G6 DECISION (user, 2026-07-11): no GPU rental for now** — Wave 4+ GPU-dependent portions run the documented CPU fallbacks (05 §5): llama.cpp + Qwen2.5-1.5B is the measured engine baseline; I4 runs as the llama.cpp-backed variant with the charter §7 repositioning note; IG-T014/IB-T011/IB-T012 defer until GPU access exists (envelope $150–250 remains approved if that changes). Never-cut list unaffected — cancellation correctness, fault-injection, valid benchmarking, contract validation, and the I6 loop all close on CPU.
 
 ## 6. Environment blind-spot register (iteration-0 pass, all facts measured 2026-07-10)
 
