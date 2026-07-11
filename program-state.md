@@ -69,7 +69,7 @@ All other register tasks (05 §8): todo, gated by wave order.
 
 - Wave 1: **EXITED 2026-07-10.** Contracts v0.1.0 released (reviewed + tagged); gateway serves non-streaming from mock (verified); infergate conformance green vs fixtures (I1 partial — inferbench wires the kit at IB-T002, fleetlab/inferops at their first consuming tasks). G1 = partially satisfied (fixtures validate + first consumer green); full I1 needs all four consumers.
 - Wave 2: **EXITED 2026-07-11** — I2 and I3 both accepted (user review after fresh-context verification). G3 (local loop) = satisfied by I2+I3 acceptance.
-- Wave 3: **active** — dispatched 2026-07-11 (Sonnet implementers per KI-2): IG-T007 (tenancy/auth/PostgreSQL), IB-T008+T009 (sweeps/replay/governance), IL-T010 (OSS build + reproduction vs llm-d-router). Remaining Wave 3: IG-T008–T011, IB-T010 (G5).
+- Wave 3: **active**. Done+verified 2026-07-11: IG-T007 (infergate@102096c, revocation 74ms/1.0s vs 5s bound, no hot-path DB reads proven); IB-T008 (inferbench@e92d2df, bracketed knee at 21.12 rps found by unmodified detector, replay determinism, A/B mode, + seed-override bug found/fixed); IB-T009 (inferbench@2959d7c, hypothesis-gated experiment framework, 6 typed refusals demoed); IL-T010 (inference-lab@fff6f72, llm-d-router built + tested, #1625 fairness_id unbounded-cardinality reproduced — 5000 series demo, draft comment prepared). Now running: IG-T008+T009 (usage accounting + quotas, Sonnet), G4 fresh-context review (Opus). Remaining Wave 3: IG-T010/T011, IB-T010 (G5), IL-T011 (blocked on OSS posting — see KI-3).
 - User actions RESOLVED 2026-07-11: six GitHub repos live (all mains pushed; KI-1 tag workaround = release/<version> branches); huggingface.co allowlisted (real model downloaded, sha256 to be pinned at I3).
 - G1–G10: none passed. I1–I8: none accepted.
 
@@ -122,6 +122,8 @@ GPU spend: $0. Envelope: $150–250 (user-confirmed 2026-07-10). Alerts at 50%/8
 - (2026-07-10) The Agent tool can transiently fail when its safety classifier model is unavailable — retry later; read-only work continues meanwhile.
 - (2026-07-11) KI-1: the session git proxy pushes branches fine but silently drops tag refs ("Everything up-to-date" while the remote has no tags) — push release/<version> branches as pinnable refs; annotated tags stay authoritative in local history and get pushed when hosting is direct.
 - (2026-07-11) KI-2: besides timed session-limit windows, a Fable-5 usage-credit cap can terminate subagents ("run /usage-credits or switch models") — finishing-type work relaunches fine on Sonnet with a self-contained from-disk prompt; heavy design/verification work should wait for credits or explicit user say-so.
+- (2026-07-11) KI-3: this session's GitHub access is scoped to the user's seven repos — writes to third-party repos (llm-d) are denied at the access layer, so ALL upstream OSS posting must be done by the user manually from the prepared drafts. User approved the #1625 comment; posting handed to user (draft: inference-lab/oss/drafts/2026-07-11-llm-d-router-1625-comment.md; pre-post live check done 2026-07-11: #1625 open+unassigned, #1909 still defers fairness_id).
+- (2026-07-11) KI-4: very long tool inputs are being truncated mid-text this session (two Agent prompts + one heredoc cut off) — keep Agent prompts moderate, split big file edits into multiple Edit calls, and always re-check what was actually sent/landed.
 
 ## 8. Deviations index
 
