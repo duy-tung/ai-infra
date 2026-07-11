@@ -43,7 +43,8 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 
 | IG-T005 llama.cpp adapter | done (orchestrator re-verified: backend tests race-green incl. real-engine suite; descriptor kit-valid 1/1; 3-point cancel on real llama-server — mid-stream slot release 1.25-5.24ms, pre-first-token 0.77-2.19s at decode-batch granularity (real-engine finding, R14 material); failover demo clean; D2 tiny-GGUF deviation standing) | /home/user/infergate/internal/backend/llamacpp | infergate@74f2372 |
 | IB-T005 analysis core (Python) | done (orchestrator re-ran: 70/70 pytest green, 7/7 result files kit-valid; pooling guard structural; error-gate makes quoting latency impossible above 5% error+shed; contract observations queued: nullable latency tables + CI fields for a future MINOR) | /home/user/inferbench/analysis + docs/evidence/ib-t005 | inferbench@10b2e61 |
-| IB-T006 report generator + validity block (G4 artifact) | in-progress (subagent) | — | — |
+| IB-T006 report generator + validity block (G4 artifact) | done (orchestrator re-ran: 103/103 pytest green; refusal-first rendering — reports cannot render without validity block/hypothesis/shed-adjacent goodput; withheld-latency case rendered honestly; G4 stays open until IB-T009 joins) | /home/user/inferbench/analysis + docs/evidence/ib-t006 | inferbench@69a5abc |
+| IL-T003 Scenario B + I3 (llama.cpp, real Qwen2.5-1.5B) | in-progress (subagent) | — | — |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
@@ -66,7 +67,8 @@ All other register tasks (05 §8): todo, gated by wave order.
 ## 2. Wave & gate status
 
 - Wave 1: **EXITED 2026-07-10.** Contracts v0.1.0 released (reviewed + tagged); gateway serves non-streaming from mock (verified); infergate conformance green vs fixtures (I1 partial — inferbench wires the kit at IB-T002, fleetlab/inferops at their first consuming tasks). G1 = partially satisfied (fixtures validate + first consumer green); full I1 needs all four consumers.
-- Wave 2: **active**. G2 PASSED (fresh-context verified). IG-T003 done. IB-T002 awaiting measurement fix + re-review. SC v0.2.0 prepared (incl. raw-event CO fix + migration note), tag review-queued.
+- Wave 2: **active — I2 ACCEPTED by user 2026-07-11** (G2 acknowledged; v0.2.0 released + tagged). Wave-2 exit needs I3 (IL-T003 running with the real Qwen2.5-1.5B GGUF).
+- User actions RESOLVED 2026-07-11: six GitHub repos live (all mains pushed; KI-1 tag workaround = release/<version> branches); huggingface.co allowlisted (real model downloaded, sha256 to be pinned at I3).
 - G1–G10: none passed. I1–I8: none accepted.
 
 ## 3. Pins
