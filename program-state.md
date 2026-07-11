@@ -44,7 +44,7 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | IG-T005 llama.cpp adapter | done (orchestrator re-verified: backend tests race-green incl. real-engine suite; descriptor kit-valid 1/1; 3-point cancel on real llama-server — mid-stream slot release 1.25-5.24ms, pre-first-token 0.77-2.19s at decode-batch granularity (real-engine finding, R14 material); failover demo clean; D2 tiny-GGUF deviation standing) | /home/user/infergate/internal/backend/llamacpp | infergate@74f2372 |
 | IB-T005 analysis core (Python) | done (orchestrator re-ran: 70/70 pytest green, 7/7 result files kit-valid; pooling guard structural; error-gate makes quoting latency impossible above 5% error+shed; contract observations queued: nullable latency tables + CI fields for a future MINOR) | /home/user/inferbench/analysis + docs/evidence/ib-t005 | inferbench@10b2e61 |
 | IB-T006 report generator + validity block (G4 artifact) | done (orchestrator re-ran: 103/103 pytest green; refusal-first rendering — reports cannot render without validity block/hypothesis/shed-adjacent goodput; withheld-latency case rendered honestly; G4 stays open until IB-T009 joins) | /home/user/inferbench/analysis + docs/evidence/ib-t006 | inferbench@69a5abc |
-| IL-T003 Scenario B + I3 (llama.cpp, real Qwen2.5-1.5B) | in-progress (subagent) | — | — |
+| IL-T003 Scenario B + I3 (llama.cpp, real Qwen2.5-1.5B) | in-progress (original Fable-5 agent hit a usage-credit limit after 3 interruptions; fresh Sonnet finisher agent relaunched from disk state 2026-07-11 ~07:2x) | evidence/i3 partial on disk | — |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
@@ -119,6 +119,7 @@ GPU spend: $0. Envelope: $150–250 (user-confirmed 2026-07-10). Alerts at 50%/8
 - (2026-07-10) Session token limits can kill all background subagents mid-task simultaneously (windows observed resetting 3:50am and 9am UTC); partial work survives on disk and agents resume via their transcript with a "continue from disk state" message — schedule the fallback heartbeat AFTER the reset time when a limit hit is known.
 - (2026-07-10) The Agent tool can transiently fail when its safety classifier model is unavailable — retry later; read-only work continues meanwhile.
 - (2026-07-11) KI-1: the session git proxy pushes branches fine but silently drops tag refs ("Everything up-to-date" while the remote has no tags) — push release/<version> branches as pinnable refs; annotated tags stay authoritative in local history and get pushed when hosting is direct.
+- (2026-07-11) KI-2: besides timed session-limit windows, a Fable-5 usage-credit cap can terminate subagents ("run /usage-credits or switch models") — finishing-type work relaunches fine on Sonnet with a self-contained from-disk prompt; heavy design/verification work should wait for credits or explicit user say-so.
 
 ## 8. Deviations index
 
