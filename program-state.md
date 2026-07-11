@@ -99,6 +99,18 @@ Mirrors /home/user/inference-lab/pins/pins.yaml (validator green):
 | RQ-7 | fleetlab ADR-0001 | — | **accepted 2026-07-10** (fleetlab@da01bb4) |
 | RQ-8 | SC compatibility policy + ADRs | — | **accepted 2026-07-10** (part of release review) |
 
+### Wave 4 (CPU path; GPU items deferred per G6 decision)
+
+| Task | Status | Evidence | Commit |
+|---|---|---|---|
+| IG-T012 routing (health+pressure+P2C) | done (orchestrator re-ran route tests race-green; shift measured 23-29ms vs bounds) | /home/user/infergate/internal/route | infergate@a99ba71 |
+| IG-T013 reliability (retry budget/breaker/timeouts) | done (zero-post-first-token-retry invariant proven structurally + live 20x; breaker mid-stream-blind verified) | /home/user/infergate/internal/reliability | infergate@5aa528e |
+| IG-T016 release v0.1.0 | done (digest-pinned images smoke-tested from release; Contract-5 descriptors kit-valid; consumption-without-checkout documented; tag local + release/v0.1.0 branch pushed per KI-1; also fixed missing mock capability descriptor gap) | /home/user/infergate RELEASES.md + deploy/ | infergate@49236a3 |
+| IG-T014 vLLM adapter | deferred (G6: no GPU) | — | — |
+| IB-T007 calibration vs reference | todo (CPU variant vs llama.cpp reference) | — | — |
+| IO-T002+ ops track | **blocked-on-user (RQ-14)**: container lacks CAP_SYS_RESOURCE — NO k8s pod can run (proven at runc level, kind/k3s/minikube alike; k3s API server itself fine; Docker Hub/quay pulls DO work — earlier curl-probe belief corrected). Options: (a) compose-based ops + k3s API-validation pivot (recommended), (b) user-provided k8s machine, (c) defer ops wave. Probe report: /home/user/tools/k8s-env-probe-report.md | — | — |
+| FL-T002+T003 ingestion + core models (Wave-5 pull-forward, zero coupling) | in-progress (subagent) | — | — |
+
 ## 5. Budget ledger
 
 GPU spend: $0. **G6 DECISION (user, 2026-07-11): no GPU rental for now** — Wave 4+ GPU-dependent portions run the documented CPU fallbacks (05 §5): llama.cpp + Qwen2.5-1.5B is the measured engine baseline; I4 runs as the llama.cpp-backed variant with the charter §7 repositioning note; IG-T014/IB-T011/IB-T012 defer until GPU access exists (envelope $150–250 remains approved if that changes). Never-cut list unaffected — cancellation correctness, fault-injection, valid benchmarking, contract validation, and the I6 loop all close on CPU.
