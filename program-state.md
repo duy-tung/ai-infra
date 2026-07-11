@@ -109,7 +109,9 @@ Mirrors /home/user/inference-lab/pins/pins.yaml (validator green):
 | IG-T014 vLLM adapter | deferred (G6: no GPU) | — | — |
 | IB-T007 calibration vs reference | todo (CPU variant vs llama.cpp reference) | — | — |
 | IO-T002+ ops track | **blocked-on-user (RQ-14)**: container lacks CAP_SYS_RESOURCE — NO k8s pod can run (proven at runc level, kind/k3s/minikube alike; k3s API server itself fine; Docker Hub/quay pulls DO work — earlier curl-probe belief corrected). Options: (a) compose-based ops + k3s API-validation pivot (recommended), (b) user-provided k8s machine, (c) defer ops wave. Probe report: /home/user/tools/k8s-env-probe-report.md | — | — |
-| FL-T002+T003 ingestion + core models (Wave-5 pull-forward, zero coupling) | in-progress (subagent) | — | — |
+| FL-T002 ingestion + validation | done (orchestrator re-ran 103 pytest green; real corpus ingests: 8 workloads, 48 manifests, ~13.4k events, 10 results; 2 refusals = the documented truncated aborted-session files, correctly refused; provenance refusals typed) | /home/user/fleetlab/fleetlab/ingest | fleetlab@2f01c10 |
+| FL-T003 core models | done (Little's law exact on real traces; token-rate rel=1e-6 vs real result; KV formula vs fixture exact; KV-vs-measured-memory honestly PENDING — no isolated KV measurement exists in evidence) | /home/user/fleetlab/fleetlab/models + docs/notes/model-validation.md | fleetlab@9f02bf4 |
+| FL-T004+T005 profiles + dynamics (G8 path) | in-progress (subagent) | — | — |
 
 ## 5. Budget ledger
 
