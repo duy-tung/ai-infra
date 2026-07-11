@@ -45,7 +45,7 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | IB-T005 analysis core (Python) | done (orchestrator re-ran: 70/70 pytest green, 7/7 result files kit-valid; pooling guard structural; error-gate makes quoting latency impossible above 5% error+shed; contract observations queued: nullable latency tables + CI fields for a future MINOR) | /home/user/inferbench/analysis + docs/evidence/ib-t005 | inferbench@10b2e61 |
 | IB-T006 report generator + validity block (G4 artifact) | done (orchestrator re-ran: 103/103 pytest green; refusal-first rendering — reports cannot render without validity block/hypothesis/shed-adjacent goodput; withheld-latency case rendered honestly; G4 stays open until IB-T009 joins) | /home/user/inferbench/analysis + docs/evidence/ib-t006 | inferbench@69a5abc |
 | IL-T003 Scenario B + I3 (llama.cpp, real Qwen2.5-1.5B) | evidence complete (Sonnet finisher: reused the terminated agent's completed phases + re-ran cancel/checks/validate on idle box; (a) PASS 40/40+25/25; (b) PASS report #0, 3 arms, validity blocks incl. negative-overhead disclaimer; (c) DEVIATION — 21-vs-20 cancel-log census unreproduced, recorded open; (d) PASS failover 142s outage zero client failures; pins 13 entries validator green) | /home/user/inference-lab/evidence/i3 | inference-lab@4f5f3c1 |
-| I3 milestone verification | in-progress (fresh-context verifier, Opus — Fable-5 credit-capped, KI-2) | — | — |
+| I3 milestone verification | **ACCEPTED by verifier AND user 2026-07-11** — all numbers re-derived exactly; deviation (cancel-log census) judged honest; 2 cosmetic nits fixed (inference-lab@b49093f); acceptance recorded in pins (proven_at [I3], milestone_evidence.I3) | verifier report (task a150717) + evidence/i3 | inference-lab@61132b2 |
 
 ### Bootstrap-pulled-forward (per goal §2: initialize every repo with *-T001)
 
@@ -68,7 +68,8 @@ All other register tasks (05 §8): todo, gated by wave order.
 ## 2. Wave & gate status
 
 - Wave 1: **EXITED 2026-07-10.** Contracts v0.1.0 released (reviewed + tagged); gateway serves non-streaming from mock (verified); infergate conformance green vs fixtures (I1 partial — inferbench wires the kit at IB-T002, fleetlab/inferops at their first consuming tasks). G1 = partially satisfied (fixtures validate + first consumer green); full I1 needs all four consumers.
-- Wave 2: **active — I2 ACCEPTED by user 2026-07-11** (G2 acknowledged; v0.2.0 released + tagged). Wave-2 exit needs I3 (IL-T003 running with the real Qwen2.5-1.5B GGUF).
+- Wave 2: **EXITED 2026-07-11** — I2 and I3 both accepted (user review after fresh-context verification). G3 (local loop) = satisfied by I2+I3 acceptance.
+- Wave 3: **active** — dispatched 2026-07-11 (Sonnet implementers per KI-2): IG-T007 (tenancy/auth/PostgreSQL), IB-T008+T009 (sweeps/replay/governance), IL-T010 (OSS build + reproduction vs llm-d-router). Remaining Wave 3: IG-T008–T011, IB-T010 (G5).
 - User actions RESOLVED 2026-07-11: six GitHub repos live (all mains pushed; KI-1 tag workaround = release/<version> branches); huggingface.co allowlisted (real model downloaded, sha256 to be pinned at I3).
 - G1–G10: none passed. I1–I8: none accepted.
 
@@ -88,7 +89,7 @@ Mirrors /home/user/inference-lab/pins/pins.yaml (validator green):
 | RQ-5 | Career-overlay exclusion (13 §7.4) | nothing | default applied (excluded); user may override |
 | RQ-10 | HF network allowlist | — | **RESOLVED 2026-07-11: huggingface.co returns 200; real 1-3B GGUF download unblocked for I3 (clears deviation D2's perf-realism limitation)** |
 | RQ-9 | Wave-1 exit review | — | **passed 2026-07-10: v0.1.0 approved+tagged; Apache-2.0 license all repos; $id -> github.com/duy-tung path; ALL queued ADRs accepted** (infergate/inferbench ADR status-line flips deferred until their active agents land — avoid concurrent-commit conflicts) |
-| RQ-11 | OSS target re-point: the RQ-3 contingency triggered — EPP/InferenceObjective/BBR migrated from GAIE to the llm-d org; llm-d/llm-d-router now scores highest (~23; Go, routing/scheduling boundary, CPU-testable via llm-d-inference-sim, 7 good-first-issues, ~1h maintainer response, DCO). Proposal: llm-d-router primary, GAIE conformance/docs secondary surface, OTel semconv track re-pointed at open-telemetry/semantic-conventions-genai. Full live-fact report: oss-live-scoring-2026-07-11.md (committed to ai-infra). | IL-T010 (Wave 3) | queued 2026-07-11; batch with I3 acceptance |
+| RQ-11 | OSS target re-point | — | **approved 2026-07-11: llm-d-router primary, GAIE secondary, semconv-genai for the OTel track** |
 | RQ-12 | Semconv pin staleness (observation): gen_ai.* deprecated out of core semconv at v1.42.0; gen_ai.system renamed gen_ai.provider.name at v1.37.0; our v1.34.0 pin is explicit + reverify-flagged, so nothing is broken — decide at a later infergate task whether to bump before v1.0.0 contract freeze (SC-T010). | nothing now; SC-T010 checklist item | queued 2026-07-11 |
 | RQ-6 | inferops ADR-0001 | — | **accepted 2026-07-10** (inferops@7ca8870) |
 | RQ-7 | fleetlab ADR-0001 | — | **accepted 2026-07-10** (fleetlab@da01bb4) |
