@@ -59,7 +59,7 @@ Status values: todo / in-progress / blocked-on(X) / review-queued / done. Eviden
 | IB-T002 CO re-review | **PASSED 2026-07-10** — verifier's original 2s-dial attack now fully surfaces (TTFT 2.002-2.014s recorded, hidden=0.000s) or trips typed wire abort (41/60 sent, ABORT); never-sent-request probe produces honest error events, nothing understated. Non-blocking notes: send_slip should be absent when send never completed (handed to IB-T004); IB-T005 analyzer MUST gate latency quotes on error/shed rate. IB-T002 stop condition met. | verifier re-report (task afc43a0f) | inferbench@2828f12 |
 | IB-T004 streaming client correctness | done (orchestrator re-verified: client+run race tests green, kit check 7/7 valid; calibration 28/28 within tolerance, TTFT Δp50 ≈ +2.9ms; 3-point cancellation two-sided vs mock; slow-client 9.2x e2e effect; contract proposals logged for metrics.md §4 wording + nullable send_ts) | /home/user/inferbench docs/evidence/ib-t004 | inferbench@caa5074 |
 | IL-T002 Scenario A + I2 evidence | evidence complete (154 concurrent streams 2736/2736 ok, 0 integrity violations; 3-point cancel deltas ≤0.72ms; TTFT agreement +1.9ms within declared 25ms; 7801 full-sequence traces, conservation exact; PostgreSQL deviation D-001 recorded honestly; deviations D-002/D-003: registry CDNs blocked → host-compiled scratch images + ocb-built collector) | /home/user/inference-lab/evidence/i2 | inference-lab@d0a858c |
-| I2 milestone verification | in-progress (fresh-context verifier re-deriving numbers from raw artifacts) | — | — |
+| I2 milestone verification | **ACCEPTED (subject to user review) 2026-07-11** — fresh-context verifier reproduced every checklist number from raw artifacts (independent DP pairing matched greedy results; conservation exact; archive byte-identical to run output; live smoke re-compose byte-identical to archived transcript); PostgreSQL deviation D-001 judged legitimate (milestone-spec inconsistency); 2 wording nits fixed at inference-lab@e11b9c9 | verifier report (task a9929d1) | inference-lab@d0a858c |
 
 All other register tasks (05 §8): todo, gated by wave order.
 
@@ -81,9 +81,9 @@ Mirrors /home/user/inference-lab/pins/pins.yaml (validator green):
 | RQ-1 | Six-repo strategy | — | **answered 2026-07-10: six repos** |
 | RQ-2 | GPU budget envelope | G6/Wave 4 GPU work | **answered 2026-07-10: $150–250, alerts 50%/80%, ≤6 sessions, per-session approval** |
 | RQ-3 | OSS primary target | IL-T010 (Wave 3) | **answered 2026-07-10: GAIE primary, OTel GenAI semconv secondary, vLLM fallback** |
-| RQ-4 | Remote hosting: user approved creating 6 public GitHub repos, but the GitHub integration returned 403 (cannot create repos). **User action needed:** create empty repos duy-tung/{serving-contracts,infergate,inferbench,fleetlab,inferops,inference-lab} (public, no README) and say "repos created" — orchestrator then adds them via add_repo and pushes. | durable component hosting (work is container-local until then) | waiting-on-user since 2026-07-10 |
+| RQ-4 | Remote hosting | — | **RESOLVED 2026-07-11: user created the six repos; all six pushed (main verified on remote). Tag pushes are silently dropped by the session git proxy (known issue KI-1) — release/v0.1.0 branch pushed as the pinnable ref workaround; annotated tags remain authoritative locally.** |
 | RQ-5 | Career-overlay exclusion (13 §7.4) | nothing | default applied (excluded); user may override |
-| RQ-10 | Network allowlist: add huggingface.co to this environment's network policy (claude.ai/code environment settings) so IG-T005/I3 can download a small GGUF (1–3B). Alternatives exist but are worse (see blind-spot register). | IG-T005/I3 (Wave 2, soon) | waiting-on-user since 2026-07-10 |
+| RQ-10 | HF network allowlist | — | **RESOLVED 2026-07-11: huggingface.co returns 200; real 1-3B GGUF download unblocked for I3 (clears deviation D2's perf-realism limitation)** |
 | RQ-9 | Wave-1 exit review | — | **passed 2026-07-10: v0.1.0 approved+tagged; Apache-2.0 license all repos; $id -> github.com/duy-tung path; ALL queued ADRs accepted** (infergate/inferbench ADR status-line flips deferred until their active agents land — avoid concurrent-commit conflicts) |
 | RQ-6 | inferops ADR-0001 | — | **accepted 2026-07-10** (inferops@7ca8870) |
 | RQ-7 | fleetlab ADR-0001 | — | **accepted 2026-07-10** (fleetlab@da01bb4) |
@@ -114,6 +114,7 @@ GPU spend: $0. Envelope: $150–250 (user-confirmed 2026-07-10). Alerts at 50%/8
 - (2026-07-10) A heredoc quoting bug silently skipped a pins.yaml edit while the commit (with a message claiming the pin) still went through — always re-run the relevant validator/check AFTER the edit and BEFORE committing; caught because the validator printed "0 artifact entries".
 - (2026-07-10) Session token limits can kill all background subagents mid-task simultaneously (windows observed resetting 3:50am and 9am UTC); partial work survives on disk and agents resume via their transcript with a "continue from disk state" message — schedule the fallback heartbeat AFTER the reset time when a limit hit is known.
 - (2026-07-10) The Agent tool can transiently fail when its safety classifier model is unavailable — retry later; read-only work continues meanwhile.
+- (2026-07-11) KI-1: the session git proxy pushes branches fine but silently drops tag refs ("Everything up-to-date" while the remote has no tags) — push release/<version> branches as pinnable refs; annotated tags stay authoritative in local history and get pushed when hosting is direct.
 
 ## 8. Deviations index
 
