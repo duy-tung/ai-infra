@@ -3,7 +3,8 @@
 Orchestrator loop state. Committed every iteration. Any iteration must be recoverable from this file + git evidence alone. A task is **done** only when its verification evidence exists — never trust a prior iteration's claim without evidence.
 
 - **Status:** **BUILD + VERIFY COMPLETE 2026-07-12.** All 8 integration milestones (I1-I8) built and fresh-context-verified. 6 repos on GitHub. Contracts frozen v1.0.0; inference-lab v1.0.0 tagged. Final report: inference-lab/FINAL-REPORT.md (c5cf6b7).
-- **Remaining = USER GATES ONLY:** accept I4-I8 batch · v1.0.0 retroactive review · post #1625 upstream (draft ready).
+- **USER ACCEPTED I4-I8 on 2026-07-12** → all 8 milestones (I1-I8) user-accepted. Definition of Done HOLDS. **PROGRAM COMPLETE.**
+- Optional follow-through (user-gated, non-blocking — OSS contingency already satisfies DoD): post #1625 (draft in inference-lab/oss/drafts/) → IL-T011/T012. v1.0.0 freeze accepted (no objection).
 - **Last updated:** 2026-07-12
 - **Workspace:** six sibling repos at `/home/user/{serving-contracts,infergate,inferbench,fleetlab,inferops,inference-lab}`, each `git init -b main`, no remotes yet.
 
