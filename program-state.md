@@ -2,9 +2,9 @@
 
 Orchestrator loop state. Committed every iteration. Any iteration must be recoverable from this file + git evidence alone. A task is **done** only when its verification evidence exists — never trust a prior iteration's claim without evidence.
 
-- **Iteration:** 0 (bootstrap)
-- **Last updated:** 2026-07-10 (session start)
-- **Current wave:** 1 (Contracts core + gateway spine) — entry condition met (plan approved by user goal directive)
+- **Status:** **BUILD + VERIFY COMPLETE 2026-07-12.** All 8 integration milestones (I1-I8) built and fresh-context-verified. 6 repos on GitHub. Contracts frozen v1.0.0; inference-lab v1.0.0 tagged. Final report: inference-lab/FINAL-REPORT.md (c5cf6b7).
+- **Remaining = USER GATES ONLY:** accept I4-I8 batch · v1.0.0 retroactive review · post #1625 upstream (draft ready).
+- **Last updated:** 2026-07-12
 - **Workspace:** six sibling repos at `/home/user/{serving-contracts,infergate,inferbench,fleetlab,inferops,inference-lab}`, each `git init -b main`, no remotes yet.
 
 ---
