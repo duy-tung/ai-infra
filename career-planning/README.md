@@ -17,6 +17,7 @@ passes on 2026-07-16; fit scores are informed judgment, not measurements.
 | [engineering-career-research-plan.md](engineering-career-research-plan.md) | Longest / most detailed; fact vs verified-fact vs assessment labeling; full 24-week hybrid plan | A 68/100 | B 43/100 |
 | [platform-and-ai-career-plan.md](platform-and-ai-career-plan.md) | Strategic roadmap; Zenoh/ROS2 + Temporal/PydanticAI/DeepEval emphasis | A 72/100 | B 45/100 |
 | [tung-platform-agentic-ai-career-plan.md](tung-platform-agentic-ai-career-plan.md) | Targets specific live listings (Menlo Platform Eng; NVIDIA Agentic AI HCMC); dated application gates | A 73/100 | B 54/100 |
+| [career-plan-platform-to-production-ai.md](career-plan-platform-to-production-ai.md) | Most granular: 30-resource library, week-by-week 24-week plan, company-specific targets; proposes an **LLM Evals & Observability niche** as the bridge | A 72/100 | B 48 product / ~62 AI-infra |
 
 **Consistent thesis across all five:** lead with the proven distributed-systems / streaming /
 observability profile (Platform / AI-infra roles — apply now), and build agentic-AI credibility
