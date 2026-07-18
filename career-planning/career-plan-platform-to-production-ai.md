@@ -648,8 +648,3 @@ Repos: `robot-fleet-platform` and `incident-agent` (descriptive, boring, searcha
 **Key verified tool/version facts (as of 2026-07-16):** LangGraph 1.2.4 (1.0 GA Oct 2025; `langgraph-api` ELv2) · Temporal server 1.31 / Python SDK 1.27.2 (MIT) · PydanticAI 1.106.0 (durable-execution backends: Temporal/DBOS/Prefect/Restate) · OpenAI Agents SDK 0.17.x (pre-1.0) · Microsoft Agent Framework 1.0 GA Apr 2026 (Semantic Kernel/AutoGen legacy) · MCP spec 2025-11-25 (Linux Foundation AAIF since 2025-12-09; next revision 2026-07-28) · Ragas 0.4.3 (cadence slowed) · promptfoo (OpenAI acquisition announced 2026-03-09; stays OSS) · DeepEval 4.x · Langfuse v3.21x (ClickHouse acquisition 2026-01-16; MIT core) · OTel GenAI semconv: client spans stable, agent spans experimental, dedicated repo · vLLM 0.22.1+ · Qdrant 1.18 · pgvector 0.8.2 (CVE-2026-3172 fix) · Flink 2.3.0 (2026-06-25) · Kafka 4.3.1 · NATS server 2.14.x (Apache-2.0 confirmed by CNCF May 2025) · MCAP frozen-stable · KServe 0.18/0.19rc (CNCF Incubating) · MLflow 3.13 · DDIA 2e published Mar 2026.
 
 **Uncertainty statement:** posting-frequency counts are small-sample and directional, not market statistics; several postings' publication dates were unverifiable (flagged); fast-moving libraries (PydanticAI, promptfoo, vLLM, LangGraph) will have newer versions within weeks — re-verify at time of use; salary figures quoted in research came from posting pages and were not independently audited. Everything labeled "judgment" is the author's assessment, not a sourced fact.
-
-
-
-
-
